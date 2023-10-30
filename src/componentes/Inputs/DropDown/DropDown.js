@@ -40,7 +40,7 @@ const Dropdown = ({ list, title, name, setValue, value }) => {
 
                 items={items}
                 setItems={setItems}
-                placeholder={title}
+                placeholder={""}
             />
         </View>
     )

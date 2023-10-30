@@ -29,41 +29,48 @@ const TabScreenOptions = (title) => ({
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
-    const { user } = useUser()
-    if (user) {
-        if (user.type_user === 'Administrador') {
-            return (
-                <NavigationContainer>
-                    <Stack.Navigator>
-                        < Stack.Screen name="TabBarAdmin" component={TabBarAdmin} options={{ headerShown: false }} />
-                        <Stack.Screen name="UsersAdmin" component={UsersAdmin} options={TabScreenOptions("Usuarios")} />
-                        <Stack.Screen name="AddUser" component={AddUser} options={TabScreenOptions("Usuario")} />
-                        <Stack.Screen name="AddGroup" component={AddGroup} options={TabScreenOptions("Grupos")} />
-                        <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuracón")} />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            )
-        } else {
-            return (
-                <NavigationContainer>
-                    <Stack.Navigator>
-                        < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
-                    </Stack.Navigator>
-                </NavigationContainer >
-            )
-        }
-    } else {
-        return (
-            <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-                    <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-                    <Stack.Screen name="Enroll" component={Enroll} options={{ headerShown: false }} />
-                    <Stack.Screen name="RecoveryPass" component={RecoveryPass} options={{ headerShown: false }} />
-                </Stack.Navigator>
-            </NavigationContainer>
-        )
-    }
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+            <Stack.Screen name="AddGroup" component={AddGroup} options={TabScreenOptions("Grupos")} />
+            </Stack.Navigator>
+        </NavigationContainer>)
 }
 
 export default AppNavigation
+
+// const { user } = useUser()
+//     if (user) {
+//         if (user.type_user === 'Administrador') {
+//             return (
+//                 <NavigationContainer>
+//                     <Stack.Navigator>
+//                         < Stack.Screen name="TabBarAdmin" component={TabBarAdmin} options={{ headerShown: false }} />
+//                         <Stack.Screen name="UsersAdmin" component={UsersAdmin} options={TabScreenOptions("Usuarios")} />
+//                         <Stack.Screen name="AddUser" component={AddUser} options={TabScreenOptions("Usuario")} />
+//                         <Stack.Screen name="AddGroup" component={AddGroup} options={TabScreenOptions("Grupos")} />
+//                         <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuracón")} />
+//                     </Stack.Navigator>
+//                 </NavigationContainer>
+//             )
+//         } else {
+//             return (
+//                 <NavigationContainer>
+//                     <Stack.Navigator>
+//                         < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
+//                     </Stack.Navigator>
+//                 </NavigationContainer >
+//             )
+//         }
+//     } else {
+//         return (
+//             <NavigationContainer>
+//                 <Stack.Navigator>
+//                     <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+//                     <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+//                     <Stack.Screen name="Enroll" component={Enroll} options={{ headerShown: false }} />
+//                     <Stack.Screen name="RecoveryPass" component={RecoveryPass} options={{ headerShown: false }} />
+//                 </Stack.Navigator>
+//             </NavigationContainer>
+//         )
+//     }

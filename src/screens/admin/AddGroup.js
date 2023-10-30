@@ -11,13 +11,13 @@ import InputFEspecial from '../../componentes/Inputs/InputEspecial'
 import InputCupo from '../../componentes/Inputs/inputCupo'
 import { StatusBar } from 'expo-status-bar'
 import Dropdown from '../../componentes/Inputs/DropDown/DropDown'
-import { getAllhoras } from '../../firebase/cloudstorage/horario'
+import { getAllhoras, gruposFun, maestrosFun } from '../../firebase/cloudstorage/horario'
 
 const AddGroup = ({ navigation }) => {
     const info = useRoute().params
     const [grupos, setGrupos] = useState([]);
     const [maestros, setMaestros] = useState([]);
-    const [horario, setHorario] = useState([]);
+
     const [data, setData] = useState([]);
     const [loading, isLoading] = useState(true);
 
@@ -38,13 +38,11 @@ const AddGroup = ({ navigation }) => {
             : initialDatos
     );
 
-    const autenticar = async (datos) => {
+    const autenticar = async () => {
         const gruposReference = doc(collection(db, "Groups"));
-        console.log(datos)
-        // await setDoc(gruposReference, datos);
-
-        // console.log("agreganding...")
-        // navigation.goBack()
+        await setDoc(gruposReference, datos);
+        console.log("agreganding...")
+        navigation.goBack()
     }
 
     const desactivar = async () => {
@@ -71,60 +69,34 @@ const AddGroup = ({ navigation }) => {
         navigation.navigate("Groups")
     }
 
-    
-
-    const gruposFun = () => {
-        const q = query(collection(db, "Default"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const typeGroup = [];
-            const horario = [];
-            querySnapshot.forEach((doc) => {
-                typeGroup.push({ ...doc.data().type_groups });
-                horario.push({ ...doc.data().schedule });
-            });
-            setGrupos(typeGroup)
-            setHorario(horario)
-
-        });
-
-        return unsubscribe
-    }
-
-    const maestrosFun = () => {
-        const q = query(collection(db, "Usuarios"), where("type_user", "==", "Maestro"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const maestros = [];
-            querySnapshot.forEach((doc) => {
-                maestros.push(doc.data().name_user);
-            });
-            setMaestros(maestros)
-
-        });
-        return unsubscribe
-    }
-
-
-
     useEffect(
         () => {
-            gruposFun();
-            maestrosFun();
+            gruposFun().then((grups) => {
+                setGrupos(grups);
+                isLoading(false);
+            })
+            maestrosFun().then((maes) => {
+                setMaestros(maes)
+                isLoading(false);
+            })
             getAllhoras().then((horas) => {
                 setData(horas)
                 isLoading(false);
-                console.log(data);
             })
         }, []
     )
     return (
         <View className="w-full  ml-4 p-7">
             <Text className="text-lg mb-3"> Información de grupos</Text>
-            <DropdownGroups
-                list={grupos}
-                name={"type_group"}
-                setValue={setDatos}
-                value={datos} />
-
+            {loading
+                ? null
+                : <Dropdown
+                    list={grupos}
+                    title={"Grupos"}
+                    name={"type_group"}
+                    setValue={setGrupos}
+                    value={grupos} />
+            }
             <InputFileld
                 title={"Descripción"}
                 props={"Grupo niños principiantes"}
@@ -134,11 +106,15 @@ const AddGroup = ({ navigation }) => {
                 setValue={setDatos}
                 value={datos} />
 
-            <DropDownMaestros
-                list={maestros}
-                name={"name_teac"}
-                setValue={setDatos}
-                value={datos} />
+            {loading
+                ? null
+                : <Dropdown
+                    list={maestros}
+                    title={"Maestros"}
+                    name={"name_teac"}
+                    setValue={setMaestros}
+                    value={maestros} />
+            }
             {loading
                 ? null
                 : <Dropdown
