@@ -9,6 +9,7 @@ import { storeData } from '../Storage/storage'
 
 const SignIn = ({ navigation }) => {
 
+
     const [datos, setDatos] = useState(
         {
             mail: '',
@@ -21,13 +22,24 @@ const SignIn = ({ navigation }) => {
             .then((userCredential) => {
                 // Signed in 
                 const user = userCredential.user;
-
                 getAnOnlyUser(user.uid)
                     .then(async (user) => {
                         await storeData(user)
+                        if(user.type_user === 'Maestro'){
+                            console.log('Como maestro no puedes ingresar a la app')
+                        }else{
+                            if(user.type_user === 'Administrador'){
+                                navigation.navigate('TabBarAdmin')
+                            }else{
+                                navigation.navigate('TabBarUser')
+                            }
+                        }
+                       
                     }
-                    ).catch(() => {
-
+                    ).catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(errorMessage)
                     })
 
             })

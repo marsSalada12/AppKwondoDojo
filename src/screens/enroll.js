@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar'
 import { auth } from '../firebase/firebase'
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWUID } from '../firebase/cloudstorage/CreateUsers'
+import { getAnOnlyUser } from '../firebase/cloudstorage/users'
 
 const Enroll = ({ navigation }) => {
 
@@ -33,12 +34,12 @@ const Enroll = ({ navigation }) => {
     const PasswordsMatch = ({ password, confirmPass }) => {
         if (confirmPass && password !== confirmPass) {
             return (
-              <Text style={{ color: 'red' }}>
-                Las contraseñas no coinciden. Por favor, inténtelo de nuevo.
-              </Text>
+                <Text style={{ color: 'red' }}>
+                    Las contraseñas no coinciden. Por favor, inténtelo de nuevo.
+                </Text>
             );
-          }
-          return null;
+        }
+        return null;
     };
 
     const MinPas = ({ password }) => {
@@ -57,17 +58,27 @@ const Enroll = ({ navigation }) => {
         console.log(datos)
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
-                // Signed in 
                 const user = userCredential.user.uid;
                 console.log("si se guardó")
                 createUserWUID(datos, user)
-                    .then(() => {
-                        console.log("se guardo en base d datos")
-                    })
-                    .catch((error) => {
+                    .then(async (user) => {
+                        await storeData(user)
+                        console.log(user)
+                        if (user.type_user === 'Maestro') {
+                            console.log('Como maestro no puedes ingresar a la app')
+                        } else {
+                            if (user.type_user === 'Administrador') {
+                                navigation.navigate('TabBarAdmin')
+                            } else {
+                                navigation.navigate('TabBarUser')
+                            }
+                        }
+
+                    }
+                    ).catch((error) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
-                        console.log(errorCode, errorMessage)
+                        console.log(errorMessage)
                     })
             })
             .catch((error) => {

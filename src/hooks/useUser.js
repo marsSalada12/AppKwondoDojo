@@ -8,40 +8,35 @@ import { getData } from '../Storage/storage';
 const useUser = () => {
     const [user, setUser] = useState(null);
 
-    const getInfo = () => {
-        if (user) {
-            getData()
-                .then((value) => {
-                    setUser(value)
-                    
-                })
-                .catch(
-                    () => {
-                        setUser(null)
-                    }
-                )
-        } else {
-            setUser(null)
-        }
-
-    }
-
     useEffect(() => {
-        getInfo();
+        // const unsub = onAuthStateChanged(auth, user => {
+        //     if (user) {
+        //         getAnOnlyUser(user.uid)
+        //             .then((dataUser) => {
+        //                 setUser({ ...dataUser, uid: user.uid })
+        //             }).catch((e) => {
+        //                 console.log('algo salio mal', e)
+        //             })
+        //     } else {
+        //         setUser(null)
+        //     }
+        // })
+
+        getData()
+            .then((data) => {
+                setUser(data)
+            })
+            .catch((error) => {
+                setUser(null)
+                console.log('Something went wrong ', error)
+            })
+
+        // return unsub
+
     }, [])
-    return { user }
+    return { user, setUser }
 }
 
 
-// const unsub = onAuthStateChanged(auth, user => {
-//     if (user) {
-//         getAnOnlyUser(user.uid)
-//             .then((dataUser) => {
-//                 setUser({ ...dataUser, uid: user.uid })
-//             }).catch((e) => { console.log('algo salio mal', e) })
-//     } else {
-//         setUser(null)
-//     }
-// })
 
 export default useUser

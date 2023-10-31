@@ -1,23 +1,26 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input';
-import DropdownUsuarios from '../../componentes/Inputs/DropDown/DropDownUsurios';
-import DropdownBase from '../../componentes/Inputs/DropDown/DropDownBase';
 
 import { auth, db } from '../../firebase/firebase';
-import { createUserWithEmailAndPassword, updateEmail, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, updateEmail, updateProfile } from 'firebase/auth';
 import { createUserWUID } from '../../firebase/cloudstorage/CreateUsers'
 import { useRoute } from '@react-navigation/native';
-import { collection, doc, onSnapshot, query, updateDoc } from 'firebase/firestore';
-import { actualizarUID } from '../../firebase/cloudstorage/ActualizarUser';
+import { doc, updateDoc } from 'firebase/firestore';
 import { StatusBar } from 'expo-status-bar';
+import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
+import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
+import useUser from '../../hooks/useUser';
+
 
 const AddUser = ({ navigation }) => {
-
   const info = useRoute().params
-  
-
-  const [tyUser, setTyUser] = useState()
+  const [tyUser, setTyUser] = useState([
+    { label: "Administrador", value: "Administrador" },
+    { label: "Usuario", value: "Usuario" },
+    { label: "Maestro", value: "Maestro" }
+  ])
+  const [loading, setLoading] = useState(true)
 
 
   const initialDatos = {
@@ -40,12 +43,15 @@ const AddUser = ({ navigation }) => {
       : initialDatos
   );
 
+  const { setUser } = useUser()
+
   const autenticar = () => {
     createUserWithEmailAndPassword(auth, datos.mail, "123456")
       .then((userCredential) => {
         const user = userCredential.user.uid;
         createUserWUID(datos, user)
           .then(() => {
+            //setUser(currentauth)
             navigation.goBack();
           })
           .catch((error) => {
@@ -61,19 +67,8 @@ const AddUser = ({ navigation }) => {
       });
   }
 
-  useEffect(() => {
-    const q = query(collection(db, "Default"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const typeUser = [];
-      querySnapshot.forEach((doc) => {
-        typeUser.push({ ...doc.data().tipo_usuario });
-      });
-      setTyUser(typeUser)
 
-    });
-    return unsubscribe
-  }, [])
-
+  //Metodo para desactivar o activar a el usuario
   const desactivar = async () => {
     const infoUser = doc(db, "Usuarios", datos.id);
     await updateDoc(infoUser, {
@@ -81,18 +76,19 @@ const AddUser = ({ navigation }) => {
     });
   }
 
-   //Actualizar desde cloudStorage
-   const actualizar = async () => {
+  //Actualizar desde cloudStorage
+  const actualizar = async () => {
     const infoUser = doc(db, "Usuarios", datos.id);
+
     await updateDoc(infoUser, {
       type_user: datos.type_user,
-      name_user:datos.name_user,
+      name_user: datos.name_user,
       pattern_name: datos.pattern_name,
       matern_name: datos.matern_name,
       phone: datos.phone
     });
     navigation.goBack()
-   }
+  }
 
   const boton = () => {
     desactivar();
@@ -100,97 +96,88 @@ const AddUser = ({ navigation }) => {
   }
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={true}
-      className="flex flex-1">
+    <View
+      className="flex flex-1 items-center">
       <View className="mt-6 ml-6">
         <Text className="text-2xl">Datos de usuario</Text>
 
       </View>
 
-      <View className="mt-5 -mb-2 ml-11">
-        <DropdownBase
-          list={tyUser}
-          title={"Tipo usuario"}
-          name={"type_user"}
-          setValue={setDatos}
-          value={datos} />
-      </View>
-      <View className=" items-center">
-        <InputFileld
-          title={"Correo Electrónico"}
-          props={"correo@ejemplo.com"}
-          edita = {info ? false : true}
-          max={100}
-          name={"mail"}
-          setValue={setDatos}
-          value={datos} />
-
-        <InputFileld
-          title={"Nombre/s"}
-          props={"Logan Antonio"}
-          edita = {info ? true : true}
-          max={100}
-          name={"name_user"}
-          setValue={setDatos}
-          value={datos} />
-
-        <InputFileld
-          title={"Apellido paterno"}
-          props={"Peña"}
-          edita = {info ? true : true}
-          max={100}
-          name={"pattern_name"}
-          setValue={setDatos}
-          value={datos} />
-
-        <InputFileld
-          title={"Apellido materno"}
-          props={"Gonzalez"}
-          edita = {info ? true : true}
-          max={100}
-          name={"matern_name"}
-          setValue={setDatos}
-          value={datos} />
-
-        <InputFileld
-          title={"Número de teléfono"}
-          props={"8442793235"}
-          edita = {info ? true : true}
-          max={10}
-          name={"phone"}
-          setValue={setDatos}
-          value={datos} />
-      </View>
-
-      <View className="ml-12 mr-12">
+      <Dropdown
+        list={tyUser}
+        title={"Tipo usuario"}
+        name={"type_user"}
+        setValue={setDatos}
+        value={datos} />
 
 
 
-        <TouchableOpacity
-          onPress={info ?
-            () => actualizar()
-            : () => autenticar()}
-          className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
-          <Text className="text-lg text-white font-bold">
-            {info
-              ? "Actualizar usuario"
-              : "Guardar usuario"}
-          </Text>
-        </TouchableOpacity>
-        {info
-          ? <TouchableOpacity
-            onPress={() => boton()}
-            className={"rounded-m p-4 color w-80 items-center mt-2 mb-2 " + (info.status ? 'bg-red' : 'bg-green')}>
+      <ScrollView
+        showsVerticalScrollIndicator={true}>
+
+        <View className=" items-center">
+          <InputFileld
+            title={"Correo Electrónico"}
+            props={"correo@ejemplo.com"}
+            edita={info ? false : true}
+            max={100}
+            name={"mail"}
+            setValue={setDatos}
+            value={datos} />
+          <InputFileld
+            title={"Nombre/s"}
+            props={"Logan Antonio"}
+            max={100}
+            name={"name_user"}
+            setValue={setDatos}
+            value={datos} />
+          <InputFileld
+            title={"Apellido paterno"}
+            props={"Peña"}
+            max={100}
+            name={"pattern_name"}
+            setValue={setDatos}
+            value={datos} />
+          <InputFileld
+            title={"Apellido materno"}
+            props={"Gonzalez"}
+            max={100}
+            name={"matern_name"}
+            setValue={setDatos}
+            value={datos} />
+          <InputFileld
+            title={"Número de teléfono"}
+            props={"8442793235"}
+            max={10}
+            name={"phone"}
+            setValue={setDatos}
+            value={datos} />
+        </View>
+        <View className="ml-12 mr-12">
+          <TouchableOpacity
+            onPress={info ?
+              () => actualizar()
+              : () => autenticar()}
+            className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
             <Text className="text-lg text-white font-bold">
-              {info.status ? "Desactivar" : "Activar"}
+              {info
+                ? "Actualizar usuario"
+                : "Guardar usuario"}
             </Text>
           </TouchableOpacity>
-          : null}
-
-      </View>
+          {info
+            ? <TouchableOpacity
+              onPress={() => boton()}
+              className={"rounded-m p-4 color w-80 items-center mt-2 mb-2 " + (info.status ? 'bg-red' : 'bg-green')}>
+              <Text className="text-lg text-white font-bold">
+                {info.status ? "Desactivar" : "Activar"}
+              </Text>
+            </TouchableOpacity>
+            : null}
+        </View>
+      </ScrollView>
       <StatusBar backgroundColor={'#6560AA'} />
-    </ScrollView>
+    </View>
   )
 }
 
