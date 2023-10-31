@@ -4,8 +4,11 @@ import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { updateEmail } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
+import { clearAll } from '../../Storage/storage'
+import { useNavigation } from '@react-navigation/native'
 
 const ProfileScreen = () => {
+  const navigation =  useNavigation()
   const [datos, setDatos] = useState(
     {
       type_user: '',
@@ -58,6 +61,18 @@ const ProfileScreen = () => {
       );
     }
   };
+
+  const handleCerrarSesion = () => {
+    clearAll()
+      .then((value) => {
+        console.log('Limpiado: ', value);
+        navigation.navigate('Main')
+      })
+      .catch((error) => {
+        console.log('Ocurrio un error: ', error);
+      })
+  }
+
   return (
     <ScrollView className="p-9">
       <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
@@ -120,9 +135,25 @@ const ProfileScreen = () => {
         onPress={() => console.log("falta")}
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
         <Text className="w-80 text-center text-white">
-          Modificar información
+          Cambiar contraseña
         </Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => {
+          handleCerrarSesion()
+          console.log("falta")
+
+        }}
+        className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
+        <Text className="w-80 text-center text-white">
+          Cerrar Sesion
+        </Text>
+      </TouchableOpacity>
+
+
+
+
     </ScrollView>
   )
 }
