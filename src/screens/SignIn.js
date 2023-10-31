@@ -12,7 +12,7 @@ const SignIn = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
 
-    const [storeUser, setstoreData] = useState({}) 
+    const [storeUser, setstoreData] = useState({})
 
     const [datos, setDatos] = useState(
         {
@@ -29,15 +29,16 @@ const SignIn = ({ navigation }) => {
 
                 //Guardamos el ID del usuario
                 const user = userCredential.user;
-                setstoreData({"userUID" : user.uid})
-                console.log(storeUser)  
+                setstoreData({ "userUID": user.uid })
+                console.log(storeUser)
+
                 getAnOnlyUser(user.uid)
-                    .then(async (user) => {
-                        
+                    .then((user) => {
+
                         // Concatenamos la informacion del usuario en la 
                         // variable que se almacenara
-                        setstoreData({... storeUser,  ...user})
-                        console.log(storeUser)
+
+                        setstoreData({ ...storeUser, ...user })
 
                         // Revisamos el  estado del usuario
                         if (!user.status) {
@@ -45,22 +46,26 @@ const SignIn = ({ navigation }) => {
                             setShowModal(true)
 
                         } else {
-                            
-                            // Escribimos la informacion del usuario en el almacenamiento del celular
-                            await storeData(storeUser)
 
-                            // Revisamos el tipo de usuario
-                            if (user.type_user === 'Maestro') {
-                                console.log('Como maestro no puedes ingresar a la app')
-                                setMsjModal('Como maestro no puedes ingresar a la app')
-                                setShowModal(true)
-                            } else {
-                                if (user.type_user === 'Administrador') {
-                                    navigation.navigate('TabBarAdmin')
-                                } else {
-                                    navigation.navigate('TabBarUser')
-                                }
-                            }
+                            // Escribimos la informacion del usuario en el almacenamiento del celular
+                            storeData(storeUser)
+                                .then(() => {
+                                    // Revisamos el tipo de usuario
+                                    if (user.type_user === 'Maestro') {
+                                        console.log('Como maestro no puedes ingresar a la app')
+                                        setMsjModal('Como maestro no puedes ingresar a la app')
+                                        setShowModal(true)
+                                    } else {
+                                        if (user.type_user === 'Administrador') {
+                                            navigation.navigate('TabBarAdmin')
+                                        } else {
+                                            navigation.navigate('TabBarUser')
+                                        }
+                                    }
+                                })
+                                .catch((error) => console.log(error))
+
+
                         }
 
                     }
