@@ -139,7 +139,7 @@ const ProfileScreen = () => {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => 
+        onPress={() => {
           handleCerrarSesion()
           console.log("falta")
 

@@ -77,8 +77,6 @@ const Enroll = ({ navigation }) => {
                         // variable que se almacenara
                         setStoreUser({ ...storeUser, ...user })
                         storeData(storeUser)
-
-
                         navigation.navigate('TabBarUser')
                     }
                     ).catch((error) => {
@@ -147,6 +145,7 @@ const Enroll = ({ navigation }) => {
 
                 <TouchableOpacity
                     onPress={() => {
+                        
                         getData()
                         .then((udata) => console.log(udata))
                         .catch((error) => console.log(error))

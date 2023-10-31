@@ -46,7 +46,7 @@ const SignIn = ({ navigation }) => {
                             setShowModal(true)
 
                         } else {
-
+                            console.log(storeData)
                             // Escribimos la informacion del usuario en el almacenamiento del celular
                             storeData(storeUser)
                                 .then(() => {
