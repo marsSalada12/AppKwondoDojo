@@ -1,7 +1,8 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 
-
+///No pude cambiarle el nombre a este archivo lo queria llamar usuarios
+//No le movi a nada a este metodo pero ya no me muestra las horas
 export const getAllhoras = async () => {
     const data = []
     const q = query(collection(db, "Default"));
@@ -13,7 +14,7 @@ export const getAllhoras = async () => {
     });
     return data
 }
-
+//Para que me traiga los grupos, si me lo muestra
 export const gruposFun = async () => {
     const grupos = []
     const qu = query(collection(db, "Default"));
@@ -25,7 +26,7 @@ export const gruposFun = async () => {
     });
     return grupos
 }
-
+// este me muestra a los maestros para el combobotz, como no es array cambio jijji
 export const maestrosFun = async () => {
     const maestros = [];
     const que = query(collection(db, "Usuarios"), where("type_user", "==", "Maestro"));

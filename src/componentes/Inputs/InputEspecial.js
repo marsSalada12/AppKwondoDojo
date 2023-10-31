@@ -15,7 +15,9 @@ const InputFEspecial = ({ title, props, name, setValue, value }) => {
       const q = query(collection(db, "Default"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
-          setMensualidad(doc.data().base_price);
+          const mensualidadValue = doc.data().base_price;
+          setMensualidad(mensualidadValue);
+          setValue({ ...value, [name]: mensualidadValue });
         });
       });
       return unsubscribe;

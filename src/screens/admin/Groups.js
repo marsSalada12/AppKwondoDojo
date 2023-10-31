@@ -12,12 +12,7 @@ const Groups = () => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [datos, setDatos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const filtro = () => {
-
-  }
-
-
-
+ 
   useEffect(
     () => {
       setLoading(true)

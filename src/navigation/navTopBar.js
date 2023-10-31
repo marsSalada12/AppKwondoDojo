@@ -5,10 +5,11 @@ import PaymentsScreen from '../screens/user/Payments_Screen';
 import HomeScreen from '../screens/user/Home_Screen';
 import ProfileScreen from '../screens/user/Profile_Screen';
 
-import { HomeIcon as HomeSolid, UserIcon as UserSolid, UserGroupIcon } from 'react-native-heroicons/solid';
+import { HomeIcon as HomeSolid, UserIcon as UserSolid, UserGroupIcon, CreditCardIcon } from 'react-native-heroicons/solid';
 import Home_admin from '../screens/admin/Home_admin';
 import Groups from '../screens/admin/Groups';
 import UsersAdmin from '../screens/admin/UsersAdmin';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -98,7 +99,10 @@ const menuIcos = (route, focused) => {
         icon = <UserGroupIcon size={30} fill={focused ? 'white' : '#3E3D4F'} />
     } else if (route.name == 'Add') {
         icon = <UserSolid size={30} fill={focused ? 'white' : '#3E3D4F'} />
-
+    }else if (route.name == 'Payments') {
+        icon = <CreditCardIcon size={30} fill={focused ? 'white' : '#3E3D4F'} />
+    }else if (route.name == 'Profile') {
+        icon = <UserSolid size={30} fill={focused ? 'white' : '#3E3D4F'} />
     }
 
     let buttonClass = focused ? " bg-[#6560AA] " : ""

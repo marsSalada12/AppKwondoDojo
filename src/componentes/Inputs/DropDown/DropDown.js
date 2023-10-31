@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 
 
 
-const Dropdown = ({ list, title, name, setValue, value }) => {
+export const Dropdown = ({ list, title, name, setValue, value }) => {
     const [open, setOpen] = useState(false)
     const [items, setItems] = useState(list)
 
@@ -18,7 +18,8 @@ const Dropdown = ({ list, title, name, setValue, value }) => {
                 //Estillos del boton que muestra al dropdown
                 style={{
                     backgroundColor: "#e6e6e6",
-                    borderColor: "#FFF"
+                    borderColor: "#FFF",
+                    zIndex: 40
                 }}
 
                 //Estillos del  dropdown
