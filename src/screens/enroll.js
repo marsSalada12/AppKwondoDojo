@@ -9,12 +9,13 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWUID } from '../firebase/cloudstorage/CreateUsers'
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
 import ModalError from '../componentes/Modals/MAddUserError'
+import { getData, storeData } from '../Storage/storage'
 
 const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
 
-    const [storeData, setstoreData] = useState({})
+    const [storeUser, setStoreUser] = useState({})
 
     const [visible, setVisible] = useState(false);
 
@@ -59,19 +60,26 @@ const Enroll = ({ navigation }) => {
         }
     };
 
+
     const autenticar = () => {
-        
+
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
+
+                //Guardamos el ID del usuario
                 const userUID = userCredential.user.uid;
-                setstoreData({...storeData, [UID]: userUID})
-                
+                setStoreUser({ "userUID": userUID })
+
                 createUserWUID(datos, userUID)
                     .then(async (user) => {
-                        console.log(storeData)
-                        // await storeData(user)
-                        // console.log(user)
-                        // navigation.navigate('TabBarUser')
+
+                        // Concatenamos la informacion del usuario en la 
+                        // variable que se almacenara
+                        setStoreUser({ ...storeUser, ...user })
+                        storeData(storeUser)
+
+
+                        navigation.navigate('TabBarUser')
                     }
                     ).catch((error) => {
                         const errorCode = error.code;
@@ -138,7 +146,12 @@ const Enroll = ({ navigation }) => {
                 <PasswordsMatch password={datos.password} confirmPass={datos.confirm_pass} />
 
                 <TouchableOpacity
-                    onPress={() => autenticar()}
+                    onPress={() => {
+                        getData()
+                        .then((udata) => console.log(udata))
+                        .catch((error) => console.log(error))
+                        // autenticar()
+                    }}
                     className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
                     <Text className="text-lg text-white font-bold">
                         Registrate
