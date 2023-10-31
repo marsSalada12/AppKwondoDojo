@@ -24,6 +24,7 @@ const SignIn = ({ navigation }) => {
                 const user = userCredential.user;
                 getAnOnlyUser(user.uid)
                     .then(async (user) => {
+                        console.log(user)
                         await storeData(user)
                         if(user.type_user === 'Maestro'){
                             console.log('Como maestro no puedes ingresar a la app')
