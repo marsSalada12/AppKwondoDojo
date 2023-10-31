@@ -64,15 +64,9 @@ const Enroll = ({ navigation }) => {
                     .then(async (user) => {
                         await storeData(user)
                         console.log(user)
-                        if (user.type_user === 'Maestro') {
-                            console.log('Como maestro no puedes ingresar a la app')
-                        } else {
-                            if (user.type_user === 'Administrador') {
-                                navigation.navigate('TabBarAdmin')
-                            } else {
-                                navigation.navigate('TabBarUser')
-                            }
-                        }
+
+                        navigation.navigate('TabBarUser')
+
 
                     }
                     ).catch((error) => {

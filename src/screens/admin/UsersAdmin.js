@@ -12,21 +12,19 @@ const UsersAdmin = () => {
   const [datos, setDatos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(
-    () => {
-      setLoading(true)
-      const q = query(collection(db, "Usuarios"));
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const users = [];
-        querySnapshot.forEach((doc) => {
-          users.push({ ...doc.data(), 'id': doc.id });
-        });
-        setDatos(users)
+  useEffect(() => {
+    setLoading(true)
+    const q = query(collection(db, "Usuarios"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const users = [];
+      querySnapshot.forEach((doc) => {
+        users.push({ ...doc.data(), 'id': doc.id });
       });
-      setLoading(false)
-      return unsubscribe
-    }, []
-  )
+      setDatos(users)
+    });
+    setLoading(false)
+    return unsubscribe
+  }, [])
 
 
   return (

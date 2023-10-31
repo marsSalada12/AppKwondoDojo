@@ -7,6 +7,8 @@ import {
 } from "firebase/firestore"
 import { db } from "../firebase";
 
+
+// Metodo para obtener la informacion de un usuario con su ID
 export const getAnOnlyUser = async (docId) => {
     const docRef = doc(db, "Usuarios", docId);
     const docSnap = await getDoc(docRef);

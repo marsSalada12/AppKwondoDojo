@@ -35,9 +35,10 @@ const AppNavigation = () => {
     const [paginaInicial, setPaginaInicial] = useState('Main')
 
     useLayoutEffect(() => {
+        setLoading(true)
         getData()
             .then((userData) => {
-                setLoading(true)
+                console.log(userData)
                 if (!userData) {
                     setPaginaInicial('Main')
                 }
@@ -53,7 +54,9 @@ const AppNavigation = () => {
                 setLoading(false)
             })
             .catch((error) => {
-                console.log('Error AppNavigation: ', error)
+                setPaginaInicial('Main')
+                setLoading(false)
+                console.log('Error AppNavigation : ', error)
             })
     }, [])
 
@@ -69,7 +72,7 @@ const AppNavigation = () => {
                           await clearAll()  
                         }}>
                             <Text>
-                                Borrar sesion
+                                Borrar sesion oo esta cargando
                             </Text>
                         </TouchableOpacity>
                     </View>

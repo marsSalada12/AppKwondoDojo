@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+//Funcion para GUARDAR  informacion //Funcion para borrar la informacion guardada en el celular en el celular
 export const storeData = async (value) => {
   try {
     const jsonValue = JSON.stringify(value)
@@ -9,6 +11,8 @@ export const storeData = async (value) => {
   }
 };
 
+
+//Funcion para OBTENER la informacion guardada en el celular
 export const getData = async () => {
   try {
     const jsonValue = await AsyncStorage.getItem('my-key');
@@ -18,13 +22,13 @@ export const getData = async () => {
   }
 };
 
+
+//Funcion para borrar la informacion guardada en el celular
 export const clearAll = async () => {
   try {
     await AsyncStorage.clear()
-
   } catch (e) {
     return false;
   }
   return true;
-  console.log('Done.')
 }

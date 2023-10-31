@@ -11,15 +11,21 @@ import { StatusBar } from 'expo-status-bar';
 import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
 import useUser from '../../hooks/useUser';
+import MAddUserError from '../../componentes/Modals/MAddUserError';
 
 
 const AddUser = ({ navigation }) => {
   const info = useRoute().params
+
   const [tyUser, setTyUser] = useState([
     { label: "Administrador", value: "Administrador" },
     { label: "Usuario", value: "Usuario" },
     { label: "Maestro", value: "Maestro" }
   ])
+
+  const [modalErrorVisible, setModalErrorVisible] = useState(false)
+  const [MsjModalError, setMsjModalError] = useState('')
+
   const [loading, setLoading] = useState(true)
 
 
@@ -63,7 +69,9 @@ const AddUser = ({ navigation }) => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode, errorMessage)
+        setMsjModalError(errorCode, '\n', errorMessage)
+        setModalErrorVisible(true)
+        console.log('Error AddUser - Create  \n', errorCode, errorMessage)
       });
   }
 
@@ -98,9 +106,16 @@ const AddUser = ({ navigation }) => {
   return (
     <View
       className="flex flex-1 items-center">
-      <View className="mt-6 ml-6">
-        <Text className="text-2xl">Datos de usuario</Text>
 
+      <MAddUserError
+        setVisible={setModalErrorVisible}
+        visible={modalErrorVisible}
+        message={MsjModalError}/>
+
+      <View className="mt-6 ml-6">
+        <Text className="text-2xl">
+          Datos de usuario
+        </Text>
       </View>
 
       <Dropdown

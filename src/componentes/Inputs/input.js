@@ -1,7 +1,7 @@
 import { View, TextInput, Text } from 'react-native'
 import React from 'react'
 
-const InputFileld = ({ title, props, edita, max, name, setValue, value }) => {
+const InputFileld = ({ title, props, edita = true, max, name, setValue, value }) => {
   return (
     <View className={" w-80 "}>
       <Text
