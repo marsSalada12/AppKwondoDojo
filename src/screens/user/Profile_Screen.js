@@ -151,7 +151,7 @@ const ProfileScreen = () => {
       </TouchableOpacity>
     </ScrollView>
   )
-  
+      
 }
 
 export default ProfileScreen

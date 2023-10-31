@@ -6,13 +6,13 @@ import { auth } from '../../firebase/firebase'
 
 const HomeScreen = () => {
 
-  getData()
   return (
     <View>
       <Text>Principal</Text>
       <HeartIcon color='#6560AA' />
       <TouchableOpacity className="bg-red"
         onPress={() => {
+          console.log("hola")
           getData()
             .then((value) => {
               console.log(value);
