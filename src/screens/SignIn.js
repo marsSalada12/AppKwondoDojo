@@ -5,12 +5,14 @@ import PasswordInput from '../componentes/Inputs/password'
 import { auth } from '../firebase/firebase'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
-import { storeData } from '../Storage/storage'
+import { clearAll, storeData } from '../Storage/storage'
 import ModalError from '../componentes/Modals/MAddUserError'
 
 const SignIn = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
+
+    const [storeUser, setstoreData] = useState({}) 
 
     const [datos, setDatos] = useState(
         {
@@ -24,10 +26,19 @@ const SignIn = ({ navigation }) => {
     const autenticarSI = () => {
         signInWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
-                // Signed in 
+
+                //Guardamos el ID del usuario
                 const user = userCredential.user;
+                setstoreData({"userUID" : user.uid})
+                console.log(storeUser)
+                
                 getAnOnlyUser(user.uid)
                     .then(async (user) => {
+                        
+                        // Concatenamos la informacion del usuario en la 
+                        // variable que se almacenara
+                        setstoreData({... storeUser,  ...user})
+                        console.log(storeUser)
 
                         // Revisamos el  estado del usuario
                         if (!user.status) {
@@ -35,8 +46,9 @@ const SignIn = ({ navigation }) => {
                             setShowModal(true)
 
                         } else {
+                            
                             // Escribimos la informacion del usuario en el almacenamiento del celular
-                            await storeData(user)
+                            await storeData(storeUser)
 
                             // Revisamos el tipo de usuario
                             if (user.type_user === 'Maestro') {

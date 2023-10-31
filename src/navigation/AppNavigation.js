@@ -9,11 +9,10 @@ import { TabBarAdmin, TabBarUser } from './navTopBar';
 import AddUser from '../screens/admin/AddUser';
 import UsersAdmin from '../screens/admin/UsersAdmin';
 import AddGroup from '../screens/admin/AddGroup';
-import { auth } from '../firebase/firebase';
 import Config from '../screens/admin/Config';
-import useUser from '../hooks/useUser';
 import { clearAll, getData } from '../Storage/storage';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import * as Progress from 'react-native-progress';
 
 const TabScreenOptions = (title) => ({
     title: title,
@@ -65,16 +64,27 @@ const AppNavigation = () => {
     return (
         <>
             {
-                !loading
-                    ? <View className='flex-1 bg-blue-600'>
+                loading
+                    ? <View className='flex-1 bg-blue-600 items-center justify-center'>
 
-                        <ActivityIndicator />
+                        <Progress.Circle
+                            size={100}
+                            borderWidth={4}
+
+                            indeterminate={true} />
+
+                        <Text className='mt-6 text-white text-xl'>
+                            Cargando
+                        </Text>
                         <TouchableOpacity
-                        onPress={async()=>{
-                          await clearAll()  
-                        }}>
-                            <Text>
-                                Borrar sesion oo esta cargando
+                            className='mt-6 bg-red px-5 py-2 rounded-lg'
+                            onPress={async () => {
+                                await clearAll()
+                            }}>
+                            <Text
+                            className='mt text-white text-xl'
+                            >
+                                Cerrar sesion
                             </Text>
                         </TouchableOpacity>
                     </View>

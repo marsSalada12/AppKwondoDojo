@@ -14,7 +14,7 @@ const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
 
-
+    const [storeData, setstoreData] = useState({})
 
     const [visible, setVisible] = useState(false);
 
@@ -28,7 +28,7 @@ const Enroll = ({ navigation }) => {
             phone: '',
             password: '',
             confirm_pass: '',
-            status: '',
+            status: true,
             payments_id: [],
             hijos_matricula: [],
 
@@ -60,16 +60,18 @@ const Enroll = ({ navigation }) => {
     };
 
     const autenticar = () => {
-        console.log(datos)
+        
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
-                const user = userCredential.user.uid;
-                console.log("si se guardó")
-                createUserWUID(datos, user)
+                const userUID = userCredential.user.uid;
+                setstoreData({...storeData, [UID]: userUID})
+                
+                createUserWUID(datos, userUID)
                     .then(async (user) => {
-                        await storeData(user)
-                        console.log(user)
-                        navigation.navigate('TabBarUser')
+                        console.log(storeData)
+                        // await storeData(user)
+                        // console.log(user)
+                        // navigation.navigate('TabBarUser')
                     }
                     ).catch((error) => {
                         const errorCode = error.code;
@@ -124,6 +126,7 @@ const Enroll = ({ navigation }) => {
                     name={"password"}
                     setValue={setDatos}
                     value={datos} />
+
                 <MinPas password={datos.password} />
                 <PasswordInput
                     title={"Confirmar contraseña"}
