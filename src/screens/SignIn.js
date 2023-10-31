@@ -6,9 +6,11 @@ import { auth } from '../firebase/firebase'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
 import { storeData } from '../Storage/storage'
+import ModalError from '../componentes/Modals/MAddUserError'
 
 const SignIn = ({ navigation }) => {
-
+    const [showModal, setShowModal] = useState(false)
+    const [msjModal, setMsjModal] = useState('')
 
     const [datos, setDatos] = useState(
         {
@@ -17,6 +19,8 @@ const SignIn = ({ navigation }) => {
         }
     );
 
+
+
     const autenticarSI = () => {
         signInWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
@@ -24,29 +28,46 @@ const SignIn = ({ navigation }) => {
                 const user = userCredential.user;
                 getAnOnlyUser(user.uid)
                     .then(async (user) => {
-                        console.log(user)
-                        await storeData(user)
-                        if(user.type_user === 'Maestro'){
-                            console.log('Como maestro no puedes ingresar a la app')
-                        }else{
-                            if(user.type_user === 'Administrador'){
-                                navigation.navigate('TabBarAdmin')
-                            }else{
-                                navigation.navigate('TabBarUser')
+
+                        // Revisamos el  estado del usuario
+                        if (!user.status) {
+                            setMsjModal('usuario desactivado')
+                            setShowModal(true)
+
+                        } else {
+                            // Escribimos la informacion del usuario en el almacenamiento del celular
+                            await storeData(user)
+
+                            // Revisamos el tipo de usuario
+                            if (user.type_user === 'Maestro') {
+                                console.log('Como maestro no puedes ingresar a la app')
+                                setMsjModal('Como maestro no puedes ingresar a la app')
+                                setShowModal(true)
+                            } else {
+                                if (user.type_user === 'Administrador') {
+                                    navigation.navigate('TabBarAdmin')
+                                } else {
+                                    navigation.navigate('TabBarUser')
+                                }
                             }
                         }
-                       
+
                     }
                     ).catch((error) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
+                        setMsjModal(errorCode, '\n', errorMessage)
+                        setShowModal(true)
                         console.log(errorMessage)
                     })
 
             })
             .catch((error) => {
+
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                setMsjModal(errorCode, '\n', errorMessage)
+                setShowModal(true)
                 console.log(errorMessage)
             });
 
@@ -54,6 +75,11 @@ const SignIn = ({ navigation }) => {
 
     return (
         <View className="flex flex-1 bg-white items-center justify-center ">
+            <ModalError
+                setVisible={setShowModal}
+                visible={showModal}
+                message={msjModal}
+            />
             <Image
                 source={require('../../assets/logo.png')}
                 className='w-56 h-56' />

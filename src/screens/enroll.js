@@ -8,8 +8,13 @@ import { auth } from '../firebase/firebase'
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWUID } from '../firebase/cloudstorage/CreateUsers'
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
+import ModalError from '../componentes/Modals/MAddUserError'
 
 const Enroll = ({ navigation }) => {
+    const [showModal, setShowModal] = useState(false)
+    const [msjModal, setMsjModal] = useState('')
+
+
 
     const [visible, setVisible] = useState(false);
 
@@ -64,26 +69,32 @@ const Enroll = ({ navigation }) => {
                     .then(async (user) => {
                         await storeData(user)
                         console.log(user)
-
                         navigation.navigate('TabBarUser')
-
-
                     }
                     ).catch((error) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
+                        setMsjModal(errorCode, '\n', errorMessage)
+                        setShowModal(true)
                         console.log(errorMessage)
                     })
             })
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                setMsjModal(errorCode, '\n', errorMessage)
+                setShowModal(true)
                 console.log(errorCode, errorMessage)
             });
     }
 
     return (
         <View className="flex flex-1 bg-white items-center justify-center ">
+            <ModalError
+                setVisible={setShowModal}
+                visible={showModal}
+                message={msjModal}
+            />
             <Image
                 source={require('../../assets/logo.png')}
                 className='w-56 h-56' />

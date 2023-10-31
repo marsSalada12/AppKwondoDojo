@@ -13,7 +13,7 @@ import { auth } from '../firebase/firebase';
 import Config from '../screens/admin/Config';
 import useUser from '../hooks/useUser';
 import { clearAll, getData } from '../Storage/storage';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 
 const TabScreenOptions = (title) => ({
     title: title,
@@ -65,8 +65,10 @@ const AppNavigation = () => {
     return (
         <>
             {
-                loading
-                    ? <View className='mt-5'>
+                !loading
+                    ? <View className='flex-1 bg-blue-600'>
+
+                        <ActivityIndicator />
                         <TouchableOpacity
                         onPress={async()=>{
                           await clearAll()  
@@ -92,7 +94,6 @@ const AppNavigation = () => {
                             <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuracón")} />
                             {/* Pantalas del usuario */}
                             < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
-
 
                         </Stack.Navigator>
                     </NavigationContainer>
