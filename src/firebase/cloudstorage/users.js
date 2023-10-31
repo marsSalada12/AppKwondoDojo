@@ -13,7 +13,7 @@ export const getAnOnlyUser = async (docId) => {
     const docRef = doc(db, "Usuarios", docId);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-        return docSnap.data()
+        return ({...docSnap.data(), "userUID" : docId })
     } else {
         console.log("No such document!");
     }

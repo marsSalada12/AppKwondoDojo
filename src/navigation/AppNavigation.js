@@ -79,6 +79,8 @@ const AppNavigation = () => {
                         <TouchableOpacity
                             className='mt-6 bg-red px-5 py-2 rounded-lg'
                             onPress={async () => {
+                                const data = await getData()
+                                console.log(data)
                                 await clearAll()
                             }}>
                             <Text

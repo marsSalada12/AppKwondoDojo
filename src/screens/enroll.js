@@ -15,8 +15,6 @@ const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
 
-    const [storeUser, setStoreUser] = useState({})
-
     const [visible, setVisible] = useState(false);
 
     const [datos, setDatos] = useState(
@@ -62,24 +60,23 @@ const Enroll = ({ navigation }) => {
 
 
     const autenticar = () => {
-
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
 
                 //Guardamos el ID del usuario
                 const userUID = userCredential.user.uid;
-                setStoreUser({ "userUID": userUID })
 
                 createUserWUID(datos, userUID)
                     .then(async (user) => {
 
                         // Concatenamos la informacion del usuario en la 
                         // variable que se almacenara
-                        setStoreUser({ ...storeUser, ...user })
-                        storeData(storeUser)
+
+                        await storeData(user)
                         navigation.navigate('TabBarUser')
                     }
-                    ).catch((error) => {
+                    ).catch(async (error) => {
+                        await clearAll()
                         const errorCode = error.code;
                         const errorMessage = error.message;
                         setMsjModal(errorCode, '\n', errorMessage)
@@ -87,7 +84,8 @@ const Enroll = ({ navigation }) => {
                         console.log(errorMessage)
                     })
             })
-            .catch((error) => {
+            .catch(async (error) => {
+                await clearAll()
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 setMsjModal(errorCode, '\n', errorMessage)
@@ -145,11 +143,7 @@ const Enroll = ({ navigation }) => {
 
                 <TouchableOpacity
                     onPress={() => {
-                        
-                        getData()
-                        .then((udata) => console.log(udata))
-                        .catch((error) => console.log(error))
-                        // autenticar()
+                        autenticar()
                     }}
                     className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
                     <Text className="text-lg text-white font-bold">

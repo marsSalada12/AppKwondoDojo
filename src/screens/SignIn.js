@@ -26,19 +26,10 @@ const SignIn = ({ navigation }) => {
     const autenticarSI = () => {
         signInWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
-
                 //Guardamos el ID del usuario
-                const user = userCredential.user;
-                setstoreData({ "userUID": user.uid })
-                console.log(storeUser)
-
-                getAnOnlyUser(user.uid)
-                    .then((user) => {
-
-                        // Concatenamos la informacion del usuario en la 
-                        // variable que se almacenara
-
-                        setstoreData({ ...storeUser, ...user })
+                const userUID = userCredential.user.uid;
+                getAnOnlyUser(userUID)
+                    .then(async (user) => {
 
                         // Revisamos el  estado del usuario
                         if (!user.status) {
@@ -46,40 +37,37 @@ const SignIn = ({ navigation }) => {
                             setShowModal(true)
 
                         } else {
-                            console.log(storeData)
-                            // Escribimos la informacion del usuario en el almacenamiento del celular
-                            storeData(storeUser)
-                                .then(() => {
-                                    // Revisamos el tipo de usuario
-                                    if (user.type_user === 'Maestro') {
-                                        console.log('Como maestro no puedes ingresar a la app')
-                                        setMsjModal('Como maestro no puedes ingresar a la app')
-                                        setShowModal(true)
-                                    } else {
-                                        if (user.type_user === 'Administrador') {
-                                            navigation.navigate('TabBarAdmin')
-                                        } else {
-                                            navigation.navigate('TabBarUser')
-                                        }
-                                    }
-                                })
-                                .catch((error) => console.log(error))
 
+                            //Reviamos que el usuario no sea maestro
+                            if (user.type_user === 'Maestro') {
+                                console.log('Como maestro no puedes ingresar a la app')
+                                setMsjModal('Como maestro no puedes ingresar a la app')
+                                setShowModal(true)
 
+                            } else {
+                                await storeData(user)
+                                // Revisamos el tipo de usuario
+                                if (user.type_user === 'Administrador') {
+                                    navigation.navigate('TabBarAdmin')
+                                } else {
+                                    navigation.navigate('TabBarUser')
+                                }
+                            }
                         }
 
                     }
-                    ).catch((error) => {
+                    ).catch(async (error) => {
+                        await clearAll()
                         const errorCode = error.code;
                         const errorMessage = error.message;
                         setMsjModal(errorCode, '\n', errorMessage)
-                        setShowModal(true)
+                        setShowModal(true) 
                         console.log(errorMessage)
                     })
 
             })
-            .catch((error) => {
-
+            .catch(async (error) => {
+                await clearAll()
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 setMsjModal(errorCode, '\n', errorMessage)
