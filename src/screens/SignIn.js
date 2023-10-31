@@ -30,8 +30,7 @@ const SignIn = ({ navigation }) => {
                 //Guardamos el ID del usuario
                 const user = userCredential.user;
                 setstoreData({"userUID" : user.uid})
-                console.log(storeUser)
-                
+                console.log(storeUser)  
                 getAnOnlyUser(user.uid)
                     .then(async (user) => {
                         
