@@ -141,8 +141,10 @@ const ProfileScreen = () => {
       <TouchableOpacity
         onPress={() => 
           handleCerrarSesion()
-        }
-        className="rounded-md bg-red p-4 w-80 items-center mt-6 mb-36">
+          console.log("falta")
+
+        }}
+        className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
         <Text className="w-80 text-center text-white">
           Cerrar sesion
         </Text>

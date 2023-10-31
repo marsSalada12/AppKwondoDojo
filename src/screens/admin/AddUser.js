@@ -11,7 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
 import useUser from '../../hooks/useUser';
-import MAddUserError from '../../componentes/Modals/MAddUserError';
+import ModalError from '../../componentes/Modals/MAddUserError';
 
 
 const AddUser = ({ navigation }) => {
@@ -107,7 +107,7 @@ const AddUser = ({ navigation }) => {
     <View
       className="flex flex-1 items-center">
 
-      <MAddUserError
+      <ModalError
         setVisible={setModalErrorVisible}
         visible={modalErrorVisible}
         message={MsjModalError}/>
@@ -173,7 +173,7 @@ const AddUser = ({ navigation }) => {
             onPress={info ?
               () => actualizar()
               : () => autenticar()}
-            className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+            className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6">
             <Text className="text-lg text-white font-bold">
               {info
                 ? "Actualizar usuario"
@@ -183,7 +183,7 @@ const AddUser = ({ navigation }) => {
           {info
             ? <TouchableOpacity
               onPress={() => boton()}
-              className={"rounded-m p-4 color w-80 items-center mt-2 mb-2 " + (info.status ? 'bg-red' : 'bg-green')}>
+              className={"rounded-lg p-4 color w-80 items-center mt-6 mb-10 " + (info.status ? 'bg-red' : 'bg-green')}>
               <Text className="text-lg text-white font-bold">
                 {info.status ? "Desactivar" : "Activar"}
               </Text>

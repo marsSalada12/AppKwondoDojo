@@ -1,6 +1,6 @@
 import { View, Text, Modal, TouchableWithoutFeedback } from 'react-native'
 
-const MAddUserError = ({ visible, setVisible, message }) => {
+const ModalError = ({ visible, setVisible, message }) => {
 
     return (
         <Modal
@@ -22,4 +22,4 @@ const MAddUserError = ({ visible, setVisible, message }) => {
     );
 }
 
-export default MAddUserError
+export default ModalError
