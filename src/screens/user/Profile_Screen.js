@@ -4,9 +4,9 @@ import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { updateEmail } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
-import { StatusBar } from 'expo-status-bar'
 
 const ProfileScreen = () => {
+  const navigation =  useNavigation()
   const [datos, setDatos] = useState(
     {
       type_user: '',
@@ -59,74 +59,83 @@ const ProfileScreen = () => {
       );
     }
   };
+
+  const handleCerrarSesion = () => {
+    clearAll()
+      .then((value) => {
+        console.log('Limpiado: ', value);
+        navigation.navigate('Main')
+      })
+      .catch((error) => {
+        console.log('Ocurrio un error: ', error);
+      })
+  }
+
   return (
-    <ScrollView className="mb-12 p-9">
-      <View className = "mb-36">
-        <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
-        <InputFileld
-          title={"Nombre/s"}
-          props={"Diego Antonio"}
-          edita={true}
-          max={100}
-          name={"name_user"}
-          setValue={setDatos}
-          value={datos} />
-        <InputFileld
-          title={"Apellido paterno"}
-          props={"Lopez"}
-          edita={true}
-          max={100}
-          name={"pattern_name"}
-          setValue={setDatos}
-          value={datos} />
-        <InputFileld
-          title={"Apellido materno"}
-          props={"Urbina"}
-          edita={true}
-          max={100}
-          name={"matern_name"}
-          setValue={setDatos}
-          value={datos} />
-        <InputFileld
-          title={"Correo electrónico"}
-          props={"ejemplo@gmail.com"}
-          edita={true}
-          max={100}
-          name={"mail"}
-          setValue={setDatos}
-          value={datos} />
-        <InputTel
-          title={"Correo electrónico"}
-          props={"8445688445"}
-          edita={true}
-          max={10}
-          name={"phone"}
-          setValue={setDatos}
-          value={datos} />
-        <TouchableOpacity
-          onPress={() => Actualizar()}
-          className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
-          <Text className="w-80 text-center text-white">
-            Modificar información
-          </Text>
-        </TouchableOpacity>
-        <Text className="text-xl text-bold">Modificar contraseña</Text>
-        <PasswordInput
-          title={"Contraseña"}
-          props={"........."}
-          name={"password"}
-          setValue={setDatos}
-          value={datos} />
-        <MinPas password={datos.password} />
-        <TouchableOpacity
-          onPress={() => console.log("falta")}
-          className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
-          <Text className="w-80 text-center text-white">
-            Modificar contraseña
-          </Text>
-        </TouchableOpacity>
-        <Text className="text-xl text-bold">Agregar hijos</Text>
-      </View>
+    <ScrollView className="p-9">
+      <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
+      <InputFileld
+        title={"Nombre/s"}
+        props={"Diego Antonio"}
+        edita={true}
+        max={100}
+        name={"name_user"}
+        setValue={setDatos}
+        value={datos} />
+      <InputFileld
+        title={"Apellido paterno"}
+        props={"Lopez"}
+        edita={true}
+        max={100}
+        name={"pattern_name"}
+        setValue={setDatos}
+        value={datos} />
+      <InputFileld
+        title={"Apellido materno"}
+        props={"Urbina"}
+        edita={true}
+        max={100}
+        name={"matern_name"}
+        setValue={setDatos}
+        value={datos} />
+      <InputFileld
+        title={"Correo electrónico"}
+        props={"ejemplo@gmail.com"}
+        edita={true}
+        max={100}
+        name={"mail"}
+        setValue={setDatos}
+        value={datos} />
+      <InputTel
+        title={"Correo electrónico"}
+        props={"8445688445"}
+        edita={true}
+        max={10}
+        name={"phone"}
+        setValue={setDatos}
+        value={datos} />
+      <TouchableOpacity
+        onPress={() => Actualizar()}
+        className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+        <Text className="w-80 text-center text-white">
+          Modificar información
+        </Text>
+      </TouchableOpacity>
+      <Text className="text-xl text-bold">Modificar contraseña</Text>
+      <PasswordInput
+        title={"Contraseña"}
+        props={"........."}
+        name={"password"}
+        setValue={setDatos}
+        value={datos} />
+      <MinPas password={datos.password} />
+      <TouchableOpacity
+        onPress={() => console.log("falta")}
+        className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+        <Text className="w-80 text-center text-white">
+          Modificar información
+        </Text>
+      </TouchableOpacity>
     </ScrollView>
   )
   
