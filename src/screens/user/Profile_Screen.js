@@ -4,6 +4,8 @@ import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { updateEmail } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
+import { useNavigation } from '@react-navigation/native'
+import { clearAll } from '../../Storage/storage'
 
 const ProfileScreen = () => {
   const navigation =  useNavigation()
@@ -131,9 +133,18 @@ const ProfileScreen = () => {
       <MinPas password={datos.password} />
       <TouchableOpacity
         onPress={() => console.log("falta")}
-        className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+        className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
         <Text className="w-80 text-center text-white">
           Modificar información
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => 
+          handleCerrarSesion()
+        }
+        className="rounded-md bg-red p-4 w-80 items-center mt-6 mb-36">
+        <Text className="w-80 text-center text-white">
+          Cerrar sesion
         </Text>
       </TouchableOpacity>
     </ScrollView>
