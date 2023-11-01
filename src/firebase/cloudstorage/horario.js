@@ -29,10 +29,11 @@ export const gruposFun = async () => {
 // este me muestra a los maestros para el combobotz, como no es array cambio jijji
 export const maestrosFun = async () => {
     const maestros = [];
-    const que = query(collection(db, "Usuarios"), where("type_user", "==", "Maestro"));
+    const que = query(collection(db, "Usuarios"), where("type_user", "==", "Maestro"), where("status", "==", true));
     const querySnapshot = await getDocs(que);
     querySnapshot.forEach((doc) => {
-        maestros.push({ label: doc.data().name_user, value: doc.data().name_user });
+        const fullName = doc.data().name_user + ' ' + doc.data().pattern_name + ' ' + doc.data().matern_name
+        maestros.push({ label: fullName, value: fullName });
     });
     return maestros;
 };

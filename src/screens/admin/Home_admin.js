@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Text } from 'react-native'
+import { View, TouchableOpacity, Text, StatusBar } from 'react-native'
 import React from 'react'
 import { CogIcon } from 'react-native-heroicons/outline'
 import { useNavigation } from '@react-navigation/native'
@@ -19,7 +19,7 @@ const HomeAdmin = () => {
   }
   return (
     <View className=" mr-5 mt-5">
-      
+      <StatusBar hidden={true} />
       <TouchableOpacity>
         <CogIcon size={45} color={"gray"}
           onPress={() => navigation.navigate("Config")} />

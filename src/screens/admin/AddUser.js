@@ -26,8 +26,6 @@ const AddUser = ({ navigation }) => {
   const [modalErrorVisible, setModalErrorVisible] = useState(false)
   const [MsjModalError, setMsjModalError] = useState('')
 
-  const [loading, setLoading] = useState(true)
-
 
   const initialDatos = {
     type_user: '',
@@ -36,9 +34,9 @@ const AddUser = ({ navigation }) => {
     matern_name: '',
     mail: '',
     phone: '',
-    password: '',
-    confirm_pass: '',
-    status: '',
+    password: '123456',
+    confirm_pass: '123456',
+    status: true,
     payments_id: [],
     hijos_matricula: [],
   }
@@ -87,7 +85,6 @@ const AddUser = ({ navigation }) => {
   //Actualizar desde cloudStorage
   const actualizar = async () => {
     const infoUser = doc(db, "Usuarios", datos.id);
-
     await updateDoc(infoUser, {
       type_user: datos.type_user,
       name_user: datos.name_user,
@@ -110,7 +107,7 @@ const AddUser = ({ navigation }) => {
       <ModalError
         setVisible={setModalErrorVisible}
         visible={modalErrorVisible}
-        message={MsjModalError}/>
+        message={MsjModalError} />
 
       <View className="mt-6 ml-6">
         <Text className="text-2xl">
@@ -125,10 +122,10 @@ const AddUser = ({ navigation }) => {
         setValue={setDatos}
         value={datos} />
 
-
-
       <ScrollView
         showsVerticalScrollIndicator={true}>
+
+
 
         <View className=" items-center">
           <InputFileld
@@ -168,6 +165,15 @@ const AddUser = ({ navigation }) => {
             setValue={setDatos}
             value={datos} />
         </View>
+
+
+        {/* Aqui vamos a cargar la informacion de los hijos */}
+        {
+          info && info.hijos_matricula > 0
+            ? <Text>Aqui se va a cargar el formulario con la informacion de los hijos</Text>
+            : null
+        }
+
         <View className="ml-12 mr-12">
           <TouchableOpacity
             onPress={info ?
