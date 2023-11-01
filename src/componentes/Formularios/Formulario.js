@@ -14,7 +14,7 @@ export const Formulario = () => {
     )
     return (
         <View>
-            <Text>información alumno(s)</Text>
+            <Text>Información alumno(s)</Text>
             <InputFileld
                 title={"Nombre/s"}
                 props={"Logan Antonio"}
@@ -51,7 +51,12 @@ export const Formulario = () => {
                 name={"mail"}
                 setValue={setDatos}
                 value={datos} />
-                <TouchableOpacity></TouchableOpacity>
+            <TouchableOpacity
+                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
+                <Text className="w-80 text-center text-white">
+                    Agregar alumno
+                </Text>
+            </TouchableOpacity>
         </View>
     )
 }

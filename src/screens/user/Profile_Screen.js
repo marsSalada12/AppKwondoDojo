@@ -13,7 +13,6 @@ const ProfileScreen = () => {
   const navigation = useNavigation()
   const [datos, setDatos] = useState(
     {
-
       name_user: '',
       pattern_name: '',
       matern_name: '',
@@ -76,7 +75,6 @@ const ProfileScreen = () => {
   const ChangePass = async () => {
     try {
       const user = auth.currentUser;
-      console.log(user, "ññññ")
       const newPassword = datos.password;
       // Obtener el correo electrónico y la contraseña del usuario desde getData()
       const value = await getData();
@@ -89,14 +87,14 @@ const ProfileScreen = () => {
       // Cambiar la contraseña
       await updatePassword(user, newPassword);
       const userUID = value.userUID;
-  
+
       const infoUserRef = doc(db, "Usuarios", userUID);
-  
+
       await updateDoc(infoUserRef, {
         password: newPassword,
         confirm_pass: newPassword,
       });
-  
+
       console.log("Contraseña actualizada exitosamente.");
       console.log(value)
     } catch (error) {
@@ -105,7 +103,7 @@ const ProfileScreen = () => {
       console.log(value)
     }
   };
-  
+
 
 
   return (
@@ -163,6 +161,12 @@ const ProfileScreen = () => {
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
         <Text className="w-80 text-center text-white">
           Modificar contraseña
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
+        <Text className="w-80 text-center text-white">
+          Agregar alumno
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
