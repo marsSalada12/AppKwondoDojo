@@ -180,7 +180,7 @@ const AddUser = ({ navigation }) => {
 
         {/* Aqui vamos a cargar la informacion de los hijos */}
         {
-          info && info.hijos_matricula > 0
+          info && info.hijos_matricula.length > 0
             ? <Text>Aqui se va a cargar el formulario con la informacion de los hijos</Text>
             : null
         }

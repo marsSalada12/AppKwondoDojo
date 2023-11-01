@@ -8,9 +8,15 @@ import { useNavigation } from '@react-navigation/native'
 import { clearAll, getData } from '../../Storage/storage'
 import { doc, updateDoc } from 'firebase/firestore'
 import { auth, db } from '../../firebase/firebase'
+import ModalError from '../../componentes/Modals/MAddUserError'
 
 const ProfileScreen = () => {
   const navigation = useNavigation()
+
+
+  const [showModal, setShowModal] = useState(false)
+  const [mensaje, setMensaje] = useState(''
+  )
   const [datos, setDatos] = useState(
     {
       name_user: '',
@@ -72,9 +78,40 @@ const ProfileScreen = () => {
       })
   }
 
+  // const ChangePass = async () => {
+  //   try {
+  //     const user = auth.currentUser;
+  //     const newPassword = datos.password;
+  //     // Obtener el correo electrónico y la contraseña del usuario desde getData()
+  //     const value = await getData();
+  //     console.log(value)
+  //     const email = value.mail;
+  //     const password = value.password;
+  //     //es para que vuelva a autenticarse
+  //     const credential = EmailAuthProvider.credential(email, password);
+  //     await reauthenticateWithCredential(user, credential);
+  //     // Cambiar la contraseña
+  //     await updatePassword(user, newPassword);
+  //     const userUID = value.userUID;
+
+  //     const infoUserRef = doc(db, "Usuarios", userUID);
+
+  //     await updateDoc(infoUserRef, {
+  //       password: newPassword,
+  //       confirm_pass: newPassword,
+  //     });
+
+  //     console.log("Contraseña actualizada exitosamente.");
+  //     console.log(value)
+  //   } catch (error) {
+  //     const value = await getData();
+  //     console.error("Error al actualizar la contraseña: ", error);
+  //     console.log(value)
+  //   }
+  // };
+
   const ChangePass = async () => {
     try {
-      
       const user = auth.currentUser;
       const newPassword = datos.password;
       // Obtener el correo electrónico y la contraseña del usuario desde getData()
@@ -109,6 +146,11 @@ const ProfileScreen = () => {
 
   return (
     <ScrollView className="p-9">
+      <ModalError
+        setVisible={setShowModal}
+        visible={showModal}
+        message={mensaje}
+      />
       <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
       <InputFileld
         title={"Nombre/s"}
