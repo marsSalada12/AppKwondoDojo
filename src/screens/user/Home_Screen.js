@@ -21,8 +21,6 @@ const HomeScreen = () => {
           //Nos traemos la sesion guardada en el celular
           getData()
             .then((value) => {
-              //  Una vez que ya obtuvimos la sesion del celular
-              //  accedemos a la porpiedad userUID del objeto 
               console.log(value);
             })
             .catch()

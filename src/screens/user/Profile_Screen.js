@@ -5,46 +5,45 @@ import InputTel from '../../componentes/Inputs/inputTel'
 import { updateEmail } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
 import { useNavigation } from '@react-navigation/native'
-import { clearAll } from '../../Storage/storage'
+import { clearAll, getData } from '../../Storage/storage'
+import { doc, updateDoc } from 'firebase/firestore'
+import { db } from '../../firebase/firebase'
 
 const ProfileScreen = () => {
-  const navigation =  useNavigation()
+  const navigation = useNavigation()
   const [datos, setDatos] = useState(
     {
-      type_user: '',
+
       name_user: '',
       pattern_name: '',
       matern_name: '',
-      mail: '',
       phone: '',
       password: '',
-      confirm_pass: '',
-      status: '',
-      payments_id: [],
+      status: true,
       hijos_matricula: [],
     }
   )
 
-  const Actualizar = async () => {
-    const user = auth.currentUser;
 
+
+
+  const Actualizar = () => {
     try {
-      // Actualizar el correo electrónico
-      await updateEmail(user, datos.mail);
-      console.log("Correo electrónico actualizado");
-
       // Actualizar la información del usuario
-      const infoUser = doc(db, "Usuarios", datos.id);
-      await updateDoc(infoUser, {
-        name_user: datos.name_user,
-        pattern_name: datos.pattern_name,
-        matern_name: datos.matern_name,
-        phone: datos.phone,
-        mail: datos.mail
-      });
+      getData().then(async (value) => {
+        const infoUser = doc(db, "Usuarios", value.userUID);
+        console.log(value.userUID)
+        await updateDoc(infoUser, {
+          name_user: datos.name_user,
+          pattern_name: datos.pattern_name,
+          matern_name: datos.matern_name,
+          phone: datos.phone
+        });
 
-      console.log("Información de usuario actualizada");
-      navigation.goBack();
+        console.log("Información de usuario actualizada");
+        navigation.goBack();
+      }
+      ).catch()
     } catch (error) {
       console.error("Error al actualizar correo o información del usuario", error);
     }
@@ -100,14 +99,6 @@ const ProfileScreen = () => {
         name={"matern_name"}
         setValue={setDatos}
         value={datos} />
-      <InputFileld
-        title={"Correo electrónico"}
-        props={"ejemplo@gmail.com"}
-        edita={true}
-        max={100}
-        name={"mail"}
-        setValue={setDatos}
-        value={datos} />
       <InputTel
         title={"Correo electrónico"}
         props={"8445688445"}
@@ -151,7 +142,7 @@ const ProfileScreen = () => {
       </TouchableOpacity>
     </ScrollView>
   )
-      
+
 }
 
 export default ProfileScreen
