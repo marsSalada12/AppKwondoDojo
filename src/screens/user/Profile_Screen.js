@@ -74,6 +74,7 @@ const ProfileScreen = () => {
 
   const ChangePass = async () => {
     try {
+      
       const user = auth.currentUser;
       const newPassword = datos.password;
       // Obtener el correo electrónico y la contraseña del usuario desde getData()
