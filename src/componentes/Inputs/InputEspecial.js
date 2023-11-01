@@ -4,12 +4,12 @@ import Checkbox from 'expo-checkbox'
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 
-const InputFEspecial = ({ title, props, name, setValue, value }) => {
+const InputFEspecial = ({ title, props, name, setValue, value, type }) => {
 
   const [isChecked, setChecked] = useState(false);
   const [mensualidad, setMensualidad] = useState();
 
-  
+
   useEffect(() => {
     if (isChecked) {
       const q = query(collection(db, "Default"));
@@ -36,8 +36,20 @@ const InputFEspecial = ({ title, props, name, setValue, value }) => {
           editable={!isChecked}
           className={"bg-fondoInput fixed p-3 rounded-md "}
           value={isChecked ? String(mensualidad) : value[name]}
-          onChangeText={(text) => {
-            setValue({ ...value, [name]: text });
+          onChangeText={(Text) => {
+            if (type === 'email') {
+              setValue({ ...value, [name]: Text })
+            } else {
+              if (type === 'letters') {
+                const result = Text.replace(/(\W|\d)*/g, '')
+                setValue({ ...value, [name]: result })
+
+              } else {
+                const result = Text.replace(/\D*/g, '')
+                setValue({ ...value, [name]: result })
+
+              }
+            }
           }}
         />
       </View>

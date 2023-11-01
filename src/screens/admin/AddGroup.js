@@ -205,7 +205,8 @@ const AddGroup = ({ navigation }) => {
                 max={100}
                 name={"description"}
                 setValue={setDatos}
-                value={datos} />
+                value={datos} 
+                type={'letters'}/>
 
             {
                 loading
@@ -237,7 +238,8 @@ const AddGroup = ({ navigation }) => {
                 max={3}
                 name={"cupo"}
                 setValue={setDatos}
-                value={datos} />
+                value={datos} 
+                type={'numeric'}/>
 
 
 
@@ -247,6 +249,7 @@ const AddGroup = ({ navigation }) => {
                 name={"price"}
                 setValue={setDatos}
                 value={datos}
+                type={'numeric'}
             />
 
 
