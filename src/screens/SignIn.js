@@ -21,8 +21,6 @@ const SignIn = ({ navigation }) => {
         }
     );
 
-
-
     const autenticarSI = () => {
         signInWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
@@ -30,14 +28,11 @@ const SignIn = ({ navigation }) => {
                 const userUID = userCredential.user.uid;
                 getAnOnlyUser(userUID)
                     .then(async (user) => {
-
                         // Revisamos el  estado del usuario
                         if (!user.status) {
                             setMsjModal('usuario desactivado')
                             setShowModal(true)
-
                         } else {
-
                             //Reviamos que el usuario no sea maestro
                             if (user.type_user === 'Maestro') {
                                 console.log('Como maestro no puedes ingresar a la app')

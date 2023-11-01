@@ -15,7 +15,8 @@ const HomeScreen = () => {
           console.log("hola")
           getData()
             .then((value) => {
-              console.log(value);
+              console.log(value.userUID)
+              console.log(value, "----");
             })
             .catch()
         }}>
