@@ -75,17 +75,17 @@ export const TabBarAdmin = () => {
             <Tab.Screen
                 name="Groups"
                 component={Groups}
-                options={TabScreenOptions('Groups')} />
+                options={TabScreenOptions('Grupos')} />
 
             <Tab.Screen
                 name="Home"
                 component={Home_admin}
-                options={TabScreenOptions('Home')} />
+                options={TabScreenOptions('Inicio')} />
 
             <Tab.Screen
                 name="Add"
                 component={UsersAdmin}
-                options={TabScreenOptions('UsersAdmin')} />
+                options={TabScreenOptions('Usuarios')} />
         </Tab.Navigator>
     );
 }

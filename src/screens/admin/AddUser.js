@@ -115,20 +115,20 @@ const AddUser = ({ navigation }) => {
           Datos de usuario
         </Text>
       </View>
-
-      <Dropdown
-        list={tyUser}
-        title={"Tipo usuario"}
-        name={"type_user"}
-        setValue={setDatos}
-        value={datos} />
       <ScrollView
         showsVerticalScrollIndicator={true}>
 
-
-
-
         <View className=" items-center">
+          <Dropdown
+            list={tyUser}
+            title={"Tipo usuario"}
+            name={"type_user"}
+            setValue={setDatos}
+            value={datos} />
+
+
+
+
           <InputFileld
             title={"Correo Electrónico"}
             props={"correo@ejemplo.com"}
@@ -136,8 +136,8 @@ const AddUser = ({ navigation }) => {
             max={100}
             name={"mail"}
             setValue={setDatos}
-            value={datos} 
-            type={'email'}/>
+            value={datos}
+            type={'email'} />
 
           <InputFileld
             title={"Nombre/s"}
@@ -145,8 +145,8 @@ const AddUser = ({ navigation }) => {
             max={50}
             name={"name_user"}
             setValue={setDatos}
-            value={datos} 
-            type={'letters'}/>
+            value={datos}
+            type={'letters'} />
 
           <InputFileld
             title={"Apellido paterno"}
@@ -154,8 +154,8 @@ const AddUser = ({ navigation }) => {
             max={100}
             name={"pattern_name"}
             setValue={setDatos}
-            value={datos} 
-            type={'letters'}/>
+            value={datos}
+            type={'letters'} />
 
           <InputFileld
             title={"Apellido materno"}
@@ -163,8 +163,8 @@ const AddUser = ({ navigation }) => {
             max={100}
             name={"matern_name"}
             setValue={setDatos}
-            value={datos} 
-            type={'letters'}/>
+            value={datos}
+            type={'letters'} />
 
           <InputFileld
             title={"Número de teléfono"}
@@ -172,8 +172,8 @@ const AddUser = ({ navigation }) => {
             max={10}
             name={"phone"}
             setValue={setDatos}
-            value={datos} 
-            type={'numeric'}/>
+            value={datos}
+            type={'numeric'} />
 
         </View>
 

@@ -40,7 +40,7 @@ const UsersAdmin = () => {
               Agregar
             </Text>
           </TouchableOpacity>
-          <AdjustmentsHorizontalIcon color="black" size={35} />
+          {/* <AdjustmentsHorizontalIcon color="black" size={35} /> */}
         </View>
         {
           loading

@@ -46,8 +46,10 @@ const Groups = () => {
                 Agregar
               </Text>
             </TouchableOpacity>
-            <AdjustmentsHorizontalIcon color="black" size={35}
-              onPress={() => setIsModalVisible(true)} />
+
+            {/* <AdjustmentsHorizontalIcon color="black" size={35}
+              onPress={() => setIsModalVisible(true)} /> */}
+
           </View>
           {
             loading
