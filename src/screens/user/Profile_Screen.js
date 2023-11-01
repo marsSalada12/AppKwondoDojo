@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth'
@@ -13,10 +13,8 @@ import ModalError from '../../componentes/Modals/MAddUserError'
 const ProfileScreen = () => {
   const navigation = useNavigation()
 
-
   const [showModal, setShowModal] = useState(false)
-  const [mensaje, setMensaje] = useState(''
-  )
+  const [mensaje, setMensaje] = useState('')
   const [datos, setDatos] = useState(
     {
       name_user: '',
@@ -30,7 +28,16 @@ const ProfileScreen = () => {
     }
   )
 
-
+  const initialDatos = {
+    name_user: '',
+    pattern_name: '',
+    matern_name: '',
+    phone: '',
+    password: '',
+    confirm_pass: '',
+    status: true,
+    hijos_matricula: [],
+  }
 
 
   const Actualizar = () => {
@@ -77,38 +84,9 @@ const ProfileScreen = () => {
         console.log('Ocurrio un error: ', error);
       })
   }
+  useLayoutEffect(() => {
 
-  // const ChangePass = async () => {
-  //   try {
-  //     const user = auth.currentUser;
-  //     const newPassword = datos.password;
-  //     // Obtener el correo electrónico y la contraseña del usuario desde getData()
-  //     const value = await getData();
-  //     console.log(value)
-  //     const email = value.mail;
-  //     const password = value.password;
-  //     //es para que vuelva a autenticarse
-  //     const credential = EmailAuthProvider.credential(email, password);
-  //     await reauthenticateWithCredential(user, credential);
-  //     // Cambiar la contraseña
-  //     await updatePassword(user, newPassword);
-  //     const userUID = value.userUID;
-
-  //     const infoUserRef = doc(db, "Usuarios", userUID);
-
-  //     await updateDoc(infoUserRef, {
-  //       password: newPassword,
-  //       confirm_pass: newPassword,
-  //     });
-
-  //     console.log("Contraseña actualizada exitosamente.");
-  //     console.log(value)
-  //   } catch (error) {
-  //     const value = await getData();
-  //     console.error("Error al actualizar la contraseña: ", error);
-  //     console.log(value)
-  //   }
-  // };
+  }, [])
 
   const ChangePass = async () => {
     try {
