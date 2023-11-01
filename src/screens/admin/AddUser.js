@@ -49,13 +49,14 @@ const AddUser = ({ navigation }) => {
 
   const { setUser } = useUser()
 
+
+  // Metodo para guardar a un usuario
   const autenticar = () => {
     createUserWithEmailAndPassword(auth, datos.mail, "123456")
       .then((userCredential) => {
         const user = userCredential.user.uid;
         createUserWUID(datos, user)
           .then(() => {
-            //setUser(currentauth)
             navigation.goBack();
           })
           .catch((error) => {
@@ -121,9 +122,9 @@ const AddUser = ({ navigation }) => {
         name={"type_user"}
         setValue={setDatos}
         value={datos} />
-
       <ScrollView
         showsVerticalScrollIndicator={true}>
+
 
 
 
@@ -135,35 +136,45 @@ const AddUser = ({ navigation }) => {
             max={100}
             name={"mail"}
             setValue={setDatos}
-            value={datos} />
+            value={datos} 
+            type={'email'}/>
+
           <InputFileld
             title={"Nombre/s"}
             props={"Logan Antonio"}
-            max={100}
+            max={50}
             name={"name_user"}
             setValue={setDatos}
-            value={datos} />
+            value={datos} 
+            type={'letters'}/>
+
           <InputFileld
             title={"Apellido paterno"}
             props={"Peña"}
             max={100}
             name={"pattern_name"}
             setValue={setDatos}
-            value={datos} />
+            value={datos} 
+            type={'letters'}/>
+
           <InputFileld
             title={"Apellido materno"}
             props={"Gonzalez"}
             max={100}
             name={"matern_name"}
             setValue={setDatos}
-            value={datos} />
+            value={datos} 
+            type={'letters'}/>
+
           <InputFileld
             title={"Número de teléfono"}
             props={"8442793235"}
             max={10}
             name={"phone"}
             setValue={setDatos}
-            value={datos} />
+            value={datos} 
+            type={'numeric'}/>
+
         </View>
 
 

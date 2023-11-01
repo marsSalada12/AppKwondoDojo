@@ -9,7 +9,7 @@ export const Dropdown = ({ list, title, name, setValue, value }) => {
     const [items, setItems] = useState(list)
 
     return (
-        <View className='pb-5 w-80'>
+        <View className='pb-5 w-80 '>
             <Text className='pb-3 text-base'>
                 {title}
             </Text>

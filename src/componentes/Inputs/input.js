@@ -1,20 +1,42 @@
 import { View, TextInput, Text } from 'react-native'
 import React from 'react'
 
-const InputFileld = ({ title, props, edita = true, max, name, setValue, value }) => {
+const InputFileld = ({ title,
+  props,
+  edita = true,
+  max,
+  name,
+  setValue,
+  value,
+  type = 'email'
+}) => {
   return (
     <View className={" w-80 "}>
       <Text
         className="text-lg mb-2 mt-0">{title}
       </Text>
       <TextInput
+
         placeholder={props}
-        editable = {edita}
+        editable={edita}
         maxLength={max}
         className={"bg-fondoInput fixed p-3 rounded-md "}
         value={value[name]}
         onChangeText={(Text) => {
-          setValue({ ...value, [name]: Text })
+          if (type === 'email') {
+            setValue({ ...value, [name]: Text })
+          } else {
+            if (type === 'letters') {
+              console.log('first')
+              const result = Text.replace(/(\W|\d)*/g, '')
+              setValue({ ...value, [name]: result })  
+
+            } else {
+              const result = Text.replace(/\D*/g, '')
+              setValue({ ...value, [name]: result })
+
+            }
+          }
         }
         }
       />
