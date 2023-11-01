@@ -2,12 +2,12 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
-import { updateEmail } from 'firebase/auth'
+import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
 import { useNavigation } from '@react-navigation/native'
 import { clearAll, getData } from '../../Storage/storage'
 import { doc, updateDoc } from 'firebase/firestore'
-import { db } from '../../firebase/firebase'
+import { auth, db } from '../../firebase/firebase'
 
 const ProfileScreen = () => {
   const navigation = useNavigation()
@@ -19,6 +19,7 @@ const ProfileScreen = () => {
       matern_name: '',
       phone: '',
       password: '',
+      confirm_pass: '',
       status: true,
       hijos_matricula: [],
     }
@@ -72,6 +73,41 @@ const ProfileScreen = () => {
       })
   }
 
+  const ChangePass = async () => {
+    try {
+      const user = auth.currentUser;
+      console.log(user, "ññññ")
+      const newPassword = datos.password;
+      // Obtener el correo electrónico y la contraseña del usuario desde getData()
+      const value = await getData();
+      console.log(value)
+      const email = value.mail;
+      const password = value.password;
+      //es para que vuelva a autenticarse
+      const credential = EmailAuthProvider.credential(email, password);
+      await reauthenticateWithCredential(user, credential);
+      // Cambiar la contraseña
+      await updatePassword(user, newPassword);
+      const userUID = value.userUID;
+  
+      const infoUserRef = doc(db, "Usuarios", userUID);
+  
+      await updateDoc(infoUserRef, {
+        password: newPassword,
+        confirm_pass: newPassword,
+      });
+  
+      console.log("Contraseña actualizada exitosamente.");
+      console.log(value)
+    } catch (error) {
+      const value = await getData();
+      console.error("Error al actualizar la contraseña: ", error);
+      console.log(value)
+    }
+  };
+  
+
+
   return (
     <ScrollView className="p-9">
       <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
@@ -100,7 +136,7 @@ const ProfileScreen = () => {
         setValue={setDatos}
         value={datos} />
       <InputTel
-        title={"Correo electrónico"}
+        title={"Teléfono"}
         props={"8445688445"}
         edita={true}
         max={10}
@@ -123,10 +159,10 @@ const ProfileScreen = () => {
         value={datos} />
       <MinPas password={datos.password} />
       <TouchableOpacity
-        onPress={() => console.log("falta")}
+        onPress={() => ChangePass()}
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
         <Text className="w-80 text-center text-white">
-          Modificar información
+          Modificar contraseña
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
