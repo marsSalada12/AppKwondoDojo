@@ -1,20 +1,28 @@
-import { View, Text, Touchable, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, Touchable, TouchableOpacity, StatusBar } from 'react-native'
+import React, { useLayoutEffect } from 'react'
 import { HeartIcon } from 'react-native-heroicons/solid'
 import { clearAll, getData } from '../../Storage/storage'
 import { auth } from '../../firebase/firebase'
 
 const HomeScreen = () => {
 
+  useLayoutEffect(() => {
+
+  }, [])
+
   return (
     <View>
+      <StatusBar hidden={true} />
       <Text>Principal</Text>
       <HeartIcon color='#6560AA' />
       <TouchableOpacity className="bg-red"
         onPress={() => {
           console.log("hola")
+          //Nos traemos la sesion guardada en el celular
           getData()
             .then((value) => {
+              //  Una vez que ya obtuvimos la sesion del celular
+              //  accedemos a la porpiedad userUID del objeto 
               console.log(value);
             })
             .catch()
@@ -24,7 +32,7 @@ const HomeScreen = () => {
         </Text>
       </TouchableOpacity>
 
-      
+
     </View>
   )
 }

@@ -62,10 +62,8 @@ const Enroll = ({ navigation }) => {
     const autenticar = () => {
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
-
                 //Guardamos el ID del usuario
                 const userUID = userCredential.user.uid;
-
                 createUserWUID(datos, userUID)
                     .then(async (user) => {
 
