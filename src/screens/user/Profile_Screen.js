@@ -102,37 +102,17 @@ const ProfileScreen = () => {
       })
   }
 
-  // const ChangePass = async () => {
-  //   try {
-  //     const user = auth.currentUser;
-  //     const newPassword = datos.password;
-  //     // Obtener el correo electrónico y la contraseña del usuario desde getData()
-  //     const value = await getData();
-  //     console.log(value)
-  //     const email = value.mail;
-  //     const password = value.password;
-  //     //es para que vuelva a autenticarse
-  //     const credential = EmailAuthProvider.credential(email, password);
-  //     await reauthenticateWithCredential(user, credential);
-  //     // Cambiar la contraseña
-  //     await updatePassword(user, newPassword);
-  //     const userUID = value.userUID;
-
-  //     const infoUserRef = doc(db, "Usuarios", userUID);
-
-  //     await updateDoc(infoUserRef, {
-  //       password: newPassword,
-  //       confirm_pass: newPassword,
-  //     });
-
-  //     console.log("Contraseña actualizada exitosamente.");
-  //     console.log(value)
-  //   } catch (error) {
-  //     const value = await getData();
-  //     console.error("Error al actualizar la contraseña: ", error);
-  //     console.log(value)
-  //   }
-  // };
+  const MinTelephone = ({phone}) => {
+    if (phone.length == 10) {
+      return null; // 
+    } else {
+      return (
+        <Text style={{ color: 'red' }}>
+          Debe ser minimo de 10 dígitos
+        </Text>
+      );
+    }
+  }
 
   const ChangePass = async () => {
     const user = auth.currentUser;
@@ -155,30 +135,30 @@ const ProfileScreen = () => {
           // navigation.goBack();
         })
         .catch((error) => {
-          
+
           const errorCode = error.code;
           const errorMessage = error.message;
           setMensaje(errorCode, ' ', errorMessage)
           setShowModal(true)
           console.log('ChangePass - GetData: ', error)
-          
+
         })
 
     }).catch((error) => {
-      
+
 
       const errorCode = error.code;
       const errorMessage = error.message;
       setMensaje(errorCode, ' -- ', errorMessage)
 
-      if(errorCode === 'auth/requires-recent-login'){
+      if (errorCode === 'auth/requires-recent-login') {
         setMensaje(mensaje + '\n \n Requiere volver a iniciar sesion')
       }
 
       setShowModal(true)
 
-      console.log('ChangePass - UpdataPassword: ',errorCode, ' -- ', errorMessage )
-      
+      console.log('ChangePass - UpdataPassword: ', errorCode, ' -- ', errorMessage)
+
     });
   };
 
@@ -192,7 +172,7 @@ const ProfileScreen = () => {
       <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
       <InputFileld
         title={"Nombre/s"}
-        props={"Diego Antonio"}
+        props={" "}
         edita={true}
         max={100}
         name={"name_user"}
@@ -200,7 +180,7 @@ const ProfileScreen = () => {
         value={datos} />
       <InputFileld
         title={"Apellido paterno"}
-        props={"Lopez"}
+        props={" "}
         edita={true}
         max={100}
         name={"pattern_name"}
@@ -208,7 +188,7 @@ const ProfileScreen = () => {
         value={datos} />
       <InputFileld
         title={"Apellido materno"}
-        props={"Urbina"}
+        props={" "}
         edita={true}
         max={100}
         name={"matern_name"}
@@ -216,12 +196,14 @@ const ProfileScreen = () => {
         value={datos} />
       <InputTel
         title={"Teléfono"}
-        props={"8445688445"}
+        props={" "}
         edita={true}
         max={10}
+        min={10}
         name={"phone"}
         setValue={setDatos}
         value={datos} />
+      <MinTelephone phone={datos.phone} />
       <TouchableOpacity
         onPress={() => Actualizar()}
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
@@ -234,7 +216,7 @@ const ProfileScreen = () => {
       <Text className="text-xl text-bold">Modificar contraseña</Text>
       <PasswordInput
         title={"Contraseña"}
-        props={"........."}
+        props={" "}
         name={"password"}
         setValue={setDatos}
         value={datos} />
@@ -246,7 +228,7 @@ const ProfileScreen = () => {
           Modificar contraseña
         </Text>
       </TouchableOpacity>
-{/* 
+      {/* 
       
       {
         datos.hijos_matricula.length > -1

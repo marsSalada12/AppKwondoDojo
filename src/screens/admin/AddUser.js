@@ -12,6 +12,7 @@ import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
 import useUser from '../../hooks/useUser';
 import ModalError from '../../componentes/Modals/MAddUserError';
+import InputTel from '../../componentes/Inputs/inputTel';
 
 
 const AddUser = ({ navigation }) => {
@@ -96,6 +97,18 @@ const AddUser = ({ navigation }) => {
     navigation.goBack()
   }
 
+  const MinTelephone = ({ phone }) => {
+    if (phone.length == 10) {
+      return null; // 
+    } else {
+      return (
+        <Text style={{ color: 'red' }}>
+          Debe ser minimo de 10 dígitos
+        </Text>
+      );
+    }
+  }
+
   const boton = () => {
     desactivar();
     navigation.goBack();
@@ -126,9 +139,6 @@ const AddUser = ({ navigation }) => {
             setValue={setDatos}
             value={datos} />
 
-
-
-
           <InputFileld
             title={"Correo Electrónico"}
             props={"correo@ejemplo.com"}
@@ -141,7 +151,7 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Nombre/s"}
-            props={"Logan Antonio"}
+            props={" "}
             max={50}
             name={"name_user"}
             setValue={setDatos}
@@ -150,7 +160,7 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Apellido paterno"}
-            props={"Peña"}
+            props={" "}
             max={100}
             name={"pattern_name"}
             setValue={setDatos}
@@ -159,22 +169,23 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Apellido materno"}
-            props={"Gonzalez"}
+            props={" "}
             max={100}
             name={"matern_name"}
             setValue={setDatos}
             value={datos}
             type={'letters'} />
 
-          <InputFileld
+          <InputTel
             title={"Número de teléfono"}
-            props={"8442793235"}
+            props={" "}
             max={10}
+            min={10}
             name={"phone"}
             setValue={setDatos}
             value={datos}
             type={'numeric'} />
-
+          <MinTelephone phone={datos.phone} />
         </View>
 
 

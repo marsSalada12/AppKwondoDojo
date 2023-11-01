@@ -200,7 +200,7 @@ const AddGroup = ({ navigation }) => {
             }
             <InputFileld
                 title={"Descripción"}
-                props={"Grupo niños principiantes"}
+                props={" "}
                 edita={info ? true : true}
                 max={100}
                 name={"description"}
@@ -233,7 +233,7 @@ const AddGroup = ({ navigation }) => {
 
             <InputCupo
                 title={"Cupo"}
-                props={"20"}
+                props={" "}
                 edita={info ? false : true}
                 max={3}
                 name={"cupo"}
@@ -245,7 +245,7 @@ const AddGroup = ({ navigation }) => {
 
             <InputFEspecial
                 title={"Usar mensualidad base?"}
-                props={"1500"}
+                props={" "}
                 name={"price"}
                 setValue={setDatos}
                 value={datos}
