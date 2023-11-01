@@ -1,14 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
 import { useNavigation } from '@react-navigation/native'
 import { clearAll, getData } from '../../Storage/storage'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../../firebase/firebase'
 import ModalError from '../../componentes/Modals/MAddUserError'
+import Formulario from '../../componentes/Formularios/Formulario'
+
 
 const ProfileScreen = () => {
   const navigation = useNavigation()
@@ -30,8 +32,37 @@ const ProfileScreen = () => {
     }
   )
 
+  const initialChidrenInfo = {
+    name_user: '',
+    pattern_name: '',
+    matern_name: '',
+    mail: '',
+    status: true,
+    matricula: '',
+    payments_id: [],
+  }
 
+  useLayoutEffect(() => {
+    //Consultamos la sesion almacenada en el telefono
+    getData()
+      .then((userData) => {
+        // Consulatamos la BD para traernos los datos del usuario
+        onSnapshot(doc(db, "Usuarios", userData.userUID), (doc) => {
+          setDatos({ ...doc.data() })
+        })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
+          })
 
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log('useLayoutEffect - getData', errorCode, ' ', errorMessage)
+      });
+  }, [])
 
   const Actualizar = () => {
     try {
@@ -56,7 +87,7 @@ const ProfileScreen = () => {
   }
 
   const MinPas = ({ password }) => {
-    if (password.length > 6) {
+    if (password.length >= 6) {
       return null; // Las contraseñas coinciden, no se muestra ningún mensaje
     } else {
       return (
@@ -66,6 +97,30 @@ const ProfileScreen = () => {
       );
     }
   };
+
+  const handleAgregarHijo = () => {
+    // datos.hijos_matricula.push(initialChidrenInfo)
+    console.log(datos)
+
+    // try {
+    //   // Obtenemos la sesion del usario
+    //   getData().then(async (value) => {
+    //     // Apuntamos al documento
+    //     const infoUser = doc(db, "Usuarios", value.userUID);
+    //     console.log(value.userUID)
+    //     // Actualizamos el numero de hijos
+    //     await updateDoc(infoUser, {
+    //       hijos_matricula: datos.hijos_matricula.push(initialChidrenInfo)
+    //     });
+
+    //     console.log("Información de usuario actualizada");
+    //     navigation.goBack();
+    //   }
+    //   ).catch()
+    // } catch (error) {
+    //   console.error("Error al actualizar correo o información del usuario", error);
+    // }
+  }
 
   const handleCerrarSesion = () => {
     clearAll()
@@ -77,38 +132,6 @@ const ProfileScreen = () => {
         console.log('Ocurrio un error: ', error);
       })
   }
-
-  // const ChangePass = async () => {
-  //   try {
-  //     const user = auth.currentUser;
-  //     const newPassword = datos.password;
-  //     // Obtener el correo electrónico y la contraseña del usuario desde getData()
-  //     const value = await getData();
-  //     console.log(value)
-  //     const email = value.mail;
-  //     const password = value.password;
-  //     //es para que vuelva a autenticarse
-  //     const credential = EmailAuthProvider.credential(email, password);
-  //     await reauthenticateWithCredential(user, credential);
-  //     // Cambiar la contraseña
-  //     await updatePassword(user, newPassword);
-  //     const userUID = value.userUID;
-
-  //     const infoUserRef = doc(db, "Usuarios", userUID);
-
-  //     await updateDoc(infoUserRef, {
-  //       password: newPassword,
-  //       confirm_pass: newPassword,
-  //     });
-
-  //     console.log("Contraseña actualizada exitosamente.");
-  //     console.log(value)
-  //   } catch (error) {
-  //     const value = await getData();
-  //     console.error("Error al actualizar la contraseña: ", error);
-  //     console.log(value)
-  //   }
-  // };
 
   const ChangePass = async () => {
     const user = auth.currentUser;
@@ -131,30 +154,30 @@ const ProfileScreen = () => {
           // navigation.goBack();
         })
         .catch((error) => {
-          
+
           const errorCode = error.code;
           const errorMessage = error.message;
           setMensaje(errorCode, ' ', errorMessage)
           setShowModal(true)
           console.log('ChangePass - GetData: ', error)
-          
+
         })
 
     }).catch((error) => {
-      
+
 
       const errorCode = error.code;
       const errorMessage = error.message;
       setMensaje(errorCode, ' -- ', errorMessage)
 
-      if(errorCode === 'auth/requires-recent-login'){
+      if (errorCode === 'auth/requires-recent-login') {
         setMensaje(mensaje + '\n \n Requiere volver a iniciar sesion')
       }
 
       setShowModal(true)
 
-      console.log('ChangePass - UpdataPassword: ',errorCode, ' -- ', errorMessage )
-      
+      console.log('ChangePass - UpdataPassword: ', errorCode, ' -- ', errorMessage)
+
     });
   };
 
@@ -205,6 +228,8 @@ const ProfileScreen = () => {
           Modificar información
         </Text>
       </TouchableOpacity>
+
+
       <Text className="text-xl text-bold">Modificar contraseña</Text>
       <PasswordInput
         title={"Contraseña"}
@@ -220,12 +245,32 @@ const ProfileScreen = () => {
           Modificar contraseña
         </Text>
       </TouchableOpacity>
+{/* 
+      
+      {
+        datos.hijos_matricula.length > -1
+          ?
+          datos.hijos_matricula.map((dataHijo, index) => {
+            return (
+              <Formulario
+                key={index}
+                informacion={dataHijo} />
+            )
+          })
+          : null
+      }
+
       <TouchableOpacity
+        onPress={() => {
+          handleAgregarHijo()
+        }}
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
         <Text className="w-80 text-center text-white">
           Agregar alumno
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+
       <TouchableOpacity
         onPress={() => {
           handleCerrarSesion()

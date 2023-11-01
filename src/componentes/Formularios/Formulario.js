@@ -54,7 +54,13 @@ export const Formulario = () => {
             <TouchableOpacity
                 className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
                 <Text className="w-80 text-center text-white">
-                    Agregar alumno
+                    Actualizar informacion
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
+                <Text className="w-80 text-center text-white">
+                    Desactivar
                 </Text>
             </TouchableOpacity>
         </View>
