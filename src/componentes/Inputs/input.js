@@ -27,8 +27,7 @@ const InputFileld = ({ title,
             setValue({ ...value, [name]: Text })
           } else {
             if (type === 'letters') {
-              console.log('first')
-              const result = Text.replace(/(\W|\d)*/g, '')
+              const result = Text.replace(/[^a-zA-Z0-9 ]/g, '');
               setValue({ ...value, [name]: result })  
 
             } else {

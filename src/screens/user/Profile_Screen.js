@@ -6,10 +6,11 @@ import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePas
 import PasswordInput from '../../componentes/Inputs/password'
 import { useNavigation } from '@react-navigation/native'
 import { clearAll, getData } from '../../Storage/storage'
-import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
+import { doc, updateDoc, onSnapshot, arrayUnion } from 'firebase/firestore'
 import { auth, db } from '../../firebase/firebase'
 import ModalError from '../../componentes/Modals/MAddUserError'
 import Formulario from '../../componentes/Formularios/Formulario'
+import { createChild } from '../../firebase/cloudstorage/Children'
 
 
 const ProfileScreen = () => {
@@ -30,8 +31,22 @@ const ProfileScreen = () => {
     }
   )
 
-
-
+  useLayoutEffect(() => {
+    //Consultamos la sesion almacenada en el telefono
+    getData()
+      .then((userData) => {
+        // Consulatamos la BD para traernos los datos del usuario
+        onSnapshot(doc(db, "Usuarios", userData.userUID), (doc) => {
+          setDatos({ ...doc.data() })
+          console.log(doc.data())
+        })
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
+      })
+  },[])
 
   const Actualizar = () => {
     try {
@@ -67,28 +82,30 @@ const ProfileScreen = () => {
     }
   };
 
-  const handleAgregarHijo = () => {
-    // datos.hijos_matricula.push(initialChidrenInfo)
-    console.log(datos)
+  const handleAgregarHijo = async () => {
 
-    // try {
-    //   // Obtenemos la sesion del usario
-    //   getData().then(async (value) => {
-    //     // Apuntamos al documento
-    //     const infoUser = doc(db, "Usuarios", value.userUID);
-    //     console.log(value.userUID)
-    //     // Actualizamos el numero de hijos
-    //     await updateDoc(infoUser, {
-    //       hijos_matricula: datos.hijos_matricula.push(initialChidrenInfo)
-    //     });
+    // Creamos al hijo en la base de datos y guardamos el ID
+    const child_id = await createChild(initialChidrenInfo)
+    getData()
+      .then(async (value) => {
 
-    //     console.log("Información de usuario actualizada");
-    //     navigation.goBack();
-    //   }
-    //   ).catch()
-    // } catch (error) {
-    //   console.error("Error al actualizar correo o información del usuario", error);
-    // }
+        // Apuntamos al documento
+        const userRef = doc(db, "Usuarios", value.userUID);
+
+        // Agregamos el id del hijo al arreglo de "hijos_matricula"
+        await updateDoc(userRef, {
+          hijos_matricula: arrayUnion(child_id)
+        });
+
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setMensaje(errorCode, ' ', errorMessage)
+        setShowModal(true)
+        console.log('ChangePass - GetData: ', error)
+
+      })
   }
 
   const handleCerrarSesion = () => {
@@ -102,7 +119,7 @@ const ProfileScreen = () => {
       })
   }
 
-  const MinTelephone = ({phone}) => {
+  const MinTelephone = ({ phone }) => {
     if (phone.length == 10) {
       return null; // 
     } else {
@@ -121,7 +138,7 @@ const ProfileScreen = () => {
     updatePassword(user, newPassword).then(() => {
       console.log('Se actualizo')
 
-      //Actualizar la contraseña en la base da datos
+      //Actualizar la contraseña en la base de datos
       getData()
         .then(async (value) => {
           const infoUser = doc(db, "Usuarios", value.userUID);
@@ -212,7 +229,6 @@ const ProfileScreen = () => {
         </Text>
       </TouchableOpacity>
 
-
       <Text className="text-xl text-bold">Modificar contraseña</Text>
       <PasswordInput
         title={"Contraseña"}
@@ -228,20 +244,19 @@ const ProfileScreen = () => {
           Modificar contraseña
         </Text>
       </TouchableOpacity>
-      {/* 
-      
       {
-        datos.hijos_matricula.length > -1
+        datos.hijos_matricula.length > 0
           ?
-          datos.hijos_matricula.map((dataHijo, index) => {
+          datos.hijos_matricula.map((hijo_id, index) => {
             return (
               <Formulario
-                key={index}
-                informacion={dataHijo} />
+                childID={hijo_id}
+                key={index} />
             )
           })
           : null
       }
+
 
       <TouchableOpacity
         onPress={() => {
@@ -251,7 +266,7 @@ const ProfileScreen = () => {
         <Text className="w-80 text-center text-white">
           Agregar alumno
         </Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
 
       <TouchableOpacity
