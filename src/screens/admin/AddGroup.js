@@ -134,7 +134,7 @@ const AddGroup = ({ navigation }) => {
             console.log("ACTUALIZANDING...")
             navigation.goBack()
         } else {
-            setMensaje('Formulario incompleto')
+            setMensaje('Formulario incompleto o\nEl maestro ya tiene grupos a esa hora')
             setShowModalErr(true)
             console.log('no lo insertamos')
         }
