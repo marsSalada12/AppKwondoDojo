@@ -3,7 +3,11 @@ import React from 'react'
 import { useRoute } from '@react-navigation/native'
 
 const Mensualidad = ({ navigation }) => {
-    const info = useRoute().params
+    const infoFull = useRoute().params
+    grupo = infoFull.info
+    alumno = infoFull.alumno
+
+    console.log(alumno)
     return (
         <View>
             <Text className="text-2xl ml-4 mt-2">Tu mensualidad</Text>
@@ -11,23 +15,32 @@ const Mensualidad = ({ navigation }) => {
             <View className=" flex-row justify-around rounded-md ml-5 mr-5 bg-white p-4 shadow-2xl items-start mt-2 mb-2">
                 <View>
                     <Text className=" text-2xl font-bold w-full">
-                        {"Grupo " + info.type_group}
+                        {"Grupo " + grupo.type_group}
                     </Text>
                     <Text className=" text-xl font-semibold w-full">
-                        {"Horario: " + info.schedule}
+                        {"Horario: " + grupo.schedule}
                     </Text>
                     <Text className=" text-xl font-semibold w-full">
-                        {"Instructor: " + info.name_teac}
+                        {"Instructor: " + grupo.name_teac}
                     </Text>
                 </View>
                 <View className="ml-10">
                     <Text className=" text-lg font-semibold w-full mt-2 ml-2">
-                        {"Cupo: \n " + info.cont_alumnos + "/" + + info.cupo}
+                        {"Cupo: \n " + grupo.cont_alumnos + "/" + + grupo.cupo}
                     </Text>
                 </View>
             </View>
             <Text className="text-2xl ml-4 mt-6">Saldo a pagar</Text>
-
+            <View className=" flex-row justify-around rounded-md ml-5 mr-5 bg-white p-4 shadow-2xl items-start mt-2 mb-2">
+                <View>
+                    <Text className=" text-2xl font-bold w-full">
+                        {"Pago de mensualidad de " + alumno.name_user}
+                    </Text>
+                    <Text className=" text-2xl font-bold w-full text-right">
+                        {"$" + grupo.price}
+                    </Text>
+                </View>
+            </View>
 
             <View className="items-center">
                 <TouchableOpacity className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6 ml-5 mr-5">

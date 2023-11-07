@@ -13,42 +13,44 @@ const PaymentsScreen = ({ navigation }) => {
     getData()
       .then((data) => {
         setUserData(data)
+        
       })
       .catch((error) => {
         console.log('Error AppNavigation : ', error)
       })
   }, [])
 
-  useEffect(() => {
-    const fetchChildNames = async () => {
-      if (userData && userData.hijos_matricula && userData.hijos_matricula.length > 0) {
-        const childNamesArray = [];
+  const fetchChildNames = async () => {
+    if (userData && userData.hijos_matricula && userData.hijos_matricula.length > 0) {
+      const childNamesArray = [];
 
-        for (const childId of userData.hijos_matricula) {
-          const childrenRef = doc(db, "Children", childId);
-          try {
-            const docSnapshot = await getDoc(childrenRef);
-
-            if (docSnapshot.exists()) {
-              const childInfo = {
-                id: childId,
-                name_user: docSnapshot.data().name_user,
-                //aun no acabo
-              };
-              childNamesArray.push(childInfo);
-            } else {
-              childNamesArray.push({ id: childId, name: 'Nombre no encontrado' });
-            }
-          } catch (error) {
-            console.error('Error al obtener el documento: ', error);
-            childNamesArray.push('Error al obtener nombre');
+      for (const childId of userData.hijos_matricula) {
+        const childrenRef = doc(db, "Children", childId);
+        try {
+          const docSnapshot = await getDoc(childrenRef);
+          if (docSnapshot.exists()) {
+            childNamesArray.push({...docSnapshot.data(), id_user:childId});
+            console.log(childNamesArray) 
+          } else {
+            childNamesArray.push({ id: childId, name: 'Nombre no encontrado' });
           }
+        } catch (error) {
+          console.error('Error al obtener el documento: ', error);
+          childNamesArray.push('Error al obtener nombre');
         }
-
-        setChildNames(childNamesArray);
       }
-    };
+      setChildNames(childNamesArray);
+    }else {
+      if(userData && userData.hijos_matricula && userData.hijos_matricula.length == 0){
+        const childNamesArray=[]
+        childNamesArray.push({...userData});
+        console.log(childNamesArray)
+        setChildNames(childNamesArray)
+      }
+    }
+  };
 
+  useEffect(() => {
     fetchChildNames();
   }, [userData]);
 
@@ -59,10 +61,10 @@ const PaymentsScreen = ({ navigation }) => {
       {childNames.map((child, index) => (
         <TouchableOpacity
           key={index}
-          onPress={() => {console.log(childNames[index])}}
+          onPress={() => navigation.navigate("Inscripcion", childNames[index])}
           className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center"
           >
-          <Text className = "w-80 text-center"> Inscripcion de {child.name_user} (ID: {child.id})</Text>
+          <Text className = "w-80 text-center"> Inscripcion de {child.name_user}</Text>
         </TouchableOpacity>
       ))}
     </View>

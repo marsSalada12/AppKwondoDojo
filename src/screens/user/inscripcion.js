@@ -4,9 +4,11 @@ import { QuestionMarkCircleIcon } from 'react-native-heroicons/solid'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import GroupInfo from '../../componentes/Modals/GroupInfo'
+import { useRoute } from '@react-navigation/native'
 
 
 const Inscripcion = ({ navigation }) => {
+    const info = useRoute().params
     const [showModal, setShowModal] = useState(false)
     const [datos, setDatos] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -47,7 +49,7 @@ const Inscripcion = ({ navigation }) => {
                             datos.map((grupillos, index) => {
                                 return (
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate("Mensualidad", grupillos)}
+                                        onPress={() => navigation.navigate("Mensualidad", {info: grupillos, alumno: info})}
                                         key={index}
                                         className="rounded-md w-full h-fit bg-white p-4 shadow-2xl items-start mt-2 mb-2">
                                         <View className="flex-row justify-around">

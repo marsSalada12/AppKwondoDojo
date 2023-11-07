@@ -42,14 +42,15 @@ const AppNavigation = () => {
                 console.log(userData, "---")
                 if (!userData) {
                     setPaginaInicial('Main')
-                }
-                if (userData.type_user === 'Administrador') {
-                    setPaginaInicial('TabBarAdmin')
-                } else {
-                    if (userData.type_user !== 'Administrador') {
-                        setPaginaInicial('TabBarUser')
+                }else{
+                    if (userData.type_user === 'Administrador') {
+                        setPaginaInicial('Home')
                     } else {
-                        setPaginaInicial('Main')
+                        if (userData.type_user !== 'Administrador') {
+                            setPaginaInicial('Home')
+                        } else {
+                            setPaginaInicial('Main')
+                        }
                     }
                 }
                 setLoading(false)

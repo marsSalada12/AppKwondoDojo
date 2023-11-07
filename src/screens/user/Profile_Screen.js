@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth'
@@ -31,7 +31,7 @@ const ProfileScreen = () => {
     }
   )
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     //Consultamos la sesion almacenada en el telefono
     getData()
       .then((userData) => {
