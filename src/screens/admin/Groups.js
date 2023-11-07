@@ -68,13 +68,15 @@ const Groups = () => {
                               {"Grupo " + grupillos.type_group}
                             </Text>
                             <Text className=" text-xl font-semibold w-full">
-                              {"Horario:\n " +
-                                grupillos.schedule}
+                              {"Horario: " + grupillos.schedule}
+                            </Text>
+                            <Text className=" text-xl font-semibold w-full">
+                              {"Instructor: " + grupillos.name_teac}
                             </Text>
                           </View>
-                          <View>
+                          <View className="ml-10">
                             <Text className=" text-lg font-semibold w-full mt-2 ml-2">
-                              {"Cupo: \n " + grupillos.cupo}
+                              {"Cupo: \n " + grupillos.cont_alumnos + "/" + + grupillos.cupo}
                             </Text>
                           </View>
                         </View>

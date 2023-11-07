@@ -4,7 +4,7 @@ import { HeartIcon } from 'react-native-heroicons/solid'
 import { clearAll, getData } from '../../Storage/storage'
 import { auth } from '../../firebase/firebase'
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
 
   useLayoutEffect(() => {
 
@@ -16,7 +16,7 @@ const HomeScreen = () => {
       <Text>Principal</Text>
       <HeartIcon color='#6560AA' />
       <TouchableOpacity className="bg-red"
-        onPress={() => {
+        onPress={() => { 
           console.log("hola")
           //Nos traemos la sesion guardada en el celular
           getData()
