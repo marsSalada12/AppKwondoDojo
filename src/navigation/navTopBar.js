@@ -46,6 +46,7 @@ export const TabBarUser = () => {
     return (
         <Tab.Navigator
             initialRouteName='Home'
+            
             screenOptions={TabNavigatorOptions}>
 
             <Tab.Screen
@@ -54,7 +55,7 @@ export const TabBarUser = () => {
                 options={TabScreenOptions('Payments')} />
 
             <Tab.Screen
-                name="Home"
+                name="HomeU"
                 component={HomeScreen}
                 options={TabScreenOptions('Home')} />
 
@@ -78,7 +79,7 @@ export const TabBarAdmin = () => {
                 options={TabScreenOptions('Grupos')} />
 
             <Tab.Screen
-                name="Home"
+                name="HomeA"
                 component={Home_admin}
                 options={TabScreenOptions('Inicio')} />
 
@@ -93,15 +94,17 @@ export const TabBarAdmin = () => {
 
 const menuIcos = (route, focused) => {
     let icon;
-    if (route.name == 'Home') {
+    if (route.name == 'HomeU') {
+        icon = <HomeSolid size={40} fill={focused ? '#FFFFFF' : '#3E3D4F'} />
+    } else if (route.name == 'HomeA') {
         icon = <HomeSolid size={40} fill={focused ? '#FFFFFF' : '#3E3D4F'} />
     } else if (route.name == 'Groups') {
         icon = <UserGroupIcon size={30} fill={focused ? 'white' : '#3E3D4F'} />
     } else if (route.name == 'Add') {
         icon = <UserSolid size={30} fill={focused ? 'white' : '#3E3D4F'} />
-    }else if (route.name == 'Payments') {
+    } else if (route.name == 'Payments') {
         icon = <CreditCardIcon size={30} fill={focused ? 'white' : '#3E3D4F'} />
-    }else if (route.name == 'Profile') {
+    } else if (route.name == 'Profile') {
         icon = <UserSolid size={30} fill={focused ? 'white' : '#3E3D4F'} />
     }
 

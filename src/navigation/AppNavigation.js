@@ -42,17 +42,17 @@ const AppNavigation = () => {
                 console.log(userData, "---")
                 if (!userData) {
                     setPaginaInicial('Main')
-                }else{
-                    if (userData.type_user === 'Administrador') {
-                        setPaginaInicial('Home')
-                    } else {
-                        if (userData.type_user !== 'Administrador') {
-                            setPaginaInicial('Home')
-                        } else {
-                            setPaginaInicial('Main')
-                        }
-                    }
                 }
+                if (userData.type_user === 'Administrador') {
+                    setPaginaInicial('TabBarAdmin')
+                    console.log("entre admi")
+                } else {
+                    setPaginaInicial('TabBarUser')
+                    console.log({ paginaInicial })
+                    console.log("entre user")
+
+                }
+
                 setLoading(false)
             })
             .catch((error) => {
@@ -74,7 +74,7 @@ const AppNavigation = () => {
 
                             indeterminate={true} />
 
-                        <Text className='mt-6 text-white text-xl'>
+                        <Text className='mt-6 w-fit text-white text-xl'>
                             Cargando
                         </Text>
                         <TouchableOpacity
@@ -85,7 +85,7 @@ const AppNavigation = () => {
                                 await clearAll()
                             }}>
                             <Text
-                            className='mt text-white text-xl'
+                                className='mt text-white text-xl'
                             >
                                 Cerrar sesion
                             </Text>

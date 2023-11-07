@@ -30,15 +30,17 @@ const PaymentsScreen = ({ navigation }) => {
           const docSnapshot = await getDoc(childrenRef);
           if (docSnapshot.exists()) {
             childNamesArray.push({...docSnapshot.data(), id_user:childId});
-            console.log(childNamesArray) 
+            
           } else {
             childNamesArray.push({ id: childId, name: 'Nombre no encontrado' });
-          }
+          } 
         } catch (error) {
           console.error('Error al obtener el documento: ', error);
           childNamesArray.push('Error al obtener nombre');
         }
       }
+      childNamesArray.push({...userData})
+      console.log(childNamesArray)
       setChildNames(childNamesArray);
     }else {
       if(userData && userData.hijos_matricula && userData.hijos_matricula.length == 0){

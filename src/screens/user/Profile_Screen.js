@@ -17,6 +17,7 @@ const ProfileScreen = () => {
   const navigation = useNavigation()
 
   const [showModal, setShowModal] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [mensaje, setMensaje] = useState('')
   const [datos, setDatos] = useState(
     {
@@ -32,6 +33,7 @@ const ProfileScreen = () => {
   )
 
   useEffect(() => {
+    // setLoading(true)
     //Consultamos la sesion almacenada en el telefono
     getData()
       .then((userData) => {
@@ -40,13 +42,14 @@ const ProfileScreen = () => {
           setDatos({ ...doc.data() })
           console.log(doc.data())
         })
+       
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
       })
-  },[])
+  }, [])
 
   const Actualizar = () => {
     try {
@@ -112,7 +115,9 @@ const ProfileScreen = () => {
     clearAll()
       .then((value) => {
         console.log('Limpiado: ', value);
+        navigation.navigate('HomeU')
         navigation.navigate('Main')
+        
       })
       .catch((error) => {
         console.log('Ocurrio un error: ', error);
@@ -228,7 +233,6 @@ const ProfileScreen = () => {
           Modificar información
         </Text>
       </TouchableOpacity>
-
       <Text className="text-xl text-bold">Modificar contraseña</Text>
       <PasswordInput
         title={"Contraseña"}
@@ -256,8 +260,6 @@ const ProfileScreen = () => {
           })
           : null
       }
-
-
       <TouchableOpacity
         onPress={() => {
           handleAgregarHijo()
@@ -267,13 +269,10 @@ const ProfileScreen = () => {
           Agregar alumno
         </Text>
       </TouchableOpacity>
-
-
       <TouchableOpacity
         onPress={() => {
           handleCerrarSesion()
           console.log("falta")
-
         }}
         className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
         <Text className="w-80 text-center text-white">
