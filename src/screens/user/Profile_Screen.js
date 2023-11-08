@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth'
@@ -13,13 +13,11 @@ import Formulario from '../../componentes/Formularios/Formulario'
 import { createChild } from '../../firebase/cloudstorage/Children'
 
 
-
-
 const ProfileScreen = () => {
   const navigation = useNavigation()
 
-
   const [showModal, setShowModal] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [mensaje, setMensaje] = useState('')
   const [datos, setDatos] = useState(
     {
@@ -34,17 +32,8 @@ const ProfileScreen = () => {
     }
   )
 
-  const initialChidrenInfo = {
-    name_user: '',
-    pattern_name: '',
-    matern_name: '',
-    mail: '',
-    status: true,
-    matricula: '',
-    payments_id: [],
-  }
-
-  useLayoutEffect(() => {
+  useEffect(() => {
+    // setLoading(true)
     //Consultamos la sesion almacenada en el telefono
     getData()
       .then((userData) => {
@@ -53,18 +42,13 @@ const ProfileScreen = () => {
           setDatos({ ...doc.data() })
           console.log(doc.data())
         })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
-          })
-
+       
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log('useLayoutEffect - getData', errorCode, ' ', errorMessage)
-      });
+        console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
+      })
   }, [])
 
   const Actualizar = () => {
@@ -101,9 +85,6 @@ const ProfileScreen = () => {
     }
   };
 
-
-
-
   const handleAgregarHijo = async () => {
 
     // Creamos al hijo en la base de datos y guardamos el ID
@@ -134,11 +115,25 @@ const ProfileScreen = () => {
     clearAll()
       .then((value) => {
         console.log('Limpiado: ', value);
+        navigation.navigate('HomeU')
         navigation.navigate('Main')
+        
       })
       .catch((error) => {
         console.log('Ocurrio un error: ', error);
       })
+  }
+
+  const MinTelephone = ({ phone }) => {
+    if (phone.length == 10) {
+      return null; // 
+    } else {
+      return (
+        <Text style={{ color: 'red' }}>
+          Debe ser minimo de 10 dígitos
+        </Text>
+      );
+    }
   }
 
   const ChangePass = async () => {
@@ -148,7 +143,7 @@ const ProfileScreen = () => {
     updatePassword(user, newPassword).then(() => {
       console.log('Se actualizo')
 
-      //Actualizar la contraseña en la base da datos
+      //Actualizar la contraseña en la base de datos
       getData()
         .then(async (value) => {
           const infoUser = doc(db, "Usuarios", value.userUID);
@@ -199,7 +194,7 @@ const ProfileScreen = () => {
       <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
       <InputFileld
         title={"Nombre/s"}
-        props={"Diego Antonio"}
+        props={" "}
         edita={true}
         max={100}
         name={"name_user"}
@@ -207,7 +202,7 @@ const ProfileScreen = () => {
         value={datos} />
       <InputFileld
         title={"Apellido paterno"}
-        props={"Lopez"}
+        props={" "}
         edita={true}
         max={100}
         name={"pattern_name"}
@@ -215,7 +210,7 @@ const ProfileScreen = () => {
         value={datos} />
       <InputFileld
         title={"Apellido materno"}
-        props={"Urbina"}
+        props={" "}
         edita={true}
         max={100}
         name={"matern_name"}
@@ -223,12 +218,14 @@ const ProfileScreen = () => {
         value={datos} />
       <InputTel
         title={"Teléfono"}
-        props={"8445688445"}
+        props={" "}
         edita={true}
         max={10}
+        min={10}
         name={"phone"}
         setValue={setDatos}
         value={datos} />
+      <MinTelephone phone={datos.phone} />
       <TouchableOpacity
         onPress={() => Actualizar()}
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
@@ -236,12 +233,10 @@ const ProfileScreen = () => {
           Modificar información
         </Text>
       </TouchableOpacity>
-
-
       <Text className="text-xl text-bold">Modificar contraseña</Text>
       <PasswordInput
         title={"Contraseña"}
-        props={"........."}
+        props={" "}
         name={"password"}
         setValue={setDatos}
         value={datos} />
@@ -253,7 +248,6 @@ const ProfileScreen = () => {
           Modificar contraseña
         </Text>
       </TouchableOpacity>
-
       {
         datos.hijos_matricula.length > 0
           ?
@@ -266,8 +260,6 @@ const ProfileScreen = () => {
           })
           : null
       }
-
-
       <TouchableOpacity
         onPress={() => {
           handleAgregarHijo()
@@ -277,13 +269,10 @@ const ProfileScreen = () => {
           Agregar alumno
         </Text>
       </TouchableOpacity>
-
-
       <TouchableOpacity
         onPress={() => {
           handleCerrarSesion()
           console.log("falta")
-
         }}
         className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
         <Text className="w-80 text-center text-white">

@@ -13,6 +13,8 @@ import Config from '../screens/admin/Config';
 import { clearAll, getData } from '../Storage/storage';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import * as Progress from 'react-native-progress';
+import inscripcion from '../screens/user/inscripcion';
+import Mensualidad from '../screens/user/mensualidad';
 
 const TabScreenOptions = (title) => ({
     title: title,
@@ -37,19 +39,20 @@ const AppNavigation = () => {
         setLoading(true)
         getData()
             .then((userData) => {
-                console.log(userData)
+                console.log(userData, "---")
                 if (!userData) {
                     setPaginaInicial('Main')
                 }
                 if (userData.type_user === 'Administrador') {
                     setPaginaInicial('TabBarAdmin')
+                    console.log("entre admi")
                 } else {
-                    if (userData.type_user !== 'Administrador') {
-                        setPaginaInicial('TabBarUser')
-                    } else {
-                        setPaginaInicial('Main')
-                    }
+                    setPaginaInicial('TabBarUser')
+                    console.log({ paginaInicial })
+                    console.log("entre user")
+
                 }
+
                 setLoading(false)
             })
             .catch((error) => {
@@ -58,8 +61,6 @@ const AppNavigation = () => {
                 console.log('Error AppNavigation : ', error)
             })
     }, [])
-
-
 
     return (
         <>
@@ -72,7 +73,7 @@ const AppNavigation = () => {
                             borderWidth={4}
                             indeterminate={true} />
 
-                        <Text className='mt-6 text-white text-xl'>
+                        <Text className='mt-6 w-fit text-white text-xl'>
                             Cargando
                         </Text>
                         <TouchableOpacity
@@ -83,7 +84,7 @@ const AppNavigation = () => {
                                 await clearAll()
                             }}>
                             <Text
-                            className='mt text-white text-xl'
+                                className='mt text-white text-xl'
                             >
                                 Cerrar sesion
                             </Text>
@@ -105,6 +106,8 @@ const AppNavigation = () => {
                             <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuracón")} />
                             {/* Pantalas del usuario */}
                             < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
+                            <Stack.Screen name="Inscripcion" component={inscripcion} options={TabScreenOptions("Mensualidad")} />
+                            <Stack.Screen name="Mensualidad" component={Mensualidad} options={TabScreenOptions("Confirmación")} />
 
                         </Stack.Navigator>
                     </NavigationContainer>
@@ -114,39 +117,3 @@ const AppNavigation = () => {
 }
 
 export default AppNavigation
-
-// const { user } = useUser()
-//     if (user) {
-//         if (user.type_user === 'Administrador') {
-//             return (
-//                 <NavigationContainer>
-//                     <Stack.Navigator>
-//                         < Stack.Screen name="TabBarAdmin" component={TabBarAdmin} options={{ headerShown: false }} />
-//                         <Stack.Screen name="UsersAdmin" component={UsersAdmin} options={TabScreenOptions("Usuarios")} />
-//                         <Stack.Screen name="AddUser" component={AddUser} options={TabScreenOptions("Usuario")} />
-//                         <Stack.Screen name="AddGroup" component={AddGroup} options={TabScreenOptions("Grupos")} />
-//                         <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuracón")} />
-//                     </Stack.Navigator>
-//                 </NavigationContainer>
-//             )
-//         } else {
-//             return (
-//                 <NavigationContainer>
-//                     <Stack.Navigator>
-//                         < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
-//                     </Stack.Navigator>
-//                 </NavigationContainer >
-//             )
-//         }
-//     } else {
-//         return (
-//             <NavigationContainer>
-//                 <Stack.Navigator>
-//                     <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
-//                     <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-//                     <Stack.Screen name="Enroll" component={Enroll} options={{ headerShown: false }} />
-//                     <Stack.Screen name="RecoveryPass" component={RecoveryPass} options={{ headerShown: false }} />
-//                 </Stack.Navigator>
-//             </NavigationContainer>
-//         )
-//     }
