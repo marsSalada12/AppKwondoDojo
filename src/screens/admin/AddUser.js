@@ -12,6 +12,7 @@ import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
 import useUser from '../../hooks/useUser';
 import ModalError from '../../componentes/Modals/MAddUserError';
+import InputTel from '../../componentes/Inputs/inputTel';
 
 
 const AddUser = ({ navigation }) => {
@@ -128,8 +129,8 @@ const AddUser = ({ navigation }) => {
         visible={modalErrorVisible}
         message={MsjModalError} />
 
-      <ModalLoading
-        visible={isLoading} />
+      {/* <ModalLoading
+        visible={isLoading} /> */}
 
       <View className="mt-6 ml-6">
         <Text className="text-2xl">

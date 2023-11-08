@@ -9,7 +9,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWUID } from '../firebase/cloudstorage/CreateUsers'
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
 import ModalError from '../componentes/Modals/MAddUserError'
-import { getData, storeData } from '../Storage/storage'
+import { clearAll, getData, storeData } from '../Storage/storage'
 
 const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)

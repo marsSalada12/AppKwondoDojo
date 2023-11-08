@@ -27,11 +27,7 @@ const InputFileld = ({ title,
             setValue({ ...value, [name]: Text })
           } else {
             if (type === 'letters') {
-<<<<<<< HEAD
-              const result = Text.replace(/(\W|\d)*/g, '')
-=======
               const result = Text.replace(/[^a-zA-Z0-9 ]/g, '');
->>>>>>> 2167707bea88ffa9435f2cc147caf7e072448b5b
               setValue({ ...value, [name]: result })  
 
             } else {
