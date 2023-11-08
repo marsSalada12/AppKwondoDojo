@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input';
 
@@ -12,10 +12,14 @@ import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
 import useUser from '../../hooks/useUser';
 import ModalError from '../../componentes/Modals/MAddUserError';
+import Formulario from '../../componentes/Formularios/Formulario';
+import ModalLoading from '../../componentes/loading/loading';
 
 
 const AddUser = ({ navigation }) => {
   const info = useRoute().params
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const [tyUser, setTyUser] = useState([
     { label: "Administrador", value: "Administrador" },
@@ -47,25 +51,27 @@ const AddUser = ({ navigation }) => {
       : initialDatos
   );
 
-  const { setUser } = useUser()
-
 
   // Metodo para guardar a un usuario
   const autenticar = () => {
+    setIsLoading(true)
     createUserWithEmailAndPassword(auth, datos.mail, "123456")
       .then((userCredential) => {
         const user = userCredential.user.uid;
         createUserWUID(datos, user)
           .then(() => {
+            setIsLoading(true)
             navigation.goBack();
           })
           .catch((error) => {
+            setIsLoading(true)
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode, errorMessage)
           })
       })
       .catch((error) => {
+        setIsLoading(true)
         const errorCode = error.code;
         const errorMessage = error.message;
         setMsjModalError(errorCode, '\n', errorMessage)
@@ -85,6 +91,7 @@ const AddUser = ({ navigation }) => {
 
   //Actualizar desde cloudStorage
   const actualizar = async () => {
+    setIsLoading(true)
     const infoUser = doc(db, "Usuarios", datos.id);
     await updateDoc(infoUser, {
       type_user: datos.type_user,
@@ -93,6 +100,7 @@ const AddUser = ({ navigation }) => {
       matern_name: datos.matern_name,
       phone: datos.phone
     });
+    setIsLoading(true)
     navigation.goBack()
   }
 
@@ -110,6 +118,9 @@ const AddUser = ({ navigation }) => {
         visible={modalErrorVisible}
         message={MsjModalError} />
 
+      <ModalLoading
+        visible={isLoading} />
+
       <View className="mt-6 ml-6">
         <Text className="text-2xl">
           Datos de usuario
@@ -126,12 +137,9 @@ const AddUser = ({ navigation }) => {
             setValue={setDatos}
             value={datos} />
 
-
-
-
           <InputFileld
             title={"Correo Electrónico"}
-            props={"correo@ejemplo.com"}
+
             edita={info ? false : true}
             max={100}
             name={"mail"}
@@ -141,7 +149,7 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Nombre/s"}
-            props={"Logan Antonio"}
+
             max={50}
             name={"name_user"}
             setValue={setDatos}
@@ -150,7 +158,7 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Apellido paterno"}
-            props={"Peña"}
+
             max={100}
             name={"pattern_name"}
             setValue={setDatos}
@@ -159,7 +167,7 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Apellido materno"}
-            props={"Gonzalez"}
+
             max={100}
             name={"matern_name"}
             setValue={setDatos}
@@ -168,7 +176,6 @@ const AddUser = ({ navigation }) => {
 
           <InputFileld
             title={"Número de teléfono"}
-            props={"8442793235"}
             max={10}
             name={"phone"}
             setValue={setDatos}
@@ -177,14 +184,6 @@ const AddUser = ({ navigation }) => {
 
         </View>
 
-
-        {/* Aqui vamos a cargar la informacion de los hijos */}
-        {
-          info && info.hijos_matricula.length > 0
-            ? <Text>Aqui se va a cargar el formulario con la informacion de los hijos</Text>
-            : null
-        }
-
         <View className="ml-12 mr-12">
           <TouchableOpacity
             onPress={info ?
@@ -192,9 +191,12 @@ const AddUser = ({ navigation }) => {
               : () => autenticar()}
             className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6">
             <Text className="text-lg text-white font-bold">
-              {info
-                ? "Actualizar usuario"
-                : "Guardar usuario"}
+              {
+                info
+                  ? "Actualizar usuario"
+                  : "Guardar usuario"
+              }
+
             </Text>
           </TouchableOpacity>
           {info
@@ -202,11 +204,37 @@ const AddUser = ({ navigation }) => {
               onPress={() => boton()}
               className={"rounded-lg p-4 color w-80 items-center mt-6 mb-10 " + (info.status ? 'bg-red' : 'bg-green')}>
               <Text className="text-lg text-white font-bold">
-                {info.status ? "Desactivar" : "Activar"}
+                {
+                  info.status
+                    ? "Desactivar"
+                    : "Activar"
+                }
               </Text>
             </TouchableOpacity>
-            : null}
+            : null
+          }
         </View>
+
+        {/* Aqui vamos a cargar la informacion de los hijos */}
+        {
+          info && info.hijos_matricula.length > 0
+            ?
+            <View className='items-center mb-11'>
+              {
+                info.hijos_matricula.map((hijo_id, index) => {
+                  console.log(hijo_id)
+                  return (
+                    <Formulario
+                      key={index}
+                      childID={hijo_id}
+                    />
+                  )
+                })
+              }
+            </View>
+            : null
+        }
+
       </ScrollView>
       <StatusBar backgroundColor={'#6560AA'} />
     </View>

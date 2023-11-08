@@ -23,6 +23,8 @@ export const Formulario = ({ childID }) => {
         });
     }, [])
 
+
+    
     return (
         <View>
             <Text
@@ -61,6 +63,7 @@ export const Formulario = ({ childID }) => {
                 value={datos} />
 
             <View className='flex flex-row justify-around'>
+
                 <TouchableOpacity
                     className="rounded-md bg-blue-400 p-4  items-center mt-6 ">
                     <Text className=" text-center text-white">
@@ -73,6 +76,7 @@ export const Formulario = ({ childID }) => {
                         Desactivar
                     </Text>
                 </TouchableOpacity>
+
             </View>
 
         </View>
