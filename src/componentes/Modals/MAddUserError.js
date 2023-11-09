@@ -1,3 +1,4 @@
+
 import { View, Text, Modal, TouchableWithoutFeedback } from 'react-native'
 
 const ModalError = ({ visible, setVisible, message }) => {
@@ -17,6 +18,7 @@ const ModalError = ({ visible, setVisible, message }) => {
                         </Text>
                     </View>
                 </View>
+
             </TouchableWithoutFeedback>
         </Modal>
     );

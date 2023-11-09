@@ -1,4 +1,4 @@
-import { View, Text, Image, StatusBar, TouchableOpacity } from 'react-native'
+import { View, Text, Image,  TouchableOpacity, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import InputFileld from '../componentes/Inputs/input'
 import PasswordInput from '../componentes/Inputs/password'
@@ -7,10 +7,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
 import { clearAll, storeData } from '../Storage/storage'
 import ModalError from '../componentes/Modals/MAddUserError'
+import ModalLoading from '../componentes/loading/loading'
+
 
 const SignIn = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
+    const [isloading, setIsLoading] = useState(false)
 
     const [storeUser, setstoreData] = useState({})
 
@@ -22,12 +25,14 @@ const SignIn = ({ navigation }) => {
     );
 
     const autenticarSI = () => {
+        setIsLoading(true)
         signInWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
                 //Guardamos el ID del usuario
                 const userUID = userCredential.user.uid;
                 getAnOnlyUser(userUID)
                     .then(async (user) => {
+                        setIsLoading(false)
                         // Revisamos el  estado del usuario
                         if (!user.status) {
                             setMsjModal('usuario desactivado')
@@ -52,16 +57,18 @@ const SignIn = ({ navigation }) => {
 
                     }
                     ).catch(async (error) => {
+                        setIsLoading(false)
                         await clearAll()
                         const errorCode = error.code;
                         const errorMessage = error.message;
                         setMsjModal(errorCode, '\n', errorMessage)
-                        setShowModal(true) 
+                        setShowModal(true)
                         console.log(errorMessage)
                     })
 
             })
             .catch(async (error) => {
+                setIsLoading(false)
                 await clearAll()
                 const errorCode = error.code;
                 const errorMessage = error.message;
@@ -74,6 +81,9 @@ const SignIn = ({ navigation }) => {
 
     return (
         <View className="flex flex-1 bg-white items-center justify-center ">
+            <ModalLoading
+                visible={isloading}
+            />
             <ModalError
                 setVisible={setShowModal}
                 visible={showModal}
@@ -86,6 +96,7 @@ const SignIn = ({ navigation }) => {
                 Inicia sesión aquí
             </Text>
             <View className="mt-12">
+                
                 <InputFileld
                     title={"Correo Electrónico"}
                     props={"correo@ejemplo.com"}
@@ -101,6 +112,9 @@ const SignIn = ({ navigation }) => {
                     name={"password"}
                     setValue={setDatos}
                     value={datos} />
+
+
+
             </View>
 
             <View className=" w-80 mt-2">
@@ -129,7 +143,7 @@ const SignIn = ({ navigation }) => {
                 </Text>
             </View>
 
-            <StatusBar backgroundColor={"#ffff"} />
+            <StatusBar hidden={true} />
         </View>
     )
 }
