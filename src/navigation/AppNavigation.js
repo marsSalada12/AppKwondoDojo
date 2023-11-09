@@ -71,7 +71,6 @@ const AppNavigation = () => {
                         <Progress.Circle
                             size={100}
                             borderWidth={4}
-
                             indeterminate={true} />
 
                         <Text className='mt-6 w-fit text-white text-xl'>
