@@ -9,7 +9,9 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUserWUID } from '../firebase/cloudstorage/CreateUsers'
 import { getAnOnlyUser } from '../firebase/cloudstorage/users'
 import ModalError from '../componentes/Modals/MAddUserError'
-import { getData, storeData } from '../Storage/storage'
+import { clearAll, getData, storeData } from '../Storage/storage'
+import * as Crypto from 'expo-crypto';
+import { generateMatri } from '../componentes/generateMatricula'
 
 const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
@@ -21,6 +23,7 @@ const Enroll = ({ navigation }) => {
         {
             type_user: 'Usuario',
             name_user: '',
+            matricula: '',
             pattern_name: '',
             matern_name: '',
             mail: '',
@@ -33,7 +36,6 @@ const Enroll = ({ navigation }) => {
 
         }
     );
-
 
     const PasswordsMatch = ({ password, confirmPass }) => {
         if (confirmPass && password !== confirmPass) {
@@ -64,22 +66,33 @@ const Enroll = ({ navigation }) => {
             .then((userCredential) => {
                 //Guardamos el ID del usuario
                 const userUID = userCredential.user.uid;
-                createUserWUID(datos, userUID)
-                    .then(async (user) => {
+                Crypto.digestStringAsync(
+                    Crypto.CryptoDigestAlgorithm.SHA256,
+                    datos.password
+                )
+                    .then((hashP) => {
+                        console.log(hashP)
+                        datos.password = hashP.toString()
+                        datos.confirm_pass = hashP.toString()
 
-                        // Concatenamos la informacion del usuario en la 
-                        // variable que se almacenara
+                        createUserWUID(datos, userUID)
+                            .then(async (user) => {
+                                console.log(user, "createUID")
+                                await storeData(user)
+                                navigation.navigate('TabBarUser')
+                            }
+                            ).catch(async (error) => {
+                                await clearAll()
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                setMsjModal(errorCode, '\n', errorMessage)
+                                setShowModal(true)
+                                console.log(errorMessage)
+                            })
 
-                        await storeData(user)
-                        navigation.navigate('TabBarUser')
-                    }
-                    ).catch(async (error) => {
-                        await clearAll()
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        setMsjModal(errorCode, '\n', errorMessage)
-                        setShowModal(true)
-                        console.log(errorMessage)
+                    })
+                    .catch((error) => {
+
                     })
             })
             .catch(async (error) => {

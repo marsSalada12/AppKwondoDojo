@@ -13,6 +13,7 @@ import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
 import useUser from '../../hooks/useUser';
 import ModalError from '../../componentes/Modals/MAddUserError';
 import InputTel from '../../componentes/Inputs/inputTel';
+import { generateMatri } from '../../componentes/generateMatricula';
 
 
 const AddUser = ({ navigation }) => {
@@ -33,6 +34,7 @@ const AddUser = ({ navigation }) => {
     name_user: '',
     pattern_name: '',
     matern_name: '',
+    matricula: '',
     mail: '',
     phone: '',
     password: '123456',
@@ -56,6 +58,8 @@ const AddUser = ({ navigation }) => {
     createUserWithEmailAndPassword(auth, datos.mail, "123456")
       .then((userCredential) => {
         const user = userCredential.user.uid;
+        datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+        console.log(datos.matricula)
         createUserWUID(datos, user)
           .then(() => {
             navigation.goBack();

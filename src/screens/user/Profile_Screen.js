@@ -11,6 +11,8 @@ import { auth, db } from '../../firebase/firebase'
 import ModalError from '../../componentes/Modals/MAddUserError'
 import Formulario from '../../componentes/Formularios/Formulario'
 import { createChild } from '../../firebase/cloudstorage/Children'
+import * as Crypto from 'expo-crypto';
+import { generateMatri } from '../../componentes/generateMatricula'
 
 
 const ProfileScreen = () => {
@@ -22,6 +24,7 @@ const ProfileScreen = () => {
   const [datos, setDatos] = useState(
     {
       name_user: '',
+      matricula: '',
       pattern_name: '',
       matern_name: '',
       phone: '',
@@ -31,6 +34,16 @@ const ProfileScreen = () => {
       hijos_matricula: [],
     }
   )
+
+  const initialChidrenInfo = {
+    name_user: '',
+    pattern_name: '',
+    matern_name: '',
+    matricula: '',
+    mail: '',
+    status: true
+  }
+  const [newPass, setNewPass] = useState('')
 
   useEffect(() => {
     // setLoading(true)
@@ -42,7 +55,7 @@ const ProfileScreen = () => {
           setDatos({ ...doc.data() })
           console.log(doc.data())
         })
-       
+
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -57,15 +70,18 @@ const ProfileScreen = () => {
       getData().then(async (value) => {
         const infoUser = doc(db, "Usuarios", value.userUID);
         console.log(value.userUID)
+        datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+        console.log(datos.matricula)
         await updateDoc(infoUser, {
           name_user: datos.name_user,
           pattern_name: datos.pattern_name,
           matern_name: datos.matern_name,
-          phone: datos.phone
+          phone: datos.phone,
+          matricula: datos.matricula
         });
 
         console.log("Información de usuario actualizada");
-        navigation.goBack();
+        navigation.navigate("HomeU");
       }
       ).catch()
     } catch (error) {
@@ -86,15 +102,12 @@ const ProfileScreen = () => {
   };
 
   const handleAgregarHijo = async () => {
-
     // Creamos al hijo en la base de datos y guardamos el ID
     const child_id = await createChild(initialChidrenInfo)
     getData()
       .then(async (value) => {
-
         // Apuntamos al documento
         const userRef = doc(db, "Usuarios", value.userUID);
-
         // Agregamos el id del hijo al arreglo de "hijos_matricula"
         await updateDoc(userRef, {
           hijos_matricula: arrayUnion(child_id)
@@ -117,7 +130,7 @@ const ProfileScreen = () => {
         console.log('Limpiado: ', value);
         navigation.navigate('HomeU')
         navigation.navigate('Main')
-        
+
       })
       .catch((error) => {
         console.log('Ocurrio un error: ', error);
@@ -137,51 +150,67 @@ const ProfileScreen = () => {
   }
 
   const ChangePass = async () => {
-    const user = auth.currentUser;
-    const newPassword = datos.password;
     //Actualizar contrasseña en el servicio de auth
-    updatePassword(user, newPassword).then(() => {
-      console.log('Se actualizo')
+    Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      newPass.password
+    )
+      .then((hashP) => {
+        const user = auth.currentUser;
 
-      //Actualizar la contraseña en la base de datos
-      getData()
-        .then(async (value) => {
-          const infoUser = doc(db, "Usuarios", value.userUID);
-          console.log(value.userUID)
-          await updateDoc(infoUser, {
-            confirm_pass: newPassword,
-            password: newPassword
+        updatePassword(user, hashP)
+          .then(() => {
+            console.log('Se actualizo')
+
+            //Actualizar la contraseña en la base de datos
+            getData()
+              .then(async (value) => {
+                const infoUser = doc(db, "Usuarios", value.userUID);
+                console.log(value.userUID)
+                await updateDoc(infoUser, {
+                  confirm_pass: hashP,
+                  password: hashP
+                });
+                setMensaje('Contraseña actualizada')
+                setShowModal(true)
+                // navigation.goBack();
+                setNewPass('')
+              })
+              .catch((error) => {
+
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setMensaje(errorCode, ' ', errorMessage)
+                setShowModal(true)
+                console.log('ChangePass - GetData: ', error)
+
+              })
+
+          }).catch((error) => {
+
+
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setMensaje(errorCode, ' -- ', errorMessage)
+
+            if (errorCode === 'auth/requires-recent-login') {
+              setMensaje(mensaje + '\n \n Requiere volver a iniciar sesion')
+            }
+
+            setShowModal(true)
+
+            console.log('ChangePass - UpdataPassword: ', errorCode, ' -- ', errorMessage)
+
           });
-          setMensaje('Contraseña actualizada')
-          setShowModal(true)
-          // navigation.goBack();
-        })
-        .catch((error) => {
 
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          setMensaje(errorCode, ' ', errorMessage)
-          setShowModal(true)
-          console.log('ChangePass - GetData: ', error)
-
-        })
-
-    }).catch((error) => {
-
-
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      setMensaje(errorCode, ' -- ', errorMessage)
-
-      if (errorCode === 'auth/requires-recent-login') {
-        setMensaje(mensaje + '\n \n Requiere volver a iniciar sesion')
-      }
-
-      setShowModal(true)
-
-      console.log('ChangePass - UpdataPassword: ', errorCode, ' -- ', errorMessage)
-
-    });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setMensaje(errorCode, ' ', errorMessage)
+        setShowModal(true)
+        console.log('ChangePass - Updatepass: ', error)
+      })
   };
 
   return (
@@ -233,14 +262,15 @@ const ProfileScreen = () => {
           Modificar información
         </Text>
       </TouchableOpacity>
+
       <Text className="text-xl text-bold">Modificar contraseña</Text>
       <PasswordInput
         title={"Contraseña"}
-        props={" "}
+        props={""}
         name={"password"}
-        setValue={setDatos}
-        value={datos} />
-      <MinPas password={datos.password} />
+        setValue={setNewPass}
+        value={newPass} />
+      <MinPas password={newPass} />
       <TouchableOpacity
         onPress={() => ChangePass()}
         className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
@@ -248,6 +278,9 @@ const ProfileScreen = () => {
           Modificar contraseña
         </Text>
       </TouchableOpacity>
+
+
+
       {
         datos.hijos_matricula.length > 0
           ?

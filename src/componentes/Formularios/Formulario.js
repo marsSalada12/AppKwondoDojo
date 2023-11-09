@@ -1,19 +1,22 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import InputFileld from '../Inputs/input'
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
+import { generateMatri } from '../generateMatricula'
 
 export const Formulario = ({ childID }) => {
     const [datos, setDatos] = useState(
         {
             name_user: '',
+            matricula: '',
             pattern_name: '',
             matern_name: '',
             mail: '',
             status: true
         }
     )
+
     //desactivar hijo(cambiar status)
     const desactivar = async () => {
         const childInfo = doc(db, "Children", childID);
@@ -26,12 +29,14 @@ export const Formulario = ({ childID }) => {
     const Actualizar = async () => {
         try {
             const childInfo = doc(db, "Children", childID);
-            console.log(childID)
+            datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+            console.log(datos)
             await updateDoc(childInfo, {
                 name_user: datos.name_user,
                 pattern_name: datos.pattern_name,
                 matern_name: datos.matern_name,
-                mail: datos.mail
+                mail: datos.mail, 
+                matricula: datos.matricula
             });
             console.log("Información actualizada");
             // navigation.goBack();
@@ -40,11 +45,11 @@ export const Formulario = ({ childID }) => {
         }
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         console.log(childID)
         onSnapshot(doc(db, "Children", childID), (doc) => {
+            datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
             setDatos({ ...doc.data() })
-
         });
     }, [])
 
