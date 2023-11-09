@@ -45,7 +45,7 @@ const TabNavigatorOptions = ({ route }) => ({
 export const TabBarUser = () => {
     return (
         <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName='HomeU'
             
             screenOptions={TabNavigatorOptions}>
 
@@ -70,7 +70,7 @@ export const TabBarUser = () => {
 export const TabBarAdmin = () => {
     return (
         <Tab.Navigator
-            initialRouteName='Home'
+            initialRouteName='HomeA'
             screenOptions={TabNavigatorOptions}>
 
             <Tab.Screen

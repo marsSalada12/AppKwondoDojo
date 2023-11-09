@@ -50,6 +50,7 @@ const AddGroup = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [showModalErr, setShowModalErr] = useState(false)
     const [mensaje, setMensaje] = useState('')
+    const [ocupado, setOCupado] = useState(false)
 
     const initialDatos = {
         type_group: '',
@@ -86,21 +87,18 @@ const AddGroup = ({ navigation }) => {
     }
 
     //Mëtodo para comprobar si el maestro ya tiene un grupo a esa hora
+    useEffect(()=>{
+        maesHoras()
+    },[datos])
+    
     const maesHoras = async () => {
         const maestro = datos.name_teac;
         const horario = datos.schedule;
         const gruposQuery = query(collection(db, "Groups"), where("name_teac", "==", maestro), where("schedule", "==", horario));
-        const gruposSnapshot = await getDocs(gruposQuery);
-
-        if (gruposSnapshot.size > 0) {
-            // El maestro ya tiene un grupo a esa hora
-            return false;
-        } else {
-            // El maestro no tiene un grupo a esa hora
-            return true;
-        }
+        const gruposSnapshot = await getDocs(gruposQuery);            
+        setOCupado(gruposSnapshot.size != 0);
+        
     }
-
 
     //Funcion para verificar que el formulario se haya llenado completo
     // Vamos a devolver "true" si el formulario esta completo
@@ -123,7 +121,7 @@ const AddGroup = ({ navigation }) => {
 
     // Metodo para actualizar la informacion del grupo
     const actualizar = async () => {
-        if (VerificarFormulario() &&  await maesHoras()) {
+        if (VerificarFormulario()) {
             const infoGroups = doc(db, "Groups", datos.id);
             await updateDoc(infoGroups, {
                 schedule: datos.schedule,
@@ -205,14 +203,24 @@ const AddGroup = ({ navigation }) => {
             {
                 loading
                     ? null
-                    : <Dropdown
-                        list={data}
-                        title={"Horaro"}
-                        name={"schedule"}
-                        setValue={setDatos}
-                        value={datos} />
-            }
+                    : <View>
+                        <Dropdown
+                            list={data}
+                            title={"Horario"}
+                            name={"schedule"}
+                            setValue={setDatos}
+                            value={datos} />
+                        {
+                            ocupado
+                                ?
+                                <Text className='text-red'>
+                                  {datos.name_teac} ya tiene grupo a esa hora  
+                                </Text>
+                                : null
 
+                        }
+                    </View>
+            }
 
             <InputCupo
                 title={"Cupo"}

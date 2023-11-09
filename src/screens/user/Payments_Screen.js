@@ -63,44 +63,31 @@ const PaymentsScreen = ({ navigation }) => {
     };
 
 
+  useEffect(() => {
+    fetchChildNames();
+  },[])
 
-
-    return (
-        <View>
-            <ModalLoading 
-            visible={isLoading}
-            />
-            <StatusBar hidden={true} />
-            <Text className="mb-6 mt-4 ml-7 text-lg">Mensualidad</Text>
-
-            {/* Renderizamos el boton para que se inscriba el usuario */}
-            {/* <TouchableOpacity
-                // onPress={() => navigation.navigate("Inscripcion", child)}
-                className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center" >
-                <Text className="w-80 text-center">Inscripcion de {userData.name_user} {userData.pattern_name} {userData.matern_name}</Text>
-    </TouchableOpacity> */}
-
-
-            {/* Vamos a cargar los botones para la inscripcion de los hijos */}
-
-            {
-                childNames.map((child, index) => {
-                    return (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={() => navigation.navigate("Inscripcion", child)}
-                            className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
-                            <Text className="w-80 text-center">
-                                Inscripcion de {child.name_user} {child.pattern_name} {child.matern_name}
-                            </Text>
-                        </TouchableOpacity>
-                    );
-
-                })
-            }
-        </View>
-    );
-
+  return (
+    <View>
+      <StatusBar hidden={true} />
+      <Text className="mb-6 mt-4 ml-7 text-lg">Mensualidad</Text>
+      {childNames.map((child, index) => {
+        if (child.id_user || child.userUID) { // Comprueba si hay un nombre de usuario
+          return (
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigation.navigate("Inscripcion", child)}
+              className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center"
+            >
+              <Text className="w-80 text-center">Inscripcion de {child.name_user}</Text>
+            </TouchableOpacity>
+          );
+        }else
+          return null; // No tiene nombre de usuario, no se muestra el botón
+      })}
+    </View>
+  );
+  
 
 }
 
