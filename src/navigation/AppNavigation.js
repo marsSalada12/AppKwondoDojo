@@ -15,6 +15,7 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import * as Progress from 'react-native-progress';
 import inscripcion from '../screens/user/inscripcion';
 import Mensualidad from '../screens/user/mensualidad';
+import Referencia from '../screens/user/referencia';
 
 const TabScreenOptions = (title) => ({
     title: title,
@@ -108,7 +109,7 @@ const AppNavigation = () => {
                             < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
                             <Stack.Screen name="Inscripcion" component={inscripcion} options={TabScreenOptions("Mensualidad")} />
                             <Stack.Screen name="Mensualidad" component={Mensualidad} options={TabScreenOptions("Confirmación")} />
-
+                            <Stack.Screen name="Referencia" component={Referencia} options={TabScreenOptions("Referencia")} />
                         </Stack.Navigator>
                     </NavigationContainer>
             }
