@@ -80,7 +80,8 @@ const Enroll = ({ navigation }) => {
                         console.log(hashP)
                         datos.password = hashP.toString()
                         datos.confirm_pass = hashP.toString()
-
+                        matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+                        datos.matricula = matricula
                         createUserWUID(datos, userUID)
                             .then(async (user) => {
                                 setIsLoading(false)

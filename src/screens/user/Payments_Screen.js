@@ -48,7 +48,6 @@ const PaymentsScreen = ({ navigation }) => {
 
 
   useEffect(() => {
-    
     fetchChildNames();
 
   }, [userData]);
@@ -59,7 +58,6 @@ const PaymentsScreen = ({ navigation }) => {
       <Text className="mb-6 mt-4 ml-7 text-lg">Mensualidad</Text>
       {childNames.map((child, index) => {
         if (child.id_user || child.userUID) { // Comprueba si hay un nombre de usuario
-          {console.log(child, "child")}
           return (
             <TouchableOpacity
               key={index}
@@ -70,7 +68,7 @@ const PaymentsScreen = ({ navigation }) => {
             </TouchableOpacity>
           );
         }else
-          return null; 
+          return null; // No tiene nombre de usuario, no se muestra el botón
       })}
     </View>
   );
