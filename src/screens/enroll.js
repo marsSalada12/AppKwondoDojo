@@ -53,7 +53,7 @@ const Enroll = ({ navigation }) => {
     };
 
     const MinPas = ({ password }) => {
-        if (password.length > 6) {
+        if (password.length >= 6) {
             return null; // Las contraseñas coinciden, no se muestra ningún mensaje
         } else {
             return (

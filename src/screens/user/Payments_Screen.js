@@ -48,6 +48,7 @@ const PaymentsScreen = ({ navigation }) => {
 
 
   useEffect(() => {
+    
     fetchChildNames();
 
   }, [userData]);
@@ -69,7 +70,7 @@ const PaymentsScreen = ({ navigation }) => {
             </TouchableOpacity>
           );
         }else
-          return null; // No tiene nombre de usuario, no se muestra el botón
+          return null; 
       })}
     </View>
   );
