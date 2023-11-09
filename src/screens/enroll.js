@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import InputFileld from '../componentes/Inputs/input'
 import UsersInfo from '../componentes/Modals/UsersInfo'
@@ -12,10 +12,14 @@ import ModalError from '../componentes/Modals/MAddUserError'
 import { clearAll, getData, storeData } from '../Storage/storage'
 import * as Crypto from 'expo-crypto';
 import { generateMatri } from '../componentes/generateMatricula'
+import InputTel from '../componentes/Inputs/inputTel'
+import ModalLoading from '../componentes/loading/loading'
 
 const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [msjModal, setMsjModal] = useState('')
+
+    const [isloading, setIsLoading] = useState(false)
 
     const [visible, setVisible] = useState(false);
 
@@ -62,6 +66,8 @@ const Enroll = ({ navigation }) => {
 
 
     const autenticar = () => {
+        setIsLoading(false)
+
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
                 //Guardamos el ID del usuario
@@ -77,11 +83,13 @@ const Enroll = ({ navigation }) => {
 
                         createUserWUID(datos, userUID)
                             .then(async (user) => {
+                                setIsLoading(false)
                                 console.log(user, "createUID")
                                 await storeData(user)
                                 navigation.navigate('TabBarUser')
                             }
                             ).catch(async (error) => {
+                                setIsLoading(false)
                                 await clearAll()
                                 const errorCode = error.code;
                                 const errorMessage = error.message;
@@ -91,11 +99,20 @@ const Enroll = ({ navigation }) => {
                             })
 
                     })
-                    .catch((error) => {
+                    .catch(async (error) => {
+                        setIsLoading(false)
+                        await clearAll()
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        setMsjModal(errorCode, '\n', errorMessage)
+                        setShowModal(true)
+                        console.log(errorCode, errorMessage)
 
                     })
             })
             .catch(async (error) => {
+
+                setIsLoading(false)
                 await clearAll()
                 const errorCode = error.code;
                 const errorMessage = error.message;
@@ -106,74 +123,104 @@ const Enroll = ({ navigation }) => {
     }
 
     return (
-        <View className="flex flex-1 bg-white items-center justify-center ">
+        <ScrollView>
+            <ModalLoading
+                visible={isloading}
+            />
             <ModalError
                 setVisible={setShowModal}
                 visible={showModal}
                 message={msjModal}
             />
-            <Image
-                source={require('../../assets/logo.png')}
-                className='w-56 h-56' />
-
-            <Text className={"text-3xl font-thin text-center w-80"}>
-                Registrate aquí
-            </Text>
-            <UsersInfo
-                visible={visible}
-                setVisible={setVisible}
-            />
-
-            <View>
-
-                <InputFileld
-                    title={"Correo Electrónico"}
-                    props={"correo@ejemplo.com"}
-                    edita={true}
-                    max={100}
-                    name={"mail"}
-                    setValue={setDatos}
-                    value={datos} />
-
-                <PasswordInput
-                    title={"Contraseña"}
-                    props={"........."}
-                    name={"password"}
-                    setValue={setDatos}
-                    value={datos} />
-
-                <MinPas password={datos.password} />
-                <PasswordInput
-                    title={"Confirmar contraseña"}
-                    props={"........."}
-                    name={"confirm_pass"}
-                    setValue={setDatos}
-                    value={datos} />
-
-                <PasswordsMatch password={datos.password} confirmPass={datos.confirm_pass} />
-
-                <TouchableOpacity
-                    onPress={() => {
-                        autenticar()
-                    }}
-                    className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
-                    <Text className="text-lg text-white font-bold">
-                        Registrate
+            <View className="flex flex-1 bg-white items-center justify-center py-28">
+                <Image
+                    source={require('../../assets/logo.png')}
+                    className='w-56 h-56' />
+                <Text className={"text-3xl font-thin text-center w-80"}>
+                    Registrate aquí
+                </Text>
+                <UsersInfo
+                    visible={visible}
+                    setVisible={setVisible}
+                />
+                <View>
+                    <InputFileld
+                        title={"Nombre/s"}
+                        props={" "}
+                        edita={true}
+                        max={100}
+                        name={"name_user"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <InputFileld
+                        title={"Apellido paterno"}
+                        props={" "}
+                        edita={true}
+                        max={100}
+                        name={"pattern_name"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <InputFileld
+                        title={"Apellido materno"}
+                        props={" "}
+                        edita={true}
+                        max={100}
+                        name={"matern_name"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <InputTel
+                        title={"Teléfono"}
+                        props={" "}
+                        edita={true}
+                        max={10}
+                        min={10}
+                        name={"phone"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <InputFileld
+                        title={"Correo Electrónico"}
+                        props={"correo@ejemplo.com"}
+                        edita={true}
+                        max={100}
+                        name={"mail"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <PasswordInput
+                        title={"Contraseña"}
+                        props={"........."}
+                        name={"password"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <MinPas password={datos.password} />
+                    <PasswordInput
+                        title={"Confirmar contraseña"}
+                        props={"........."}
+                        name={"confirm_pass"}
+                        setValue={setDatos}
+                        value={datos} />
+                    <PasswordsMatch password={datos.password} confirmPass={datos.confirm_pass} />
+                    <TouchableOpacity
+                        onPress={() => {
+                            autenticar()
+                        }}
+                        className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+                        <Text className="text-lg text-white font-bold">
+                            Registrate
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View className=" flex flex-row justify-center w-96 ">
+                    <Text>
+                        Ya tienes cuenta?{" "}
                     </Text>
-                </TouchableOpacity>
-
-            </View>
-            <View className=" flex flex-row justify-center w-96 ">
-                <Text>
-                    Ya tienes cuenta?{" "}
-                </Text>
-                <Text onPress={() => navigation.navigate("SignIn")}
-                    className=" underline w-20">
-                    Inicia sesión
-                </Text>
-            </View>
-            <StatusBar backgroundColor={'#ffff'} />
-        </View >
+                    <Text onPress={() => navigation.navigate("SignIn")}
+                        className=" underline w-20">
+                        Inicia sesión
+                    </Text>
+                </View>
+                <StatusBar style='dark' />
+            </View >
+        </ScrollView>
     )
 }
 
