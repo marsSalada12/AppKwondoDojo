@@ -6,10 +6,6 @@ import { auth } from '../../firebase/firebase'
 
 const HomeScreen = ({navigation}) => {
 
-  useLayoutEffect(() => {
-
-  }, [])
-
   return (
     <View>
       <StatusBar hidden={true} />
