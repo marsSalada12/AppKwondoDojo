@@ -44,9 +44,10 @@ const Mensualidad = ({ navigation }) => {
 
             <View className="items-center">
                 <TouchableOpacity className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6 ml-5 mr-5"
-                    onPress={()=>navigation.navigate("Referencia", infoFull)}>
+                    onPress={()=>navigation.navigate("Referencia", {alumno, grupo})}>
                     <Text className="text-white text-center w-72">Generar referencia</Text>
                 </TouchableOpacity>
+                {console.log(infoFull, "red")}
                 <TouchableOpacity className="rounded-md bg-red p-4 w-80 items-center mb-6 ml-5 mr-5">
                     <Text className="text-white text-center w-72">Cancelar</Text>
                 </TouchableOpacity>

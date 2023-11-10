@@ -72,6 +72,7 @@ const PaymentsScreen = ({ navigation }) => {
       <StatusBar hidden={true} />
       <Text className="mb-6 mt-4 ml-7 text-lg">Mensualidad</Text>
       {childNames.map((child, index) => {
+        
         if (child.id_user || child.userUID) { // Comprueba si hay un nombre de usuario
           return (
             <TouchableOpacity
