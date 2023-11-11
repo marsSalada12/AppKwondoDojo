@@ -19,7 +19,6 @@ export const createChild = async (data) => {
 
 
 //Funcion para traerse la informacion de un niño
-
 export const getDataChild = async (child_id) => {
   const childrenRef = doc(db, "Children", child_id);
   const docSnapshot = await getDoc(childrenRef);
@@ -28,5 +27,15 @@ export const getDataChild = async (child_id) => {
   } else {
     return { noting: "nothing" }
   }
-
 }
+
+
+export const getDataChildren = async (child_ids) => {
+  const child_info = await Promise.all(
+    child_ids.map(async (ch_id) => {
+      return await getDataChild(ch_id);
+    })
+  );
+
+  return child_info;
+};

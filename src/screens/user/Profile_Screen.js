@@ -14,12 +14,13 @@ import { createChild } from '../../firebase/cloudstorage/Children'
 import * as Crypto from 'expo-crypto';
 import { generateMatri } from '../../componentes/generateMatricula'
 import ModalLoading from '../../componentes/loading/loading'
-
+import { useIsFocused } from '@react-navigation/native';
 
 const ProfileScreen = () => {
     const navigation = useNavigation()
     const [showModal, setShowModal] = useState(false)
     const [loading, setLoading] = useState(true)
+    const isFocused = useIsFocused();
 
     const [mensaje, setMensaje] = useState('')
     const [datos, setDatos] = useState(
@@ -50,22 +51,26 @@ const ProfileScreen = () => {
         setLoading(true)
         //Consultamos la sesion almacenada en el telefono
         getData()
-            .then((userData) => {
-                // Consulatamos la BD para traernos los datos del usuario
-                onSnapshot(doc(db, "Usuarios", userData.userUID), (doc) => {
-                    setDatos({ ...doc.data() })
-                    setLoading(false)
-                    console.log(doc.data())
-                })
-
+            .then(async (data) => {
+                setDatos(data)
+                traerInformacionUsuario(data.userUID)
             })
             .catch((error) => {
                 setLoading(false)
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
+                console.log('useEffect - onSnapshot ', errorCode, ' ', errorMessage)
             })
-    }, [])
+            .finally(()=>{
+                setLoading(false)
+            })
+    }, [useIsFocused])
+
+    async function traerInformacionUsuario(id) {
+        const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
+            setDatos(doc.data());
+        });
+    }
 
     const Actualizar = () => {
         try {
@@ -73,7 +78,6 @@ const ProfileScreen = () => {
             setLoading(true)
             getData()
                 .then(async (value) => {
-
                     const infoUser = doc(db, "Usuarios", value.userUID);
                     console.log(value.userUID)
                     datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
@@ -97,6 +101,8 @@ const ProfileScreen = () => {
                     console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
                 })
         } catch (error) {
+
+
             console.error("Error al actualizar correo o información del usuario", error);
         }
     }
@@ -305,16 +311,13 @@ const ProfileScreen = () => {
 
 
                         {
-                            datos.hijos_matricula.length > 0
-                                ?
-                                datos.hijos_matricula.map((hijo_id, index) => {
-                                    return (
-                                        <Formulario
-                                            childID={hijo_id}
-                                            key={index} />
-                                    )
-                                })
-                                : null
+                            datos.hijos_matricula.map((hijo_id, index) => {
+                                return (
+                                    <Formulario
+                                        childID={hijo_id}
+                                        key={index} />
+                                )
+                            })
                         }
                         <TouchableOpacity
                             onPress={() => {

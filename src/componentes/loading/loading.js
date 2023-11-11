@@ -1,7 +1,7 @@
 import { View, Text, Modal } from 'react-native'
 import * as Progress from 'react-native-progress';
 
-const ModalLoading = ({ visible }) => {
+const ModalLoading = ({ visible=true }) => {
 
     return (
         <Modal

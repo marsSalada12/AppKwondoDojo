@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import Main from '../screens/main';
 import SignIn from '../screens/SignIn';
 import Enroll from '../screens/enroll';
@@ -31,7 +31,7 @@ const TabScreenOptions = (title) => ({
     },
 });
 
-const Stack = createNativeStackNavigator();
+const Stack =  createStackNavigator();
 
 const AppNavigation = () => {
     const [loading, setLoading] = useState(true)
@@ -93,8 +93,9 @@ const AppNavigation = () => {
                         </TouchableOpacity>
                     </View>
                     :
-                    <NavigationContainer >
-                        <Stack.Navigator initialRouteName={paginaInicial} >
+                    <NavigationContainer  >
+                        <Stack.Navigator 
+                            initialRouteName={paginaInicial} >
                             {/* Pantallas del login */}
                             <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
                             <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
