@@ -67,7 +67,6 @@ const Enroll = ({ navigation }) => {
 
     const autenticar = () => {
         setIsLoading(false)
-
         createUserWithEmailAndPassword(auth, datos.mail, datos.password)
             .then((userCredential) => {
                 //Guardamos el ID del usuario
