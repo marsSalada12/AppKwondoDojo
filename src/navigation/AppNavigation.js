@@ -15,7 +15,7 @@ import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import * as Progress from 'react-native-progress';
 import inscripcion from '../screens/user/inscripcion';
 import Mensualidad from '../screens/user/mensualidad';
-import Referencia from '../screens/user/referencia';
+import Referencia from '../screens/user/Referencia'
 
 
 const TabScreenOptions = (title) => ({

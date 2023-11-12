@@ -2,10 +2,11 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { generateReference } from '../../componentes/generateRefe';
-import { createPayment, createPaymentWUID } from '../../firebase/cloudstorage/CreatePayment';
+
 import { getData } from '../../Storage/storage';
 import { arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
+import { createPayment } from '../../firebase/cloudstorage/CreatePayment';
 
 const Referencia = () => {
   const navigation = useNavigation();
@@ -41,7 +42,6 @@ const Referencia = () => {
     const payments_id = await createPayment(datos);
     setDatos({ ...datos, payment_id: payments_id });
     console.log(datos.payment_id)
-    console.log(alumnoIn)
     // Verificar si alumnoIn es un padre o un hijo
     if (alumnoIn.type_user == "Usuario") {
       // Si es un padre, actualiza el documento del padre
@@ -49,36 +49,31 @@ const Referencia = () => {
       await updateDoc(userRef, {
         payments_id: arrayUnion(payments_id),
       });
+      console.log("se realixo papiu")
     } else {
       // Si es un hijo, actualiza su propio documento
       const alumnoRef = doc(db, "Children", alumnoIn.id_user);
       await updateDoc(alumnoRef, {
         payments_id: arrayUnion(payments_id),
       })
-
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-
-          console.log('Handlepayments - GetData: ', error);
-        });
+      console.log("se realixo hije")
 
     }
   }
 
   useEffect(() => {
     getData()
-    .then(async (data) => {
+      .then(async (data) => {
         setData(data)
         console.log(data)
-    })
-    .catch((error) => {
-        
+      })
+      .catch((error) => {
+
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log('useEffect - onSnapshot ', errorCode, ' ', errorMessage)
-    })
-  },[])
+      })
+  }, [])
   return (
     <View className="ml-8 mr-8">
       <Text className="text-3xl mt-4">Mensualidad</Text>
@@ -104,7 +99,15 @@ const Referencia = () => {
         <Text className="mt-2 text-lg">{datos.due_date}</Text>
       </View>
       <View>
-        <TouchableOpacity onPress={() => { handlePayments() }}><Text>Volver al inicio</Text></TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            handlePayments(),
+            navigation.navigate("HomeU")
+          }}>
+          <Text>
+            Volver al inicio
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
