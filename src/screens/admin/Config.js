@@ -67,7 +67,7 @@ const Config = ({ navigation }) => {
                     </Text>
                 </View>
                 <TouchableOpacity
-                    onPress={() => console.log("first")}
+                    onPress={() => navigation.navigate("Roles")}
                     className={"rounded-md p-4 w-80 bg-baseDark items-center mt-2 mb-10 "}>
                     <Text className="text-lg text-blue-400 font-bold">
                         Roles

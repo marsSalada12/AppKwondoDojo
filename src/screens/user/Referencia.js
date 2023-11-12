@@ -35,7 +35,10 @@ const Referencia = () => {
     emission_date: formatDate(addDays(new Date().getTime(), 0)),
     price: grupoIn.price,
     reference: generateReference(alumnoIn.matricula),
-    status: "Pendiente"
+    status: "Pendiente",
+    grupo: grupoIn.type_group,
+    hora: grupoIn.schedule,
+    matricula: alumnoIn.matricula
   });
 
   const handlePayments = async () => {

@@ -137,7 +137,7 @@ const AddUser = ({ navigation }) => {
       {/* <ModalLoading
         visible={isLoading} /> */}
 
-      <View className="mt-6 ml-6">
+      <View className="mt-4 w-80 ml-1">
         <Text className="text-2xl">
           Datos de usuario
         </Text>

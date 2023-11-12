@@ -16,6 +16,7 @@ import * as Progress from 'react-native-progress';
 import inscripcion from '../screens/user/inscripcion';
 import Mensualidad from '../screens/user/mensualidad';
 import Referencia from '../screens/user/Referencia';
+import Roles from '../screens/admin/Roles';
 
 
 const TabScreenOptions = (title) => ({
@@ -100,7 +101,8 @@ const AppNavigation = () => {
                             <Stack.Screen name="UsersAdmin" component={UsersAdmin} options={TabScreenOptions("Usuarios")} />
                             <Stack.Screen name="AddUser" component={AddUser} options={TabScreenOptions("Usuario")} />
                             <Stack.Screen name="AddGroup" component={AddGroup} options={TabScreenOptions("Grupos")} />
-                            <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuracón")} />
+                            <Stack.Screen name="Config" component={Config} options={TabScreenOptions("Configuración")} />
+                            <Stack.Screen name="Roles" component={Roles} options={TabScreenOptions("Roles")} />
                             {/* Pantalas del usuario */}
                             < Stack.Screen name="TabBarUser" component={TabBarUser} options={{ headerShown: false }} />
                             <Stack.Screen name="Inscripcion" component={inscripcion} options={TabScreenOptions("Mensualidad")} />
