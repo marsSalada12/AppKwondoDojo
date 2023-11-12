@@ -14,6 +14,7 @@ import useUser from '../../hooks/useUser';
 import ModalError from '../../componentes/Modals/MAddUserError';
 import InputTel from '../../componentes/Inputs/inputTel';
 import { generateMatri } from '../../componentes/generateMatricula';
+import Formulario from '../../componentes/Formularios/Formulario';
 
 
 const AddUser = ({ navigation }) => {
