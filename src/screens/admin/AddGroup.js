@@ -72,7 +72,7 @@ const AddGroup = ({ navigation }) => {
 
     // Metodo para guardar a un grupo en la BD
     const autenticar = async () => {
-        if (VerificarFormulario() && await maesHoras()) {
+        if (VerificarFormulario() && !ocupado) {
             console.log('insertamos el grupo')
             const gruposReference = doc(collection(db, "Groups"));
             await setDoc(gruposReference, datos);

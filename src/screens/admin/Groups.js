@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { AdjustmentsHorizontalIcon } from 'react-native-heroicons/outline'
-import { collection, onSnapshot, query } from 'firebase/firestore'
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import { useNavigation } from '@react-navigation/native'
 import { StatusBar } from 'expo-status-bar'
@@ -13,11 +13,15 @@ const Groups = () => {
   const [datos, setDatos] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Variable para filtrar por el estatus de los usuarios, por defecto va a traer a todos
+  const [filtro, setFiltro] = useState([true, false])
+
 
   useEffect(
     () => {
       setLoading(true)
-      const q = query(collection(db, "Groups"));
+      const q = query(collection(db, "Groups"), where("status", "in", filtro));
+      // const q = query(collection(db, "Groups"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const grupos = [];
         querySnapshot.forEach((doc) => {
@@ -27,16 +31,19 @@ const Groups = () => {
       });
       setLoading(false)
       return unsubscribe
-    }, []
+    }, [filtro]
   )
 
   return (
     <>
       <FiltrarGrupo
+        filtro={filtro}
+        setFiltro={setFiltro}
         setVisible={setIsModalVisible}
         visible={isModalVisible}
       />
       <ScrollView >
+
         <View className="flex flex-1 items-center mb-28">
           <View className="flex-row items-center justify-between">
             <TouchableOpacity
@@ -47,8 +54,10 @@ const Groups = () => {
               </Text>
             </TouchableOpacity>
 
-            {/* <AdjustmentsHorizontalIcon color="black" size={35}
-              onPress={() => setIsModalVisible(true)} /> */}
+            <AdjustmentsHorizontalIcon color="black" size={35}
+              onPress={() => {
+                setIsModalVisible(true)
+              }} />
 
           </View>
           {

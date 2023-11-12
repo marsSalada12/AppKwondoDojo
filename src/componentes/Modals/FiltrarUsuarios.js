@@ -2,13 +2,13 @@ import Checkbox from 'expo-checkbox';
 import { useEffect, useState } from 'react';
 import { View, Text, Modal, TouchableWithoutFeedback } from 'react-native'
 
-const FiltrarGrupo = ({ filtro, setFiltro, visible, setVisible }) => {
-    const [isCheckedAct, setCheckedAct] = useState(filtro[0]);
-    const [isCheckedDes, setCheckedDes] = useState(!filtro[1]);
+const FiltrarUsuarios = ({ filtro, setFiltro, visible, setVisible }) => {
+    const [activos, setActivos] = useState(filtro[0]);
+    const [desactivos, setDesactivos] = useState(!filtro[1]);
 
     useEffect(()=>{
-        setFiltro([isCheckedAct, !isCheckedDes])
-    },[visible, isCheckedAct, isCheckedDes])
+        setFiltro([activos, !desactivos])
+    },[visible, activos, desactivos])
 
 
     return (
@@ -22,12 +22,12 @@ const FiltrarGrupo = ({ filtro, setFiltro, visible, setVisible }) => {
                     <View className='bg-white rounded-xl w-80  items-start justify-center p-10 '>
                         <View className="flex-row ">
                             <Checkbox
-                                value={isCheckedAct}
+                                value={activos}
                                 onValueChange={(check) => {
-                                    setCheckedAct(check)
+                                    setActivos(check)
                                     // handleGroups('activos', check)
                                 }}
-                                color={isCheckedAct ? '#3E3D4F' : undefined}
+                                color={activos ? '#3E3D4F' : undefined}
                             />
                             <Text className='ml-3'>
                                 Grupos activos
@@ -35,11 +35,11 @@ const FiltrarGrupo = ({ filtro, setFiltro, visible, setVisible }) => {
                         </View>
                         <View className="flex-row mt-5 ">
                             <Checkbox
-                                value={isCheckedDes}
+                                value={desactivos}
                                 onValueChange={(check) => {
-                                    setCheckedDes(check)
+                                    setDesactivos(check)
                                 }}
-                                color={isCheckedDes ? '#3E3D4F' : undefined}
+                                color={desactivos ? '#3E3D4F' : undefined}
                             />
                             <Text className='ml-3'>
                                 Grupos desactivados
@@ -52,4 +52,4 @@ const FiltrarGrupo = ({ filtro, setFiltro, visible, setVisible }) => {
     );
 }
 
-export default FiltrarGrupo;
+export default FiltrarUsuarios;
