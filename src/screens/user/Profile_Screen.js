@@ -1,10 +1,9 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input'
 import InputTel from '../../componentes/Inputs/inputTel'
-import { EmailAuthProvider, reauthenticateWithCredential, updateEmail, updatePassword } from 'firebase/auth'
+import { updatePassword } from 'firebase/auth'
 import PasswordInput from '../../componentes/Inputs/password'
-import { useNavigation } from '@react-navigation/native'
 import { clearAll, getData } from '../../Storage/storage'
 import { doc, updateDoc, onSnapshot, arrayUnion } from 'firebase/firestore'
 import { auth, db } from '../../firebase/firebase'
@@ -16,26 +15,15 @@ import { generateMatri } from '../../componentes/generateMatricula'
 import ModalLoading from '../../componentes/loading/loading'
 import { useIsFocused } from '@react-navigation/native';
 
-const ProfileScreen = () => {
-    const navigation = useNavigation()
+const ProfileScreen = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
+    const [mensaje, setMensaje] = useState('')
+
     const [loading, setLoading] = useState(true)
     const isFocused = useIsFocused();
 
-    const [mensaje, setMensaje] = useState('')
-    const [datos, setDatos] = useState(
-        {
-            name_user: '',
-            matricula: '',
-            pattern_name: '',
-            matern_name: '',
-            phone: '',
-            password: '',
-            confirm_pass: '',
-            status: true,
-            hijos_matricula: [],
-        }
-    )
+    const [datos, setDatos] = useState(initialUserInfo)
+    const [newPass, setNewPass] = useState('')
 
     const initialChidrenInfo = {
         name_user: '',
@@ -46,31 +34,54 @@ const ProfileScreen = () => {
         status: true,
         payments_id: []
     }
-    const [newPass, setNewPass] = useState('')
+
+    const initialUserInfo = {
+        name_user: '',
+        matricula: '',
+        pattern_name: '',
+        matern_name: '',
+        phone: '',
+        password: '',
+        confirm_pass: '',
+        status: true,
+        hijos_matricula: [],
+    }
+
+    
 
     useEffect(() => {
-        setLoading(true)
-        //Consultamos la sesion almacenada en el telefono
-        getData()
-            .then(async (data) => {
-                setDatos(data)
-                traerInformacionUsuario(data.userUID)
-            })
-            .catch((error) => {
-                setLoading(false)
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('useEffect - onSnapshot ', errorCode, ' ', errorMessage)
-            })
-            .finally(()=>{
-                setLoading(false)
-            })
-    }, [useIsFocused])
+        console.log(isFocused ? 'Activo' : 'Inactivo')
+
+        if (isFocused) {
+            setLoading(true)
+            setDatos(initialUserInfo)
+            //Consultamos la sesion almacenada en el telefono
+            getData()
+                .then(async (data) => {
+                    setDatos(data)
+                    await traerInformacionUsuario(data.userUID)
+
+                })
+                .catch((error) => {
+                    setLoading(false)
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log('useEffect - onSnapshot ', errorCode, ' ', errorMessage)
+                })
+        } else {
+            setDatos(initialUserInfo)
+            setLoading(false)
+        }
+
+    }, [isFocused])
 
     async function traerInformacionUsuario(id) {
         const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
             setDatos(doc.data());
+            console.log('first')
         });
+
+        setLoading(false)
     }
 
     const Actualizar = () => {
@@ -247,100 +258,103 @@ const ProfileScreen = () => {
             {
                 loading
                     ?
-                    <ModalLoading
-                        visible={loading} />
-                    : <>
-                        <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
-                        <InputFileld
-                            title={"Nombre/s"}
-                            props={" "}
-                            edita={true}
-                            max={100}
-                            name={"name_user"}
-                            setValue={setDatos}
-                            value={datos} />
-                        <InputFileld
-                            title={"Apellido paterno"}
-                            props={" "}
-                            edita={true}
-                            max={100}
-                            name={"pattern_name"}
-                            setValue={setDatos}
-                            value={datos} />
-                        <InputFileld
-                            title={"Apellido materno"}
-                            props={" "}
-                            edita={true}
-                            max={100}
-                            name={"matern_name"}
-                            setValue={setDatos}
-                            value={datos} />
-                        <InputTel
-                            title={"Teléfono"}
-                            props={" "}
-                            edita={true}
-                            max={10}
-                            min={10}
-                            name={"phone"}
-                            setValue={setDatos}
-                            value={datos} />
-                        <MinTelephone phone={datos.phone} />
-                        <TouchableOpacity
-                            onPress={() => Actualizar()}
-                            className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
-                            <Text className="w-80 text-center text-white">
-                                Modificar información
-                            </Text>
-                        </TouchableOpacity>
+                    (
+                        <ModalLoading />
+                    )
+                    : (
+                        <>
+                            <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
+                            <InputFileld
+                                title={"Nombre/s"}
+                                props={" "}
+                                edita={true}
+                                max={100}
+                                name={"name_user"}
+                                setValue={setDatos}
+                                value={datos} />
+                            <InputFileld
+                                title={"Apellido paterno"}
+                                props={" "}
+                                edita={true}
+                                max={100}
+                                name={"pattern_name"}
+                                setValue={setDatos}
+                                value={datos} />
+                            <InputFileld
+                                title={"Apellido materno"}
+                                props={" "}
+                                edita={true}
+                                max={100}
+                                name={"matern_name"}
+                                setValue={setDatos}
+                                value={datos} />
+                            <InputTel
+                                title={"Teléfono"}
+                                props={" "}
+                                edita={true}
+                                max={10}
+                                min={10}
+                                name={"phone"}
+                                setValue={setDatos}
+                                value={datos} />
+                            <MinTelephone phone={datos.phone} />
+                            <TouchableOpacity
+                                onPress={() => Actualizar()}
+                                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+                                <Text className="w-80 text-center text-white">
+                                    Modificar información
+                                </Text>
+                            </TouchableOpacity>
 
-                        <Text className="text-xl text-bold">Modificar contraseña</Text>
-                        <PasswordInput
-                            title={"Contraseña"}
-                            props={""}
-                            name={"password"}
-                            setValue={setNewPass}
-                            value={newPass} />
-                        <MinPas password={newPass} />
-                        <TouchableOpacity
-                            onPress={() => ChangePass()}
-                            className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
-                            <Text className="w-80 text-center text-white">
-                                Modificar contraseña
-                            </Text>
-                        </TouchableOpacity>
+                            <Text className="text-xl text-bold">Modificar contraseña</Text>
+                            <PasswordInput
+                                title={"Contraseña"}
+                                props={""}
+                                name={"password"}
+                                setValue={setNewPass}
+                                value={newPass} />
+                            <MinPas password={newPass} />
+                            <TouchableOpacity
+                                onPress={() => ChangePass()}
+                                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
+                                <Text className="w-80 text-center text-white">
+                                    Modificar contraseña
+                                </Text>
+                            </TouchableOpacity>
 
 
 
-                        {
-                            datos.hijos_matricula.map((hijo_id, index) => {
-                                return (
-                                    <Formulario
-                                        childID={hijo_id}
-                                        key={index} />
-                                )
-                            })
-                        }
-                        <TouchableOpacity
-                            onPress={() => {
-                                handleAgregarHijo()
-                            }}
-                            className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
-                            <Text className="w-80 text-center text-white">
-                                Agregar alumno
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
-                                handleCerrarSesion()
-                                console.log("falta")
-                            }}
-                            className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
-                            <Text className="w-80 text-center text-white">
-                                Cerrar sesion
-                            </Text>
-                        </TouchableOpacity>
+                            {
+                                datos.hijos_matricula.map((hijo_id, index) => {
+                                    return (
+                                        <Formulario
+                                            childID={hijo_id}
+                                            key={index} />
+                                    )
+                                })
+                            }
+                            <TouchableOpacity
+                                onPress={() => {
+                                    handleAgregarHijo()
+                                }}
+                                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
+                                <Text className="w-80 text-center text-white">
+                                    Agregar alumno
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    handleCerrarSesion()
+                                    console.log("falta")
+                                }}
+                                className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
+                                <Text className="w-80 text-center text-white">
+                                    Cerrar sesion
+                                </Text>
+                            </TouchableOpacity>
 
-                    </>
+                        </>
+                    )
             }
 
         </ScrollView>

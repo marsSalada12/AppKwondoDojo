@@ -17,22 +17,38 @@ const PaymentsScreen = ({ navigation }) => {
 
 
     useEffect(() => {
-        setIsLoading(true);
-        setChildNames([])
-        getData()
-            .then(async (data) => {
-                setUserData(data)
-                traerInformacionUsuario(data.userUID)
-                // await traerInformacionUsuario(await data.userUID);
+        if (isFocused) {
+
+            setIsLoading(true);
+            setChildNames([])
+            getData()
+                .then(async (data) => {
+                    setUserData(data)
+                    traerInformacionUsuario(data.userUID)
+                    // await traerInformacionUsuario(await data.userUID);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.log('UseEffect - getData:', error);
+                })
+        } else {
+            setUserData({
+                name_user: '',
+                pattern_name: '',
+                matern_name: '',
+                matricula: '',
+                mail: '',
+                status: true,
+                phone: '',
+                password: '',
+                confirm_pass: '',
+                hijos_matricula: [],
             })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log('UseEffect - getData:', error);
-            })
-            return ()=>{
-                console.log('limpiando')
-            }
+            setChildNames([])
+
+        }
+
     }, [isFocused]);
 
     async function traerInformacionUsuario(id) {
