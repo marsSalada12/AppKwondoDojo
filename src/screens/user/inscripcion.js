@@ -12,6 +12,7 @@ const Inscripcion = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
     const [datos, setDatos] = useState([]);
     const [loading, setLoading] = useState(true);
+
     useEffect(
         () => {
             setLoading(true)
@@ -49,7 +50,7 @@ const Inscripcion = ({ navigation }) => {
                             datos.map((grupillos, index) => {
                                 return (
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate("Mensualidad", {info: grupillos, alumno: info})}
+                                        onPress={() => navigation.navigate("Mensualidad", {"info": grupillos, alumno: info.alumno})}
                                         key={index}
                                         className="rounded-md w-full h-fit bg-white p-4 shadow-2xl items-start mt-2 mb-2">
                                         <View className="flex-row justify-around">

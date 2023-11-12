@@ -23,7 +23,7 @@ export const getDataChild = async (child_id) => {
   const childrenRef = doc(db, "Children", child_id);
   const docSnapshot = await getDoc(childrenRef);
   if (docSnapshot.exists()) {
-    return { ...docSnapshot.data(), id_user: child_id }
+    return { ...docSnapshot.data(), userUID: child_id }
   } else {
     return { noting: "nothing" }
   }

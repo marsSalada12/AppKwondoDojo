@@ -9,7 +9,7 @@ import { db } from '../../firebase/firebase';
 import { createPayment } from '../../firebase/cloudstorage/CreatePayment';
 
 const Referencia = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   const route = useRoute().params;
   const alumnoIn = route.alumno;
   const grupoIn = route.grupo;
@@ -30,6 +30,7 @@ const Referencia = () => {
     return `${day}/${month}/${year}`;
   };
 
+  // Creacion de una variable que tiene los datos que se van a insertar en la coleccion
   const [datos, setDatos] = useState({
     due_date: formatDate(addDays(new Date().getTime(), 7)),
     emission_date: formatDate(addDays(new Date().getTime(), 0)),
@@ -41,50 +42,44 @@ const Referencia = () => {
     matricula: alumnoIn.matricula,
     name_user: alumnoIn.name_user,
     ap_paterno: alumnoIn.pattern_name,
-    ap_materno:alumnoIn.matern_name
+    ap_materno: alumnoIn.matern_name,
+    userUID: alumnoIn.userUID
   });
 
-  const handlePayments = async () => {
-    alumnoIn.type_user == "Usuario" 
-    ? setDatos({...datos, id_user: alumnoIn.userUID}) 
-    : setDatos({...datos, id_user: alumnoIn.id_user})
-    const payments_id = await createPayment(datos);
-    setDatos({ ...datos, payment_id: payments_id });
-    console.log(datos.payment_id)
-    // Verificar si alumnoIn es un padre o un hijo
-    if (alumnoIn.type_user == "Usuario") {
-      // Si es un padre, actualiza el documento del padre
-      
-      const userRef = doc(db, "Usuarios", data.userUID);
-      await updateDoc(userRef, {
-        payments_id: arrayUnion(payments_id),
-      });
-      console.log("se realixo papiu")
-    } else {
-      // Si es un hijo, actualiza su propio documento
-      
-      const alumnoRef = doc(db, "Children", alumnoIn.id_user);
-      await updateDoc(alumnoRef, {
-        payments_id: arrayUnion(payments_id),
-      })
-      console.log("se realixo hije")
 
-    }
-  }
 
   useEffect(() => {
-    getData()
-      .then(async (data) => {
-        setData(data)
-        console.log(data)
-      })
-      .catch((error) => {
+    const handlePayments = async () => {
+      // Insertamos los datos en la coleccion
+      const payments_id = await createPayment(datos);
+      setDatos({ ...datos, payment_id: payments_id });
 
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log('useEffect - onSnapshot ', errorCode, ' ', errorMessage)
-      })
+
+      // Verificar si alumnoIn es un padre o un hijo
+      if (alumnoIn.type_user == "Usuario") {
+
+        // Si es un padre, actualiza el documento del padre
+        const userRef = doc(db, "Usuarios", data.userUID);
+        await updateDoc(userRef, {
+          payments_id: arrayUnion(payments_id),
+        });
+        console.log("se realixo papiu")
+      } else {
+
+        // Si es un hijo, actualiza su propio document
+        const alumnoRef = doc(db, "Children", alumnoIn.userUID);
+        await updateDoc(alumnoRef, {
+          payments_id: arrayUnion(payments_id),
+        })
+        console.log("se realixo hije")
+
+      }
+    }
+    handlePayments()
   }, [])
+
+
+
   return (
     <View className="ml-8 mr-8">
       <Text className="text-3xl mt-4">Mensualidad</Text>
@@ -112,10 +107,10 @@ const Referencia = () => {
       <View>
         <TouchableOpacity
           onPress={() => {
-            handlePayments(),
             navigation.navigate("HomeU")
-          }}>
-          <Text>
+          }}
+          className="rounded-md bg-red p-4 w-80 items-center mt-6 mb-6">
+          <Text className="text-lg text-white font-bold">
             Volver al inicio
           </Text>
         </TouchableOpacity>

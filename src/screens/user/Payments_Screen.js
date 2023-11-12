@@ -53,7 +53,7 @@ const PaymentsScreen = ({ navigation }) => {
 
     async function traerInformacionUsuario(id) {
         const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
-            setUserData(doc.data());
+            setUserData({...doc.data(), "userUID": id});
             traerInformacionChildren(doc.data().hijos_matricula)
         });
     }
@@ -61,6 +61,7 @@ const PaymentsScreen = ({ navigation }) => {
     function traerInformacionChildren(ids) {
         getDataChildren(ids)
             .then((info) => {
+
                 setChildNames(info);
                 // Puedes descomentar la siguiente línea si necesitas realizar alguna operación adicional después de obtener la información de los hijos
                 // setIsLoading(false);
@@ -89,7 +90,7 @@ const PaymentsScreen = ({ navigation }) => {
                         <Text className="mb-6 mt-4 ml-7 text-lg">Mensualidad</Text>
                         {/* Renderizamos el boton de inscripcion de usuario */}
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('Inscripcion', userData)}
+                            onPress={() => navigation.navigate('Inscripcion', {alumno: userData})}
                             className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
                             <Text className="w-80 text-center">
                                 Inscripcion de {userData.name_user} {userData.pattern_name} {userData.matern_name}
@@ -100,10 +101,9 @@ const PaymentsScreen = ({ navigation }) => {
                             return (
                                 <TouchableOpacity
                                     key={index}
-                                    onPress={() => navigation.navigate('Inscripcion', childInfo)}
+                                    onPress={() => navigation.navigate('Inscripcion', {alumno: childInfo})}
                                     className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
                                     <Text className="w-80 text-center">
-                                        {console.log(childInfo)}
                                         Inscripcion de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
                                     </Text>
                                 </TouchableOpacity>)
