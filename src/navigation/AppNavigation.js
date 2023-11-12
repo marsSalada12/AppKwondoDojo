@@ -75,7 +75,7 @@ const AppNavigation = () => {
                             borderWidth={4}
                             indeterminate={true} />
 
-                        <Text className='mt-6 w-fit text-white text-xl'>
+                        <Text className='mt-6 text-center w-24 text-white text-xl'>
                             Cargando
                         </Text>
                         <TouchableOpacity
@@ -86,7 +86,7 @@ const AppNavigation = () => {
                                 await clearAll()
                             }}>
                             <Text
-                                className='mt text-white text-xl'
+                                className=' w-28 text-center text-white text-xl'
                             >
                                 Cerrar sesion
                             </Text>

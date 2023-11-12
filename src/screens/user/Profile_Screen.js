@@ -43,7 +43,8 @@ const ProfileScreen = () => {
         matern_name: '',
         matricula: '',
         mail: '',
-        status: true
+        status: true,
+        payments_id: []
     }
     const [newPass, setNewPass] = useState('')
 
@@ -140,7 +141,7 @@ const ProfileScreen = () => {
                 const errorMessage = error.message;
                 setMensaje(errorCode, ' ', errorMessage)
                 setShowModal(true)
-                console.log('ChangePass - GetData: ', error)
+                console.log('HandleAgregar - GetData: ', error)
 
             })
     }
