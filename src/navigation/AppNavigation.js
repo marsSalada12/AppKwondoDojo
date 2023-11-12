@@ -41,18 +41,13 @@ const AppNavigation = () => {
         setLoading(true)
         getData()
             .then((userData) => {
-                console.log(userData, "---")
                 if (!userData) {
                     setPaginaInicial('Main')
                 }
                 if (userData.type_user === 'Administrador') {
                     setPaginaInicial('TabBarAdmin')
-                    console.log("entre admi")
                 } else {
                     setPaginaInicial('TabBarUser')
-                    console.log({ paginaInicial })
-                    console.log("entre user")
-
                 }
 
                 setLoading(false)
@@ -82,7 +77,6 @@ const AppNavigation = () => {
                             className='mt-6 bg-red px-5 py-2 rounded-lg'
                             onPress={async () => {
                                 const data = await getData()
-                                console.log(data)
                                 await clearAll()
                             }}>
                             <Text
