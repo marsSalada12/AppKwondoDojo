@@ -38,16 +38,23 @@ const Referencia = () => {
     status: "Pendiente",
     grupo: grupoIn.type_group,
     hora: grupoIn.schedule,
-    matricula: alumnoIn.matricula
+    matricula: alumnoIn.matricula,
+    name_user: alumnoIn.name_user,
+    ap_paterno: alumnoIn.pattern_name,
+    ap_materno:alumnoIn.matern_name
   });
 
   const handlePayments = async () => {
+    alumnoIn.type_user == "Usuario" 
+    ? setDatos({...datos, id_user: alumnoIn.userUID}) 
+    : setDatos({...datos, id_user: alumnoIn.id_user})
     const payments_id = await createPayment(datos);
     setDatos({ ...datos, payment_id: payments_id });
     console.log(datos.payment_id)
     // Verificar si alumnoIn es un padre o un hijo
     if (alumnoIn.type_user == "Usuario") {
       // Si es un padre, actualiza el documento del padre
+      
       const userRef = doc(db, "Usuarios", data.userUID);
       await updateDoc(userRef, {
         payments_id: arrayUnion(payments_id),
@@ -55,6 +62,7 @@ const Referencia = () => {
       console.log("se realixo papiu")
     } else {
       // Si es un hijo, actualiza su propio documento
+      
       const alumnoRef = doc(db, "Children", alumnoIn.id_user);
       await updateDoc(alumnoRef, {
         payments_id: arrayUnion(payments_id),
