@@ -83,7 +83,7 @@ const Referencia = () => {
           )
       }
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => {
           navigation.navigate("HomeA")
         }}
@@ -91,7 +91,7 @@ const Referencia = () => {
         <Text className="text-lg text-white font-bold">
           Volver al inicio
         </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
 
 
