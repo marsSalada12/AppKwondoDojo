@@ -27,6 +27,7 @@ const Roles = ({ navigation }) => {
                 tipo_usuarios: data.tipo_usuarios
             });
             console.log("Campo actualizado con éxito.");
+
         } else {
             console.log("El campo tipo_usuarios no es un array en el documento.");
         }
