@@ -33,6 +33,7 @@ const Enroll = ({ navigation }) => {
             mail: '',
             phone: '',
             password: '',
+            lastGroupUID: '',
             confirm_pass: '',
             status: true,
             payments_id: [],

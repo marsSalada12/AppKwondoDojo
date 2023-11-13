@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const createPaymentWUID = async (data, UID) => {
@@ -14,3 +14,16 @@ export const createPayment = async (data) => {
     });
     return docRef.id
 }
+
+
+//Funcion para traerse la informacion de un pago
+export const getDataPayment = async (pay_id) => {
+    const payRef = doc(db, "Payments", pay_id);
+    const docSnapshot = await getDoc(payRef);
+    if (docSnapshot.exists()) {
+        return { ...docSnapshot.data(), pay_id: pay_id }
+    } else {
+        return { noting: "nothing" }
+    }
+}
+

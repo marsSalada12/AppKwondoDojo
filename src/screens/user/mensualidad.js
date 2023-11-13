@@ -39,7 +39,7 @@ const Mensualidad = ({ navigation }) => {
         name_user: alumnoIn.name_user,
         ap_paterno: alumnoIn.pattern_name,
         ap_materno: alumnoIn.matern_name,
-        userUID: alumnoIn.userUID
+        userUID: alumnoIn.userUID,
       });
 
 
@@ -56,6 +56,7 @@ const Mensualidad = ({ navigation }) => {
           const userRef = doc(db, "Usuarios", alumnoIn.userUID);
           await updateDoc(userRef, {
             payments_id: arrayUnion(payments_id),
+            lastGroupUID: grupoIn.id
           });
           console.log("se realixo papiu")
         } else {
@@ -64,6 +65,7 @@ const Mensualidad = ({ navigation }) => {
           const alumnoRef = doc(db, "Children", alumnoIn.userUID);
           await updateDoc(alumnoRef, {
             payments_id: arrayUnion(payments_id),
+            lastGroupUID: grupoIn.id
           })
           console.log("se realixo hije")
   

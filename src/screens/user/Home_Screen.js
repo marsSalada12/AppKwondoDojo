@@ -8,6 +8,7 @@ import ModalLoading from '../../componentes/loading/loading'
 import { getData } from '../../Storage/storage'
 import { db } from '../../firebase/firebase';
 import { getDataChildren } from '../../firebase/cloudstorage/Children';
+import { getDataGroup } from '../../firebase/cloudstorage/Groups';
 
 const HomeScreen = ({ navigation }) => {
     const isFocused = useIsFocused()
@@ -16,8 +17,8 @@ const HomeScreen = ({ navigation }) => {
 
     // Varibales para almnacenar la informacion del usuario 
     // y de los hijos
-    const [userData, setUserData] = useState({ "confirm_pass": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "hijos_matricula": ["a04W6sQMe854J0sp8vBA", "oPAXyCLxM3RfNZl4dJzc"], "mail": "maestro4@gmail.com", "matern_name": "Guzman", "matricula": "KAG59189752", "name_user": "Karla", "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "pattern_name": "Arriaga", "payments_id": ["UFQEb7DjEnbfTHB62aoW"], "phone": "8446319545", "status": true, "type_user": "Usuario", "userUID": "vKl8niUS6df5Rp8JN69gzGU1t1D2" });
-    const [childNames, setChildNames] = useState([{ "mail": "jaa@gmail.com ", "matern_name": "Alonso", "matricula": "JAA27811970", "name_user": "Juanito", "pattern_name": "Arriaga", "payments_id": ["AaIIOpwwS3rAqChlTIr1"], "status": true, "userUID": "a04W6sQMe854J0sp8vBA" }, { "mail": "ludo@gmail.com", "matern_name": "Peluche", "matricula": "LPP16988732", "name_user": "Ludovico", "pattern_name": "Peluche", "payments_id": ["KWQmkoprGGWHk2F2urAy", "Y395loi0aMx1LbyEIo6s", "rkunoYsTZOToq6bR6o3Q", "gOVGGFiueBUtVAhYzrS7"], "status": true, "userUID": "oPAXyCLxM3RfNZl4dJzc" }]);
+    const [userData, setUserData] = useState(null);
+    const [childNames, setChildNames] = useState([]);
 
     // Variables para almacenar los ids del usuario e hijos
     const [idusuario, setIdusuario] = useState([""])
@@ -25,36 +26,50 @@ const HomeScreen = ({ navigation }) => {
 
 
     useEffect(() => {
-        // getData()
-        //   .then((uData) => {
-        //     setIdusuario([uData.userUID])
-        //     setIdHijos(uData.hijos_matricula)
+        getData()
+            .then((uData) => {
+                setIdusuario([uData.userUID])
+                setIdHijos(uData.hijos_matricula)
 
-        //     setUserData(uData)
-        //     traerInformacionUsuario(uData.userUID)
+                setUserData(uData)
+                traerInformacionUsuario(uData.userUID)
 
-        //     const q = query(collection(db, "Payments"), where("userUID", "in", idusuario.concat(idHijos)), where("status", "==", "Pendiente"));
-        //     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        //       const pendientes = [];
-        //       querySnapshot.forEach((doc) => {
-        //         pendientes.push({ ...doc.data(), "payment_id": doc.id });
-        //       });
-        //       setPagosPendientes(pendientes)
-        //     });
+                const q = query(collection(db, "Payments"), where("userUID", "in", idusuario.concat(idHijos)), where("status", "==", "Pendiente"));
+                const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    const pendientes = [];
+                    querySnapshot.forEach((doc) => {
+                        pendientes.push({ ...doc.data(), "payment_id": doc.id });
+                    });
+                    setPagosPendientes(pendientes)
+                });
 
-        //   })
-        //   .catch((error) => {
-        //     console.log(error)
-        //   })
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+            .finally(() => {
+                // Llamamos setIsLoading(false) solo después de que ambas operaciones asíncronas se hayan completado
+                console.log(userData, '------------------------------')
+                console.log(childNames)
+                setIsLoading(false);
+            });
     }, [isFocused,])
 
     //Funcion para traernos la informacion de un usuario
     async function traerInformacionUsuario(id) {
         setIdusuario([id])
-        const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
+        const unsub = onSnapshot(doc(db, "Usuarios", id), async (doc) => {
             setUserData({ ...doc.data(), "userUID": id });
-            traerInformacionChildren(doc.data().hijos_matricula)
 
+            // Mandamos a llamar una funcion para agregar la informacion del grupo
+            let infroGroup = {}
+            if (doc.data().lastGroupUID !== "") {
+                infroGroup = await getDataGroup(doc.data().lastGroupUID)
+            }
+            setUserData({ ...doc.data(), ...infroGroup,"userUID": id });
+            
+            // Agregamos la informacion del pago, porque ademas del pago se guarda la informacion del grupo
+            traerInformacionChildren(doc.data().hijos_matricula)
         });
     }
 
@@ -70,12 +85,7 @@ const HomeScreen = ({ navigation }) => {
                 const errorMessage = error.message;
                 console.log('traerInformacionChildren - getDataChildren: ', error);
             })
-            .finally(() => {
-                // Llamamos setIsLoading(false) solo después de que ambas operaciones asíncronas se hayan completado
-                setIsLoading(false);
-                console.log(userData)
-                console.log(childNames)
-            });
+
     }
 
     return (
@@ -91,19 +101,39 @@ const HomeScreen = ({ navigation }) => {
                         </Text>
 
                         <View>
-                            <Text className="text-xl   ">{userData.name_user} {userData.pattern_name} {userData.matern_name}</Text>
-                            <Text className="text-lg  ">Hora 10:00 -12:00</Text>
-                            <Text className="text-lg  ">Lunes - Viernes</Text>
-                            <Text className="text-lg  ">Grupo: A1</Text>
                             {
+                                userData && (
+                                    <>
+
+                                        <Text className="text-xl   ">{userData.name_user} {userData.pattern_name} {userData.matern_name}</Text>
+                                        <Text className="text-lg  ">Hora {userData.schedule}</Text>
+                                        <Text className="text-lg  ">Lunes - Viernes</Text>
+                                        <Text className="text-lg  ">Grupo: {userData.type_group}</Text>
+                                    </>
+                                )
+                            }
+                            {
+
                                 childNames.map((childInfo, index) => {
                                     return (
+
                                         <View
+                                            key={index}
                                             className='mt-4'>
                                             <Text className="text-lg  ">{childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}</Text>
-                                            <Text className="text-lg  ">Hora 10:00 -12:00</Text>
-                                            <Text className="text-lg  ">Lunes - Viernes</Text>
-                                            <Text className="text-lg  ">Grupo: A1</Text>
+                                            {
+                                                childInfo.lastGroupUID
+                                                    ? (<>
+
+                                                        <Text className="text-lg  ">Hora {childInfo.schedule}</Text>
+                                                        <Text className="text-lg  ">Lunes - Viernes</Text>
+                                                        <Text className="text-lg  ">Grupo: {childInfo.type_group}</Text>
+
+                                                    </>)
+                                                    : (<>
+                                                        <Text className="text-lg  ">Sin horario :c</Text>
+                                                    </>)
+                                            }
                                         </View>
                                     )
                                 })
@@ -159,7 +189,6 @@ const HomeScreen = ({ navigation }) => {
                         <HeartIcon color='#6560AA' />
                         <TouchableOpacity className="bg-red"
                             onPress={() => {
-                                console.log("hola")
                                 //Nos traemos la sesion guardada en el celular
                                 getData()
                                     .then((value) => {
