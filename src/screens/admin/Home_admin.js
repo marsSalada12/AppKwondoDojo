@@ -99,7 +99,7 @@ const HomeAdmin = () => {
                             Grupo: {pago.grupo}
                           </Text>
                           <Text
-                            className='text-base'>
+                            className='text-base w-28'>
                             Hora: {pago.hora}
                           </Text>
                         </>
