@@ -50,8 +50,6 @@ const ProfileScreen = ({ navigation }) => {
     
 
     useEffect(() => {
-        console.log(isFocused ? 'Activo' : 'Inactivo')
-
         if (isFocused) {
             setLoading(true)
             setDatos(initialUserInfo)
@@ -78,7 +76,6 @@ const ProfileScreen = ({ navigation }) => {
     async function traerInformacionUsuario(id) {
         const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
             setDatos(doc.data());
-            console.log('first')
         });
 
         setLoading(false)
@@ -91,9 +88,7 @@ const ProfileScreen = ({ navigation }) => {
             getData()
                 .then(async (value) => {
                     const infoUser = doc(db, "Usuarios", value.userUID);
-                    console.log(value.userUID)
                     datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-                    console.log(datos.matricula)
                     await updateDoc(infoUser, {
                         name_user: datos.name_user,
                         pattern_name: datos.pattern_name,
@@ -162,7 +157,6 @@ const ProfileScreen = ({ navigation }) => {
         clearAll()
             .then((value) => {
                 setLoading(false)
-                console.log('Limpiado: ', value);
                 navigation.navigate('HomeU')
                 navigation.navigate('Main')
 
@@ -203,7 +197,6 @@ const ProfileScreen = ({ navigation }) => {
                         getData()
                             .then(async (value) => {
                                 const infoUser = doc(db, "Usuarios", value.userUID);
-                                console.log(value.userUID)
                                 await updateDoc(infoUser, {
                                     confirm_pass: hashP,
                                     password: hashP
@@ -345,7 +338,6 @@ const ProfileScreen = ({ navigation }) => {
                             <TouchableOpacity
                                 onPress={() => {
                                     handleCerrarSesion()
-                                    console.log("falta")
                                 }}
                                 className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
                                 <Text className="w-80 text-center text-white">

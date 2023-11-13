@@ -30,7 +30,6 @@ export const Formulario = ({ childID }) => {
         try {
             const childInfo = doc(db, "Children", childID);
             datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-            console.log(datos)
             await updateDoc(childInfo, {
                 name_user: datos.name_user,
                 pattern_name: datos.pattern_name,
@@ -46,7 +45,6 @@ export const Formulario = ({ childID }) => {
     }
 
     useEffect(() => {
-        console.log(childID)
         onSnapshot(doc(db, "Children", childID), (doc) => {
             datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
             setDatos({ ...doc.data() })
