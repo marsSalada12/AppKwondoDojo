@@ -12,7 +12,7 @@ const InputFileld = ({ title,
 }) => {
   return (
     <View className={" "}>
-      <Text className="text-lg mb-2 mt-0">{title}</Text>
+      <Text className="text-lg pb-2 w-80 pt-0">{title}</Text>
       <TextInput
 
         placeholder={props}

@@ -40,14 +40,14 @@ const Config = ({ navigation }) => {
     };
 
     return (
-        <View className="flex flex-1 p-8">
+        <View className="flex flex-1 py-1 px-10 pt-7">
             <View>
                 <Text className="text-lg">Mensualidad</Text>
             </View>
-            <View className="w-full justify-center items-center">
+            <View className=" justify-center items-center">
                 <InputFileld
-                    title={" "}
-                    props={"1000"}
+                    title={null}
+                    props={""}
                     edita={true}
                     max={5}
                     name={"base_price"}
@@ -56,7 +56,7 @@ const Config = ({ navigation }) => {
 
                 <TouchableOpacity
                     onPress={() => actualizar()}
-                    className={"rounded-md p-4 w-80 bg-blue-400 items-center mt-2 mb-2 "}>
+                    className={"rounded-md p-5 w-80 bg-blue-400 items-center mt-2 "}>
                     <Text className="text-lg text-white font-bold">
                         Modificar mensualidad base
                     </Text>
@@ -68,7 +68,7 @@ const Config = ({ navigation }) => {
                 </View>
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Roles")}
-                    className={"rounded-md p-4 w-80 bg-baseDark items-center mt-2 mb-10 "}>
+                    className={"rounded-md p-4 w-80 bg-baseDark items-center mt-2 "}>
                     <Text className="text-lg text-blue-400 font-bold">
                         Roles
                     </Text>

@@ -154,7 +154,8 @@ const AddUser = ({ navigation }) => {
         </Text>
       </View>
       <ScrollView
-        showsVerticalScrollIndicator={true}>
+        showsVerticalScrollIndicator={true}
+        nestedScrollEnabled={true}>
 
         <View className=" px-1">
           {

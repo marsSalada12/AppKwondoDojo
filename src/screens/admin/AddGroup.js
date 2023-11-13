@@ -158,8 +158,9 @@ const AddGroup = ({ navigation }) => {
         }, []
     )
     return (
-        <ScrollView>
-            <View className="w-full  ml-4 p-7">
+        <ScrollView
+            nestedScrollEnabled={true}>
+            <View className="ml-4 p-7">
                 <ModalError
                     setVisible={setShowModalErr}
                     visible={showModalErr}
@@ -180,6 +181,12 @@ const AddGroup = ({ navigation }) => {
                             setValue={setDatos}
                             value={datos} />
                 }
+                {info
+                    ?
+                    <Text className='text-red'>
+                        No se puede actualizar tipo grupo
+                    </Text>
+                    : null}
                 <InputFileld
                     title={"Descripción"}
                     props={" "}
