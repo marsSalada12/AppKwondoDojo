@@ -5,28 +5,31 @@ import { useNavigation } from '@react-navigation/native'
 import { clearAll } from '../../Storage/storage'
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from '../../firebase/firebase'
+import ModalLoading from '../../componentes/loading/loading'
 
 const HomeAdmin = () => {
   const navigation = useNavigation()
   const [pagosPendientes, setPagosPendientes] = useState([])
   const [pagosPagados, setPagosPagados] = useState([])
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true)
     const q = query(collection(db, "Payments"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const pendientes = [];
       const pagados = []
       querySnapshot.forEach((doc) => {
         if (doc.data().status === 'Pendiente') {
-          pendientes.push({...doc.data(), "payment_id": doc.id});
+          pendientes.push({ ...doc.data(), "payment_id": doc.id });
         } else {
-          pagados.push({...doc.data(), "payment_id": doc.id});
+          pagados.push({ ...doc.data(), "payment_id": doc.id });
         }
 
       });
       setPagosPendientes(pendientes)
       setPagosPagados(pagados)
+      setLoading(false)
     });
   }, [])
 
@@ -44,7 +47,10 @@ const HomeAdmin = () => {
 
   return (
     <ScrollView>
-      <View className=" flex flex-1 px-5 pt-5 bg-white">
+      {
+        loading
+        ? <ModalLoading/>
+        : <View className=" flex flex-10 px-5 pt-5 scroll-pb-10 bg-baseDark">
         <StatusBar hidden={true} />
         <TouchableOpacity>
           <CogIcon size={45} color={"gray"}
@@ -77,7 +83,7 @@ const HomeAdmin = () => {
                 return (
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate("Referencia", {...pago, "admin": true})
+                      navigation.navigate("Referencia", { ...pago, "admin": true })
                     }}
                     key={index}
                     className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
@@ -127,7 +133,7 @@ const HomeAdmin = () => {
                   <TouchableOpacity
 
                     onPress={() => {
-                      navigation.navigate("Referencia", {...pago, "admin": true})
+                      navigation.navigate("Referencia", { ...pago, "admin": true })
                     }}
                     key={index}
                     className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
@@ -154,7 +160,7 @@ const HomeAdmin = () => {
           }
         </ScrollView>
         <TouchableOpacity
-          className="bg-red mt-10 p-5 mx-5 rounded-lg mb-32"
+          className="bg-red mt-10 p-5 mx-5 rounded-lg"
           onPress={() => handleCerrarSesion()}>
           <Text
             className='text-center text-white text-base'>
@@ -162,6 +168,8 @@ const HomeAdmin = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      }
+      
     </ScrollView>
   )
 }

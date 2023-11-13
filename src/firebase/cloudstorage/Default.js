@@ -15,7 +15,7 @@ export const getAllTypeUsers = async () => {
     const docRef = doc(db, "Default", Default_ID);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-        docSnap.data().tipo_usuario.forEach(element => {
+        docSnap.data().tipo_usuarios.forEach(element => {
             tipos.push({ label: element, value: element })
         });
     } else {

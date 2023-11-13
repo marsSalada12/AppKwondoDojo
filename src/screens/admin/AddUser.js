@@ -1,7 +1,6 @@
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import InputFileld from '../../componentes/Inputs/input';
-
 import { auth, db } from '../../firebase/firebase';
 import { createUserWithEmailAndPassword, getAuth, updateEmail, updateProfile } from 'firebase/auth';
 import { createUserWUID } from '../../firebase/cloudstorage/CreateUsers'
@@ -15,6 +14,7 @@ import ModalError from '../../componentes/Modals/MAddUserError';
 import InputTel from '../../componentes/Inputs/inputTel';
 import { generateMatri } from '../../componentes/generateMatricula';
 import Formulario from '../../componentes/Formularios/Formulario';
+import ModalLoading from '../../componentes/loading/loading';
 
 
 const AddUser = ({ navigation }) => {
@@ -22,11 +22,7 @@ const AddUser = ({ navigation }) => {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [tyUser, setTyUser] = useState([
-    { label: "Administrador", value: "Administrador" },
-    { label: "Usuario", value: "Usuario" },
-    { label: "Maestro", value: "Maestro" }
-  ])
+  const [tyUser, setTyUser] = useState([])
 
   const [modalErrorVisible, setModalErrorVisible] = useState(false)
   const [MsjModalError, setMsjModalError] = useState('')
@@ -125,6 +121,21 @@ const AddUser = ({ navigation }) => {
     navigation.goBack();
   }
 
+  useEffect(
+    () => {
+      setIsLoading(true);
+      getAllTypeUsers()
+        .then((user) => {
+          setTyUser(user);
+        })
+        .catch((error) => {
+
+        })
+        .finally(() => {
+          setIsLoading(false);
+        })
+    }, [])
+
   return (
     <View
       className="flex flex-1 items-center px-4 ">
@@ -134,75 +145,87 @@ const AddUser = ({ navigation }) => {
         visible={modalErrorVisible}
         message={MsjModalError} />
 
-      {/* <ModalLoading
-        visible={isLoading} /> */}
+      <ModalLoading
+        visible={isLoading} />
 
-      <View className="mt-4 w-80 ml-1">
-        <Text className="text-2xl">
+      <View className="items-start w-96">
+        <Text className=" text-2xl pt-2 pb-3 w-72">
           Datos de usuario
         </Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={true}>
 
-        <View className=" w-80">
-          <Dropdown
-            list={tyUser}
-            title={"Tipo usuario"}
-            name={"type_user"}
-            setValue={setDatos}
-            value={datos} />
+        <View className=" px-1">
+          {
+            isLoading
+              ? <ModalLoading />
+              : <><Dropdown
 
-          <InputFileld
-            title={"Correo Electrónico"}
+                list={tyUser}
+                title={"Tipo usuario"}
+                name={"type_user"}
+                setValue={setDatos}
+                value={datos} />
 
-            edita={info ? false : true}
-            max={100}
-            name={"mail"}
-            setValue={setDatos}
-            value={datos}
-            type={'email'} />
+                <InputFileld
+                  title={"Correo Electrónico"}
+                  props={""}
+                  edita={info ? false : true}
+                  max={100}
+                  name={"mail"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'email'} />
 
-          <InputFileld
-            title={"Nombre/s"}
-            props={""}
-            max={50}
-            name={"name_user"}
-            setValue={setDatos}
-            value={datos}
-            type={'letters'} />
+                <InputFileld
+                  title={"Nombre/s"}
+                  props={""}
+                  edita={true}
+                  max={50}
+                  name={"name_user"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'letters'} />
 
-          <InputFileld
-            title={"Apellido paterno"}
-            props={""}
-            max={100}
-            name={"pattern_name"}
-            setValue={setDatos}
-            value={datos}
-            type={'letters'} />
+                <InputFileld
+                  title={"Apellido paterno"}
+                  props={""}
+                  edita={true}
+                  max={100}
+                  name={"pattern_name"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'letters'} />
 
-          <InputFileld
-            title={"Apellido materno"}
-            props={""}
-            max={100}
-            name={"matern_name"}
-            setValue={setDatos}
-            value={datos}
-            type={'letters'} />
+                <InputFileld
+                  title={"Apellido materno"}
+                  props={""}
+                  max={100}
+                  edita={true}
+                  name={"matern_name"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'letters'} />
 
-          <InputTel
-            title={"Número de teléfono"}
-            props={""}
-            max={10}
-            min={10}
-            name={"phone"}
-            setValue={setDatos}
-            value={datos}
-            type={'numeric'} />
-          <MinTelephone phone={datos.phone} />
+                <InputTel
+                  title={"Número de teléfono"}
+                  props={""}
+                  max={10}
+                  min={10}
+                  name={"phone"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'numeric'} />
+                <MinTelephone phone={datos.phone} />
+              </>
+          }
+
+
+
         </View>
 
-        <View className="ml-12 mr-12">
+        <View className="px-7">
           <TouchableOpacity
             onPress={info ?
               () => actualizar()
@@ -252,7 +275,6 @@ const AddUser = ({ navigation }) => {
             </View>
             : null
         }
-
       </ScrollView>
       <StatusBar backgroundColor={'#6560AA'} />
     </View>
