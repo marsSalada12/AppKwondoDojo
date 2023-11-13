@@ -111,7 +111,7 @@ const PaymentsScreen = ({ navigation }) => {
                             onPress={() => navigation.navigate('Inscripcion', { alumno: userData })}
                             className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
                             <Text className="w-80 text-center">
-                                Inscripcion de {userData.name_user} {userData.pattern_name} {userData.matern_name}
+                                Mensualidad de {userData.name_user} {userData.pattern_name} {userData.matern_name}
                             </Text>
                         </TouchableOpacity>
 
@@ -122,7 +122,7 @@ const PaymentsScreen = ({ navigation }) => {
                                     onPress={() => navigation.navigate('Inscripcion', { alumno: childInfo })}
                                     className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
                                     <Text className="w-80 text-center">
-                                        Inscripcion de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
+                                    Mensualidadr de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
                                     </Text>
                                 </TouchableOpacity>)
                         })}

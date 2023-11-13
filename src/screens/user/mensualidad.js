@@ -85,6 +85,7 @@ const Mensualidad = ({ navigation }) => {
     return (
         <View>
             <Text className="text-2xl ml-4 mt-2">Tu mensualidad</Text>
+            {console.log(datos)}
             <Text className="text-xl ml-4 mt-4 mb-4">Grupo</Text>
             <View className=" flex-row justify-around rounded-md ml-5 mr-5 bg-white p-4 shadow-2xl items-start mt-2 mb-2">
                 <View>

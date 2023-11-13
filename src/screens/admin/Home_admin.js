@@ -75,7 +75,7 @@ const HomeAdmin = () => {
                       size={35} color={'black'} />
                     {/* <View className='rounded-full bg-blue-400'></View> */}
                     <Text
-                      className='text-lg px-4'>
+                      className='text-lg w-80 px-2'>
                       Sin pagos pendientes por aceptar
                     </Text>
 
@@ -92,7 +92,7 @@ const HomeAdmin = () => {
                         <>
                           <Text
                             className='text-xl'>
-                            Pago de inscripcion {pago.name_user} {pago.ap_paterno} {pago.ap_materno}
+                            Pago de mensualidad {pago.name_user} {pago.ap_paterno} {pago.ap_materno}
                           </Text>
                           <Text
                             className='text-base'>
@@ -142,7 +142,7 @@ const HomeAdmin = () => {
                         <View className=''>
                           <Text
                             className='text-xl'>
-                            Pago de inscripcion {pago.name_user} {pago.ap_paterno} {'\n'} {pago.ap_materno}
+                            Pago de mensualidad {pago.name_user} {pago.ap_paterno} {'\n'} {pago.ap_materno}
                           </Text>
                           <View
                             className='flex-row  justify-between w-full'>
