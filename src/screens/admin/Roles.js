@@ -1,40 +1,52 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import InputFileld from '../../componentes/Inputs/input'
-import { doc, updateDoc } from 'firebase/firestore'
-import { db } from '../../firebase/firebase'
-import { getAllTypeUsers } from '../../firebase/cloudstorage/Default'
+import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import InputFileld from '../../componentes/Inputs/input';
+import { doc, updateDoc, getDoc, query, collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase/firebase';
 
 const Roles = ({ navigation }) => {
     const [datos, setDatos] = useState({
-        id: 'yUIGazmtjPuxXwZroekk',
-        tipo_usuario: [],
+        tipo_usuario: '',
     });
 
-    const [users, setUsers] = useState([]);
-
-    const addValueToTipoUsuario = (newValue) => {
-        setDatos((prevDatos) => ({
-            ...prevDatos,
-            tipo_usuario: [...prevDatos.tipo_usuario, newValue],
-        }));
-    };
+    const [data, setData] = useState([]);
+    const id = 'yUIGazmtjPuxXwZroekk';
 
     const actualizar = async () => {
-        const precioRef = doc(db, "Default", datos.id);
-        await updateDoc(precioRef, {
-            tipo_usuario: datos.tipo_usuario, // Update the array in the database
-            // Other properties
-        });
-        navigation.goBack();
-    };
+        const docRef = doc(db, 'Default', id);
+        const docSnapshot = await getDoc(docRef);
+        const data = docSnapshot.data();
+        console.log(data.tipo_usuarios)
+        console.log(datos.tipo_usuario["tipo_usuario"])
 
-    useEffect(() => {
-        // Load the initial data from the database
-        getAllTypeUsers().then((user) => {
-            setUsers(user);
-        });
-    }, []);
+        // Verifica si el campo tipo_usuarios es un array en el documento.
+        if (Array.isArray(data.tipo_usuarios)) {
+            // Agrega el nuevo valor al array.
+            data.tipo_usuarios.push(datos.tipo_usuario["tipo_usuario"]);
+            await updateDoc(docRef, {
+                tipo_usuarios: data.tipo_usuarios
+            });
+            console.log("Campo actualizado con éxito.");
+        } else {
+            console.log("El campo tipo_usuarios no es un array en el documento.");
+        }
+
+    };
+    useEffect(
+        () => {
+            const q = query(collection(db, "Default"));
+            // const q = query(collection(db, "Groups"));
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const roles = [];
+                querySnapshot.forEach((doc) => {
+                    roles.push({ ...doc.data()["tipo_usuarios"], id: doc.id });
+                });
+                setData(roles)
+            });
+
+            return unsubscribe
+        }, []
+    )
 
     return (
         <View className="flex flex-1 p-8">
@@ -46,10 +58,10 @@ const Roles = ({ navigation }) => {
                     title={"Descripción"}
                     props={""}
                     edita={true}
-                    max={5}
+                    max={100}
                     name={"tipo_usuario"}
-                    setValue={setDatos}
-                    value={datos.tipo_usuario} // Pass the array directly
+                    setValue={(value) => setDatos({ ...datos, tipo_usuario: value })} // Actualiza el estado con el valor del input
+                    value={datos.tipo_usuario}
                 />
 
                 <TouchableOpacity
@@ -59,6 +71,29 @@ const Roles = ({ navigation }) => {
                         Guardar
                     </Text>
                 </TouchableOpacity>
+
+                {
+                    data.map((rol, index) => {
+                        return (
+                            <View className="w-80 mt-6 items-center" key={index}>
+                                {Object.keys(rol).map((key) => {
+                                    // Excluye la propiedad "id" del mapeo
+                                    if (key !== "id") {
+                                        return (
+                                            <TouchableOpacity
+                                                key={key}
+                                                className="rounded-md w-full h-fit bg-white p-4 shadow-2xl items-start mt-2 mb-2">
+                                                <Text className="text-2xl text-center font-bold w-full">
+                                                    {rol[key]}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </View>
+                        );
+                    })}
             </View>
         </View>
     );
