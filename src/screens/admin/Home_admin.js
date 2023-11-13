@@ -50,7 +50,8 @@ const HomeAdmin = () => {
           <CogIcon size={45} color={"gray"}
             onPress={() => navigation.navigate("Config")} />
         </TouchableOpacity>
-        <Text className="text-2xl font-semibold mb-5 ">
+
+        <Text className="text-2xl font-bold mb-5 ">
           Pagos pendientes
         </Text>
         <ScrollView
@@ -99,7 +100,7 @@ const HomeAdmin = () => {
               })
           }
         </ScrollView>
-        <Text className="text-2xl font-semibold mb-5 ">
+        <Text className="text-2xl font-bold mb-5 ">
           Historial de pagos
         </Text>
         <ScrollView

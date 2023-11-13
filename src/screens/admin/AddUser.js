@@ -127,7 +127,7 @@ const AddUser = ({ navigation }) => {
 
   return (
     <View
-      className="flex flex-1 items-center">
+      className="flex flex-1 items-center px-4 ">
 
       <ModalError
         setVisible={setModalErrorVisible}
@@ -145,7 +145,7 @@ const AddUser = ({ navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={true}>
 
-        <View className=" items-center">
+        <View className=" w-80">
           <Dropdown
             list={tyUser}
             title={"Tipo usuario"}
@@ -237,7 +237,7 @@ const AddUser = ({ navigation }) => {
         {
           info && info.hijos_matricula.length > 0
             ?
-            <View className='items-center mb-11'>
+            <View className='px-10 mb-11'>
               {
                 info.hijos_matricula.map((hijo_id, index) => {
                   console.log(hijo_id)

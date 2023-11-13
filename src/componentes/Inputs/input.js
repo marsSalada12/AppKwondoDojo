@@ -11,10 +11,8 @@ const InputFileld = ({ title,
   type = 'email'
 }) => {
   return (
-    <View className={" w-80 "}>
-      <Text
-        className="text-lg mb-2 mt-0">{title}
-      </Text>
+    <View className={" "}>
+      <Text className="text-lg mb-2 mt-0">{title}</Text>
       <TextInput
 
         placeholder={props}

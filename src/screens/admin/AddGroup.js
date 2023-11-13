@@ -87,17 +87,17 @@ const AddGroup = ({ navigation }) => {
     }
 
     //Mëtodo para comprobar si el maestro ya tiene un grupo a esa hora
-    useEffect(()=>{
+    useEffect(() => {
         maesHoras()
-    },[datos])
-    
+    }, [datos])
+
     const maesHoras = async () => {
         const maestro = datos.name_teac;
         const horario = datos.schedule;
         const gruposQuery = query(collection(db, "Groups"), where("name_teac", "==", maestro), where("schedule", "==", horario));
-        const gruposSnapshot = await getDocs(gruposQuery);            
+        const gruposSnapshot = await getDocs(gruposQuery);
         setOCupado(gruposSnapshot.size != 0);
-        
+
     }
 
     //Funcion para verificar que el formulario se haya llenado completo
@@ -158,113 +158,115 @@ const AddGroup = ({ navigation }) => {
         }, []
     )
     return (
-        <View className="w-full  ml-4 p-7">
-            <ModalError
-                setVisible={setShowModalErr}
-                visible={showModalErr}
-                message={mensaje}
-            />
-            <GroupInfo
-                setVisible={setShowModal}
-                visible={showModal}
-            />
-            <Text className="text-lg mb-3"> Información de grupos</Text>
-            {
-                loading
-                    ? null
-                    : <DropdownGroup
-                        list={grupos}
-                        title={"Grupos"}
-                        name={"type_group"}
-                        setValue={setDatos}
-                        value={datos} />
-            }
-            <InputFileld
-                title={"Descripción"}
-                props={" "}
-                edita={info ? true : true}
-                max={100}
-                name={"description"}
-                setValue={setDatos}
-                value={datos}
-                type={'letters'} />
-
-            {
-                loading
-                    ? null
-                    : <Dropdown
-                        list={maestros}
-                        title={"Maestros"}
-                        name={"name_teac"}
-                        setValue={setDatos}
-                        value={datos} />
-            }
-
-            {
-                loading
-                    ? null
-                    : <View>
-                        <Dropdown
-                            list={data}
-                            title={"Horario"}
-                            name={"schedule"}
+        <ScrollView>
+            <View className="w-full  ml-4 p-7">
+                <ModalError
+                    setVisible={setShowModalErr}
+                    visible={showModalErr}
+                    message={mensaje}
+                />
+                <GroupInfo
+                    setVisible={setShowModal}
+                    visible={showModal}
+                />
+                <Text className="text-lg mb-3"> Información de grupos</Text>
+                {
+                    loading
+                        ? null
+                        : <DropdownGroup
+                            list={grupos}
+                            title={"Grupos"}
+                            name={"type_group"}
                             setValue={setDatos}
                             value={datos} />
-                        {
-                            ocupado
-                                ?
-                                <Text className='text-red'>
-                                  {datos.name_teac} ya tiene grupo a esa hora  
-                                </Text>
-                                : null
+                }
+                <InputFileld
+                    title={"Descripción"}
+                    props={" "}
+                    edita={info ? true : true}
+                    max={100}
+                    name={"description"}
+                    setValue={setDatos}
+                    value={datos}
+                    type={'letters'} />
 
-                        }
-                    </View>
-            }
+                {
+                    loading
+                        ? null
+                        : <Dropdown
+                            list={maestros}
+                            title={"Maestros"}
+                            name={"name_teac"}
+                            setValue={setDatos}
+                            value={datos} />
+                }
 
-            <InputCupo
-                title={"Cupo"}
-                props={" "}
-                edita={info ? true : true}
-                max={3}
-                name={"cupo"}
-                setValue={setDatos}
-                value={datos}
-                type={'numeric'} />
+                {
+                    loading
+                        ? null
+                        : <View>
+                            <Dropdown
+                                list={data}
+                                title={"Horario"}
+                                name={"schedule"}
+                                setValue={setDatos}
+                                value={datos} />
+                            {
+                                ocupado
+                                    ?
+                                    <Text className='text-red'>
+                                        {datos.name_teac} ya tiene grupo a esa hora
+                                    </Text>
+                                    : null
 
-            <InputFEspecial
-                title={"Usar mensualidad base?"}
-                props={" "}
-                name={"price"}
-                setValue={setDatos}
-                value={datos}
-                type={'numeric'}
-            />
+                            }
+                        </View>
+                }
 
-            <TouchableOpacity
-                onPress={info ?
-                    () => actualizar()
-                    : () => autenticar()}
-                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-10">
-                <Text className="text-lg text-white font-bold">
-                    {info
-                        ? "Actualizar grupo"
-                        : "Guardar grupo"}
-                </Text>
-            </TouchableOpacity>
-            {info
-                ? <TouchableOpacity
-                    onPress={() => boton()}
-                    className={"rounded-md p-4 color w-80 items-center mt-2 mb-10 " + (info.status ? 'bg-red' : 'bg-green')}>
+                <InputCupo
+                    title={"Cupo"}
+                    props={" "}
+                    edita={info ? true : true}
+                    max={3}
+                    name={"cupo"}
+                    setValue={setDatos}
+                    value={datos}
+                    type={'numeric'} />
+
+                <InputFEspecial
+                    title={"Usar mensualidad base?"}
+                    props={" "}
+                    name={"price"}
+                    setValue={setDatos}
+                    value={datos}
+                    type={'numeric'}
+                />
+
+                <TouchableOpacity
+                    onPress={info ?
+                        () => actualizar()
+                        : () => autenticar()}
+                    className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-10">
                     <Text className="text-lg text-white font-bold">
-                        {info.status ? "Desactivar" : "Activar"}
+                        {info
+                            ? "Actualizar grupo"
+                            : "Guardar grupo"}
                     </Text>
                 </TouchableOpacity>
-                : null}
+                {info
+                    ? <TouchableOpacity
+                        onPress={() => boton()}
+                        className={"rounded-md p-4 color w-80 items-center mt-2 mb-10 " + (info.status ? 'bg-red' : 'bg-green')}>
+                        <Text className="text-lg text-white font-bold">
+                            {info.status ? "Desactivar" : "Activar"}
+                        </Text>
+                    </TouchableOpacity>
+                    : null}
 
-            <StatusBar backgroundColor={'#6560AA'} />
+                <StatusBar backgroundColor={'#6560AA'} />
 
-        </View>
+            </View>
+        </ScrollView>
     )
 }
 
