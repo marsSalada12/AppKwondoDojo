@@ -68,7 +68,7 @@ const Inscripcion = ({ navigation }) => {
                                             </View>
                                             <View className="ml-10">
                                                 <Text className=" text-lg font-semibold w-full mt-2 ml-2">
-                                                    {"Cupo: \n " + grupillos.cont_alumnos + "/" + + grupillos.cupo}
+                                                    {"Cupo: \n " + grupillos.matricula_alumno.length + "/" + + grupillos.cupo}
                                                 </Text>
                                             </View>
                                         </View>

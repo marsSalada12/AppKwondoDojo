@@ -50,6 +50,8 @@ const ProfileScreen = ({ navigation }) => {
     
 
     useEffect(() => {
+        console.log(isFocused ? 'Activo' : 'Inactivo')
+
         if (isFocused) {
             setLoading(true)
             setDatos(initialUserInfo)
@@ -76,6 +78,7 @@ const ProfileScreen = ({ navigation }) => {
     async function traerInformacionUsuario(id) {
         const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
             setDatos(doc.data());
+            console.log('first')
         });
 
         setLoading(false)
@@ -88,7 +91,9 @@ const ProfileScreen = ({ navigation }) => {
             getData()
                 .then(async (value) => {
                     const infoUser = doc(db, "Usuarios", value.userUID);
+                    console.log(value.userUID)
                     datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+                    console.log(datos.matricula)
                     await updateDoc(infoUser, {
                         name_user: datos.name_user,
                         pattern_name: datos.pattern_name,
@@ -157,6 +162,7 @@ const ProfileScreen = ({ navigation }) => {
         clearAll()
             .then((value) => {
                 setLoading(false)
+                console.log('Limpiado: ', value);
                 navigation.navigate('HomeU')
                 navigation.navigate('Main')
 
@@ -197,6 +203,7 @@ const ProfileScreen = ({ navigation }) => {
                         getData()
                             .then(async (value) => {
                                 const infoUser = doc(db, "Usuarios", value.userUID);
+                                console.log(value.userUID)
                                 await updateDoc(infoUser, {
                                     confirm_pass: hashP,
                                     password: hashP
@@ -242,7 +249,7 @@ const ProfileScreen = ({ navigation }) => {
     };
 
     return (
-        <ScrollView className="p-9">
+        <ScrollView>
             <ModalError
                 setVisible={setShowModal}
                 visible={showModal}
@@ -255,8 +262,9 @@ const ProfileScreen = ({ navigation }) => {
                         <ModalLoading />
                     )
                     : (
-                        <>
-                            <Text className="text-xl  text-bold">Actualizar datos de perfil</Text>
+                        <View
+                        className='bg-white px-10 pt-4'>
+                            <Text className="text-xl text-bold">Actualizar datos de perfil</Text>
                             <InputFileld
                                 title={"Nombre/s"}
                                 props={" "}
@@ -293,7 +301,7 @@ const ProfileScreen = ({ navigation }) => {
                             <MinTelephone phone={datos.phone} />
                             <TouchableOpacity
                                 onPress={() => Actualizar()}
-                                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-6">
+                                className="rounded-md bg-blue-400 p-4  items-center mt-6 mb-6">
                                 <Text className="w-80 text-center text-white">
                                     Modificar información
                                 </Text>
@@ -309,7 +317,7 @@ const ProfileScreen = ({ navigation }) => {
                             <MinPas password={newPass} />
                             <TouchableOpacity
                                 onPress={() => ChangePass()}
-                                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
+                                className="rounded-md bg-blue-400 p-4 items-center mt-6 ">
                                 <Text className="w-80 text-center text-white">
                                     Modificar contraseña
                                 </Text>
@@ -330,22 +338,23 @@ const ProfileScreen = ({ navigation }) => {
                                 onPress={() => {
                                     handleAgregarHijo()
                                 }}
-                                className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 ">
-                                <Text className="w-80 text-center text-white">
+                                className="rounded-md bg-blue-400 p-4 items-center mt-6 ">
+                                <Text className=" text-center text-white">
                                     Agregar alumno
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
                                     handleCerrarSesion()
+                                    console.log("falta")
                                 }}
-                                className="rounded-md bg-red p-4 w-80 items-center mt-3 mb-40">
+                                className="rounded-md bg-red p-4 items-center mt-3 mb-40">
                                 <Text className="w-80 text-center text-white">
                                     Cerrar sesion
                                 </Text>
                             </TouchableOpacity>
 
-                        </>
+                        </View>
                     )
             }
 

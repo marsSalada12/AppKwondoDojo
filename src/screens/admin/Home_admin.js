@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, Text, StatusBar, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { CheckCircleIcon, CheckIcon, CogIcon } from 'react-native-heroicons/outline'
+import { CheckCircleIcon, CheckIcon, ClipboardDocumentCheckIcon, CogIcon } from 'react-native-heroicons/outline'
 import { useNavigation } from '@react-navigation/native'
 import { clearAll } from '../../Storage/storage'
 import { collection, query, where, onSnapshot } from "firebase/firestore";
@@ -13,24 +13,20 @@ const HomeAdmin = () => {
 
 
   useEffect(() => {
-
     const q = query(collection(db, "Payments"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const pendientes = [];
       const pagados = []
       querySnapshot.forEach((doc) => {
-        console.log(doc.data().status)
         if (doc.data().status === 'Pendiente') {
-          pendientes.push(doc.data());
+          pendientes.push({...doc.data(), "payment_id": doc.id});
         } else {
-          pagados.push(doc.data());
+          pagados.push({...doc.data(), "payment_id": doc.id});
         }
 
       });
       setPagosPendientes(pendientes)
       setPagosPagados(pagados)
-
-      console.log(pagados)
     });
   }, [])
 
@@ -44,9 +40,11 @@ const HomeAdmin = () => {
         console.log('Ocurrio un error: ', error);
       })
   }
+
+
   return (
     <ScrollView>
-      <View className=" flex flex-1 mx-5 mt-5 ">
+      <View className=" flex flex-1 px-5 pt-5 bg-white">
         <StatusBar hidden={true} />
         <TouchableOpacity>
           <CogIcon size={45} color={"gray"}
@@ -59,37 +57,41 @@ const HomeAdmin = () => {
 
           className=' max-h-96'>
           {
-            pagosPendientes.length != 0
+            pagosPendientes.length == 0
               ? <View
-                className='rounded-md  bg-white  p-4 shadow-md items-start mb-4'>
-                <Text>
+                className='rounded-md  bg-white  p-4 shadow-md  mb-4 flex-row items-center'>
 
-                  <View className='rounded-full bg-blue-400'>
-                    <CheckIcon
-                    
-                      size={35} color={'white'} />
-                  </View>
 
+                <CheckIcon
+                  size={35} color={'black'} />
+                {/* <View className='rounded-full bg-blue-400'></View> */}
+                <Text
+                  className='text-lg px-4'>
+                  Sin pagos pendientes por aceptar
                 </Text>
+
+
               </View>
               : pagosPendientes.map((pago, index) => {
                 return (
                   <TouchableOpacity
-                    // onPress={() => navigation.navigate("AddGroup", )}
+                    onPress={() => {
+                      navigation.navigate("Referencia", {...pago, "admin": true})
+                    }}
                     key={index}
                     className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
                     <>
                       <Text
                         className='text-xl'>
-                        Pago de inscripcion NOMBRE
+                        Pago de inscripcion {pago.name_user} {pago.ap_paterno} {pago.ap_materno}
                       </Text>
                       <Text
                         className='text-base'>
-                        Grupo: GRUPO
+                        Grupo: {pago.grupo}
                       </Text>
                       <Text
                         className='text-base'>
-                        Hora: INICIO - FIN
+                        Hora: {pago.hora}
                       </Text>
                     </>
                   </TouchableOpacity>
@@ -104,29 +106,50 @@ const HomeAdmin = () => {
           nestedScrollEnabled={true}
           className=''>
           {
-            pagosPagados.map((pago, index) => {
-              return (
-                <TouchableOpacity
-                  // onPress={() => navigation.navigate("AddGroup", )}
-                  key={index}
-                  className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
-                  <>
-                    <Text
-                      className='text-xl'>
-                      Pago de inscripcion NOMBRE
-                    </Text>
-                    <Text
-                      className='text-base'>
-                      Grupo: GRUPO
-                    </Text>
-                    <Text
-                      className='text-base'>
-                      Hora: INICIO - FIN
-                    </Text>
-                  </>
-                </TouchableOpacity>
-              )
-            })
+
+            pagosPagados.length == 0
+              ? <View
+                className='rounded-md  bg-white  p-4 shadow-md  mb-4 flex-row items-center'>
+
+                <ClipboardDocumentCheckIcon
+                  size={35} color={'black'} />
+
+                <Text
+                  className='text-lg px-4'>
+                  Historial limpio
+                </Text>
+
+
+              </View>
+              : pagosPagados.map((pago, index) => {
+                return (
+                  <TouchableOpacity
+
+                    onPress={() => {
+                      navigation.navigate("Referencia", {...pago, "admin": true})
+                    }}
+                    key={index}
+                    className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
+                    <View className=''>
+                      <Text
+                        className='text-xl'>
+                        Pago de inscripcion {pago.name_user} {pago.ap_paterno} {'\n'} {pago.ap_materno}
+                      </Text>
+                      <View
+                        className='flex-row  justify-between w-full'>
+                        <Text
+                          className='text-base '>
+                          {pago.status} {pago.due_date}
+                        </Text>
+                        <Text
+                          className='text-xl font-bold text-blue-400 '>
+                          ${pago.price}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                )
+              })
           }
         </ScrollView>
         <TouchableOpacity
