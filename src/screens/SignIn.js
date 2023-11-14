@@ -61,7 +61,7 @@ const SignIn = ({ navigation }) => {
                         await clearAll()
                         const errorCode = error.code;
                         const errorMessage = error.message;
-                        setMsjModal(errorCode, '\n', errorMessage)
+                        setMsjModal("Usuario no dado de alta")
                         setShowModal(true)
                         console.log(errorMessage)
                     })
@@ -72,7 +72,7 @@ const SignIn = ({ navigation }) => {
                 await clearAll()
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                setMsjModal(errorCode, '\n', errorMessage)
+                setMsjModal("No se puede acceder\nRevisar email/password")
                 setShowModal(true)
                 console.log(errorMessage)
             });
