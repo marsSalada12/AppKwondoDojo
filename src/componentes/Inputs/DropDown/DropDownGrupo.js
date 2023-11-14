@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { QuestionMarkCircleIcon } from 'react-native-heroicons/solid'
 import GroupInfo from '../../Modals/GroupInfo'
 
-export const DropdownGroup = ({ list, title, name, setValue, value }) => {
+export const DropdownGroup = ({ list, title, active = true, name, setValue, value }) => {
     const [open, setOpen] = useState(false)
     const [items, setItems] = useState(list)
     const [showModal, setShowModal] = useState(false)
@@ -15,7 +15,7 @@ export const DropdownGroup = ({ list, title, name, setValue, value }) => {
                 setVisible={setShowModal}
                 visible={showModal}
             />
-            <View className='pb-5 w-80 '>
+            <View className='pb-0 w-80 '>
                 <View className='flex-row justify-between'>
                     <Text className='pb-3 text-base'>
                         {title}
@@ -25,6 +25,7 @@ export const DropdownGroup = ({ list, title, name, setValue, value }) => {
                 </View>
                 <DropDownPicker
                     disableBorderRadius={true}
+                    disabled= {!active}
                     //Estillos del boton que muestra al dropdown
                     style={{
                         backgroundColor: "#e6e6e6",

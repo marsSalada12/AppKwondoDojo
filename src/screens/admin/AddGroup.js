@@ -177,6 +177,7 @@ const AddGroup = ({ navigation }) => {
                         : <DropdownGroup
                             list={grupos}
                             title={"Grupos"}
+                            active={info ? false : true}
                             name={"type_group"}
                             setValue={setDatos}
                             value={datos} />
