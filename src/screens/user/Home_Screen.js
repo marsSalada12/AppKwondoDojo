@@ -49,8 +49,6 @@ const HomeScreen = ({ navigation }) => {
             })
             .finally(() => {
                 // Llamamos setIsLoading(false) solo después de que ambas operaciones asíncronas se hayan completado
-                console.log(userData, '------------------------------')
-                console.log(childNames)
                 setIsLoading(false);
             });
     }, [isFocused,])
@@ -66,8 +64,8 @@ const HomeScreen = ({ navigation }) => {
             if (doc.data().lastGroupUID !== "") {
                 infroGroup = await getDataGroup(doc.data().lastGroupUID)
             }
-            setUserData({ ...doc.data(), ...infroGroup,"userUID": id });
-            
+            setUserData({ ...doc.data(), ...infroGroup, "userUID": id });
+
             // Agregamos la informacion del pago, porque ademas del pago se guarda la informacion del grupo
             traerInformacionChildren(doc.data().hijos_matricula)
         });
@@ -93,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
             {
                 isLoading
                     ? <ModalLoading />
-                    : <View className=" flex flex-1 px-5 pt-5 bg-white">
+                    : <View className=" flex flex-1 px-5 pt-5 ">
                         <StatusBar hidden={true} />
 
                         <Text className="text-2xl font-bold mb-1 ">
@@ -120,7 +118,7 @@ const HomeScreen = ({ navigation }) => {
                                         <View
                                             key={index}
                                             className='mt-4'>
-                                            <Text className="text-lg  ">{childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}</Text>
+                                            <Text className="text-xl  ">{childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}</Text>
                                             {
                                                 childInfo.lastGroupUID
                                                     ? (<>
@@ -172,13 +170,14 @@ const HomeScreen = ({ navigation }) => {
                                                 key={index}
                                                 className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
                                                 <>
+                                                
                                                     <Text
                                                         className='text-xl'>
                                                         Pago de inscripcion {pago.name_user} {pago.ap_paterno} {pago.ap_materno}
                                                     </Text>
                                                     <Text
                                                         className='text-base'>
-                                                        Limite de pago: {pago.due_date}
+                                                        Limite de pago: {pago.due_date} "" 
                                                     </Text>
                                                 </>
                                             </TouchableOpacity>
@@ -186,21 +185,6 @@ const HomeScreen = ({ navigation }) => {
                                     })
                             }
                         </ScrollView>
-                        <HeartIcon color='#6560AA' />
-                        <TouchableOpacity className="bg-red"
-                            onPress={() => {
-                                //Nos traemos la sesion guardada en el celular
-                                getData()
-                                    .then((value) => {
-                                        console.log(value);
-                                    })
-                                    .catch()
-                            }}>
-                            <Text>
-                                Consular sesion
-                            </Text>
-                        </TouchableOpacity>
-
                     </View>
             }
         </ScrollView>

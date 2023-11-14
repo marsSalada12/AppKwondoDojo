@@ -137,25 +137,25 @@ const AddUser = ({ navigation }) => {
     }, [])
 
   return (
-    <View
-      className="flex flex-1 items-center px-4 ">
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={true}>
+      <View
+        className="flex flex-1  px-10 pt-4 ">
 
-      <ModalError
-        setVisible={setModalErrorVisible}
-        visible={modalErrorVisible}
-        message={MsjModalError} />
+        <ModalError
+          setVisible={setModalErrorVisible}
+          visible={modalErrorVisible}
+          message={MsjModalError} />
 
-      <ModalLoading
-        visible={isLoading} />
+        <ModalLoading
+          visible={isLoading} />
 
-      <View className="items-start w-96">
-        <Text className=" text-2xl pt-2 pb-3 w-72">
-          Datos de usuario
-        </Text>
-      </View>
-      <ScrollView
-        showsVerticalScrollIndicator={true}
-        nestedScrollEnabled={true}>
+        <View className="items-start w-96">
+          <Text className=" text-2xl pt-2 pb-3 w-72">
+            Datos de usuario
+          </Text>
+        </View>
 
         <View className=" px-1">
           {
@@ -226,7 +226,7 @@ const AddUser = ({ navigation }) => {
 
         </View>
 
-        <View className="px-7">
+        <View className="">
           <TouchableOpacity
             onPress={info ?
               () => actualizar()
@@ -261,14 +261,14 @@ const AddUser = ({ navigation }) => {
         {
           info && info.hijos_matricula.length > 0
             ?
-            <View className='px-10 mb-11'>
+            <View className='mb-11'>
               {
                 info.hijos_matricula.map((hijo_id, index) => {
-                  console.log(hijo_id)
                   return (
                     <Formulario
                       key={index}
                       childID={hijo_id}
+                      admin={true}
                     />
                   )
                 })
@@ -276,9 +276,9 @@ const AddUser = ({ navigation }) => {
             </View>
             : null
         }
-      </ScrollView>
-      <StatusBar backgroundColor={'#6560AA'} />
-    </View>
+        <StatusBar backgroundColor={'#6560AA'} />
+      </View>
+    </ScrollView>
   )
 }
 

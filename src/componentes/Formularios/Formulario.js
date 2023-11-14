@@ -5,7 +5,7 @@ import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import { generateMatri } from '../generateMatricula'
 
-export const Formulario = ({ childID }) => {
+export const Formulario = ({ childID, admin = false }) => {
     const [datos, setDatos] = useState(
         {
             name_user: '',
@@ -34,7 +34,7 @@ export const Formulario = ({ childID }) => {
                 name_user: datos.name_user,
                 pattern_name: datos.pattern_name,
                 matern_name: datos.matern_name,
-                mail: datos.mail, 
+                mail: datos.mail,
                 matricula: datos.matricula
             });
             console.log("Información actualizada");
@@ -52,7 +52,7 @@ export const Formulario = ({ childID }) => {
     }, [])
 
 
-    
+
     return (
         <View>
             <Text
@@ -90,24 +90,31 @@ export const Formulario = ({ childID }) => {
                 setValue={setDatos}
                 value={datos} />
 
-            <View className='flex flex-row justify-around'>
 
-                <TouchableOpacity
-                    onPress={() => Actualizar()}
-                    className="rounded-md bg-blue-400 p-4  items-center mt-6 ">
-                    <Text className=" text-center text-white">
-                        Actualizar
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => desactivar()}
-                    className={"rounded-md p-4  items-center mt-6 " + (datos.status ? 'bg-red' : 'bg-green')}>
-                    <Text className=" text-center text-white">
-                        {datos.status ? "Desactivar" : "Activar"}
-                    </Text>
-                </TouchableOpacity>
+            {
+                !admin && (
 
-            </View>
+                    <View className='flex flex-row justify-around'>
+
+                        <TouchableOpacity
+                            onPress={() => Actualizar()}
+                            className="rounded-md bg-blue-400 p-4  items-center mt-6 ">
+                            <Text className=" text-center text-white">
+                                Actualizar
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => desactivar()}
+                            className={"rounded-md p-4  items-center mt-6 " + (datos.status ? 'bg-red' : 'bg-green')}>
+                            <Text className=" text-center text-white">
+                                {datos.status ? "Desactivar" : "Activar"}
+                            </Text>
+                        </TouchableOpacity>
+
+                    </View>
+                )
+            }
+
 
         </View>
     )

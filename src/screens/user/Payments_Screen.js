@@ -103,14 +103,14 @@ const PaymentsScreen = ({ navigation }) => {
                     <ModalLoading />
                 )
                 : (
-                    <View className=" flex flex-1 mx-5 mt-5  ">
+                    <View className=" flex flex-1 px-5 pt-5  ">
                         <StatusBar hidden={true} />
                         <Text className="text-2xl font-semibold mb-5 ">Mensualidad</Text>
                         {/* Renderizamos el boton de inscripcion de usuario */}
                         <TouchableOpacity
                             onPress={() => navigation.navigate('Inscripcion', { alumno: userData })}
-                            className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
-                            <Text className="w-80 text-center">
+                            className="rounded-md bg-white justify-center px-10 py-4 mb-4 items-center">
+                            <Text className="w-80 text-center text-lg">
                                 Mensualidad de {userData.name_user} {userData.pattern_name} {userData.matern_name}
                             </Text>
                         </TouchableOpacity>
@@ -120,8 +120,8 @@ const PaymentsScreen = ({ navigation }) => {
                                 <TouchableOpacity
                                     key={index}
                                     onPress={() => navigation.navigate('Inscripcion', { alumno: childInfo })}
-                                    className="rounded-md bg-baseDark h-10 justify-center ml-7 mr-7 mb-4 items-center">
-                                    <Text className="w-80 text-center">
+                                    className="rounded-md bg-white justify-center px-10 py-4 mb-4 items-center">
+                                    <Text className="w-80 text-center text-lg">
                                     Mensualidadr de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
                                     </Text>
                                 </TouchableOpacity>)

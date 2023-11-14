@@ -162,7 +162,7 @@ const HomeAdmin = () => {
               }
             </ScrollView>
             <TouchableOpacity
-              className="bg-red mt-10 p-5 mx-5 rounded-lg"
+              className="bg-red mt-10 p-5 mx-5 mb-32 rounded-lg"
               onPress={() => handleCerrarSesion()}>
               <Text
                 className='text-center text-white text-base'>

@@ -13,7 +13,8 @@ const ModalLoading = ({ visible=true }) => {
                 className='flex flex-1 items-center justify-center bg-[#00000052]'>
                 <Progress.Circle
                     size={100}
-                    borderWidth={4}
+                    borderWidth={5}
+                    color='#646283'
                     indeterminate={true} />
             </View>
         </Modal>

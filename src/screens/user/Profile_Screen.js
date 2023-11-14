@@ -263,7 +263,7 @@ const ProfileScreen = ({ navigation }) => {
                     )
                     : (
                         <View
-                        className='bg-white px-10 pt-4'>
+                        className=' px-10 pt-4'>
                             <Text className="text-xl text-bold">Actualizar datos de perfil</Text>
                             <InputFileld
                                 title={"Nombre/s"}
