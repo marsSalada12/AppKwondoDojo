@@ -83,15 +83,20 @@ const Referencia = () => {
           )
       }
 
-      {/* <TouchableOpacity
+      <TouchableOpacity
         onPress={() => {
-          navigation.navigate("HomeA")
+          if(datos.admin){
+            navigation.navigate("HomeA")
+          }else{
+            navigation.navigate("HomeU")
+          }
+          
         }}
         className={"rounded-md p-4 bg-red items-center mt-6 mb-6 "}>
         <Text className="text-lg text-white font-bold">
           Volver al inicio
         </Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
 
 

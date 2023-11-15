@@ -1,5 +1,5 @@
 
-import { View, Text, Modal, TouchableWithoutFeedback } from 'react-native'
+import { View, Text, Modal, TouchableWithoutFeedback, StatusBar } from 'react-native'
 
 const ModalError = ({ visible, setVisible, message }) => {
 

@@ -42,6 +42,19 @@ const Enroll = ({ navigation }) => {
         }
     );
 
+
+    //Funcion para verificar que el formulario se haya llenado completo
+    // Vamos a devolver "true" si el formulario esta completo
+    const VerificarFormulario = () => {
+        return (datos.name_user
+            && datos.pattern_name
+            && datos.matern_name
+            && datos.phone
+            && datos.mail
+            && datos.password
+            && datos.confirm_pass)
+    }
+
     const PasswordsMatch = ({ password, confirmPass }) => {
         if (confirmPass && password !== confirmPass) {
             return (
@@ -67,73 +80,77 @@ const Enroll = ({ navigation }) => {
 
 
     const autenticar = () => {
-        setIsLoading(false)
-        createUserWithEmailAndPassword(auth, datos.mail, datos.password)
-            .then((userCredential) => {
-                //Guardamos el ID del usuario
-                const userUID = userCredential.user.uid;
-                Crypto.digestStringAsync(
-                    Crypto.CryptoDigestAlgorithm.SHA256,
-                    datos.password
-                )
-                    .then((hashP) => {
-                        console.log(hashP)
-                        datos.password = hashP.toString()
-                        datos.confirm_pass = hashP.toString()
-                        matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-                        datos.matricula = matricula
-                        createUserWUID(datos, userUID)
-                            .then(async (user) => {
-                                setIsLoading(false)
-                                console.log(user, "createUID")
-                                await storeData(user)
-                                navigation.navigate('TabBarUser')
-                            }
-                            ).catch(async (error) => {
-                                setIsLoading(false)
-                                await clearAll()
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                setMsjModal(errorCode, '\n', errorMessage)
-                                setShowModal(true)
-                                console.log(errorMessage)
-                            })
+        setIsLoading(true)
 
-                    })
-                    .catch(async (error) => {
-                        setIsLoading(false)
-                        await clearAll()
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        setMsjModal(errorCode, '\n', errorMessage)
-                        setShowModal(true)
-                        console.log(errorCode, errorMessage)
+        if (!VerificarFormulario()) {
+            setMsjModal("Formulario incompleto")
+            setShowModal(true)
+        } else {
+            createUserWithEmailAndPassword(auth, datos.mail, datos.password)
+                .then((userCredential) => {
+                    //Guardamos el ID del usuario
+                    const userUID = userCredential.user.uid;
+                    Crypto.digestStringAsync(
+                        Crypto.CryptoDigestAlgorithm.SHA256,
+                        datos.password
+                    )
+                        .then((hashP) => {
+                            console.log(hashP)
+                            datos.password = hashP.toString()
+                            datos.confirm_pass = hashP.toString()
+                            matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+                            datos.matricula = matricula
+                            createUserWUID(datos, userUID)
+                                .then(async (user) => {
+                                    setIsLoading(false)
+                                    console.log(user, "createUID")
+                                    await storeData(user)
+                                    navigation.navigate('TabBarUser')
+                                }
+                                ).catch(async (error) => {
+                                    setIsLoading(false)
+                                    await clearAll()
+                                    const errorCode = error.code;
+                                    const errorMessage = error.message;
+                                    setMsjModal(errorCode, '\n', errorMessage)
+                                    setShowModal(true)
+                                    console.log(errorMessage)
+                                })
 
-                    })
-            })
-            .catch(async (error) => {
+                        })
+                        .catch(async (error) => {
+                            setIsLoading(false)
+                            await clearAll()
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+                            setMsjModal(errorCode, '\n', errorMessage)
+                            setShowModal(true)
+                            console.log(errorCode, errorMessage)
 
-                setIsLoading(false)
-                await clearAll()
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                setMsjModal(errorCode, '\n', errorMessage)
-                setShowModal(true)
-                console.log(errorCode, errorMessage)
-            });
+                        })
+                })
+                .catch(async (error) => {
+
+                    setIsLoading(false)
+                    await clearAll()
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setMsjModal(errorCode, '\n', errorMessage)
+                    setShowModal(true)
+                    console.log(errorCode, errorMessage)
+                });
+        }
     }
 
     return (
         <ScrollView>
-            <ModalLoading
-                visible={isloading}
-            />
+            <ModalLoading visible={false} />
             <ModalError
                 setVisible={setShowModal}
                 visible={showModal}
                 message={msjModal}
             />
-            <View className="flex flex-1 bg-white items-center justify-center py-28">
+            <View className="flex flex-1 bg-white items-center justify-center py-28 px-10">
                 <Image
                     source={require('../../assets/logo.png')}
                     className='w-56 h-56' />

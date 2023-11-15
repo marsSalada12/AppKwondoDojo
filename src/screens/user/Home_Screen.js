@@ -12,7 +12,7 @@ import { getDataGroup } from '../../firebase/cloudstorage/Groups';
 
 const HomeScreen = ({ navigation }) => {
     const isFocused = useIsFocused()
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [pagosPendientes, setPagosPendientes] = useState([])
 
     // Varibales para almnacenar la informacion del usuario 
@@ -26,6 +26,7 @@ const HomeScreen = ({ navigation }) => {
 
 
     useEffect(() => {
+        setIsLoading(true)
         getData()
             .then((uData) => {
                 setIdusuario([uData.userUID])
@@ -47,11 +48,7 @@ const HomeScreen = ({ navigation }) => {
             .catch((error) => {
                 console.log(error)
             })
-            .finally(() => {
-                // Llamamos setIsLoading(false) solo después de que ambas operaciones asíncronas se hayan completado
-                setIsLoading(false);
-            });
-    }, [isFocused,])
+    }, [isFocused])
 
     //Funcion para traernos la informacion de un usuario
     async function traerInformacionUsuario(id) {
@@ -83,6 +80,9 @@ const HomeScreen = ({ navigation }) => {
                 const errorMessage = error.message;
                 console.log('traerInformacionChildren - getDataChildren: ', error);
             })
+            .finally(() => {
+                setIsLoading(false);
+            });
 
     }
 
