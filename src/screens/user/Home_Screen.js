@@ -3,16 +3,18 @@ import { collection, doc, onSnapshot, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { HeartIcon } from 'react-native-heroicons/solid'
 import { useIsFocused } from '@react-navigation/native'
-import { CheckIcon } from 'react-native-heroicons/outline'
+import { CalendarDaysIcon, CheckIcon } from 'react-native-heroicons/outline'
 import ModalLoading from '../../componentes/loading/loading'
 import { getData } from '../../Storage/storage'
 import { db } from '../../firebase/firebase';
 import { getDataChildren } from '../../firebase/cloudstorage/Children';
 import { getDataGroup } from '../../firebase/cloudstorage/Groups';
+import { getDataPayment } from '../../firebase/cloudstorage/CreatePayment';
+import { diasRestantes } from '../../componentes/fechas';
 
 const HomeScreen = ({ navigation }) => {
     const isFocused = useIsFocused()
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
     const [pagosPendientes, setPagosPendientes] = useState([])
 
     // Varibales para almnacenar la informacion del usuario 
@@ -26,6 +28,7 @@ const HomeScreen = ({ navigation }) => {
 
 
     useEffect(() => {
+
         setIsLoading(true)
         getData()
             .then((uData) => {
@@ -50,6 +53,9 @@ const HomeScreen = ({ navigation }) => {
             })
     }, [isFocused])
 
+
+
+
     //Funcion para traernos la informacion de un usuario
     async function traerInformacionUsuario(id) {
         setIdusuario([id])
@@ -61,7 +67,18 @@ const HomeScreen = ({ navigation }) => {
             if (doc.data().lastGroupUID !== "") {
                 infroGroup = await getDataGroup(doc.data().lastGroupUID)
             }
-            setUserData({ ...doc.data(), ...infroGroup, "userUID": id });
+
+            let paymentID = ''
+            let lastPaymentInfo = {}
+            if (doc.data().payments_id.length > 0) {
+                paymentID = doc.data().payments_id[doc.data().payments_id.length - 1]
+                lastPaymentInfo = await getDataPayment(paymentID)
+
+
+            }
+
+            const restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
+            setUserData({ ...doc.data(), ...infroGroup, ...lastPaymentInfo, "lastPaymentID": paymentID, "end_mensulidad_days": restantes })
 
             // Agregamos la informacion del pago, porque ademas del pago se guarda la informacion del grupo
             traerInformacionChildren(doc.data().hijos_matricula)
@@ -81,6 +98,7 @@ const HomeScreen = ({ navigation }) => {
                 console.log('traerInformacionChildren - getDataChildren: ', error);
             })
             .finally(() => {
+                console.log(userData)
                 setIsLoading(false);
             });
 
@@ -98,15 +116,43 @@ const HomeScreen = ({ navigation }) => {
                             Grupo y horario
                         </Text>
 
+
                         <View>
                             {
                                 userData && (
                                     <>
+                                        {console.log(userData)}
+                                        <Text className="text-xl ">{userData.name_user} {userData.ap_paterno} {userData.ap_materno} </Text>
+                                        {
+                                            (userData.lastGroupUID && userData.end_mensulidad_days > 0)
+                                                ? <>
+                                                    <Text className="text-lg  ">Hora {userData.hora}</Text>
+                                                    <Text className="text-lg  ">Lunes - Viernes</Text>
+                                                    <Text className="text-lg  ">Grupo: {userData.grupo}</Text>
+                                                    <Text className="text-lg  ">Vencimiento: {userData.end_mensulidad_days} dias</Text>
+                                                    {
+                                                        userData.end_mensulidad_days <= 7 && (
+                                                            <TouchableOpacity
+                                                                className='items-center py-2 rounded-md bg-blue-400'>
+                                                                <Text
+                                                                    className='text-white text-lg'>
+                                                                    Renovar mensualidad
+                                                                </Text>
+                                                            </TouchableOpacity>
+                                                        )
+                                                    }
+                                                </>
+                                                : <View
+                                                    className='p-4  mb-1 flex-row items-center'>
+                                                    <CalendarDaysIcon size={30} color={'black'} />
+                                                    <Text
+                                                        className=' text-lg px-4'>
+                                                        Inscribete a un grupo para mostrarte tu horario
+                                                    </Text>
+                                                </View>
+                                        }
 
-                                        <Text className="text-xl   ">{userData.name_user} {userData.pattern_name} {userData.matern_name}</Text>
-                                        <Text className="text-lg  ">Hora {userData.schedule}</Text>
-                                        <Text className="text-lg  ">Lunes - Viernes</Text>
-                                        <Text className="text-lg  ">Grupo: {userData.type_group}</Text>
+
                                     </>
                                 )
                             }
@@ -120,16 +166,35 @@ const HomeScreen = ({ navigation }) => {
                                             className='mt-4'>
                                             <Text className="text-xl  ">{childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}</Text>
                                             {
-                                                childInfo.lastGroupUID
+                                                (childInfo.lastGroupUID && childInfo.end_mensulidad_days >= 0 )
                                                     ? (<>
 
                                                         <Text className="text-lg  ">Hora {childInfo.schedule}</Text>
                                                         <Text className="text-lg  ">Lunes - Viernes</Text>
                                                         <Text className="text-lg  ">Grupo: {childInfo.type_group}</Text>
+                                                        <Text className="text-lg  ">Vencimiento: {childInfo.end_mensulidad_days} dias</Text>
+                                                        {
+                                                            childInfo.end_mensulidad_days <= 7 && (
+                                                                <TouchableOpacity
+                                                                    className='items-center py-2 rounded-md bg-blue-400'>
+                                                                    <Text
+                                                                        className='text-white text-lg'>
+                                                                        Renovar mensualidad
+                                                                    </Text>
+                                                                </TouchableOpacity>
+                                                            )
+                                                        }
 
                                                     </>)
                                                     : (<>
-                                                        <Text className="text-lg  ">Sin horario :c</Text>
+                                                        <View
+                                                            className='p-4  mb-1 flex-row items-center'>
+                                                            <CalendarDaysIcon size={30} color={'black'} />
+                                                            <Text
+                                                                className=' text-lg px-4'>
+                                                                Inscribete a un grupo para mostrarte tu horario
+                                                            </Text>
+                                                        </View>
                                                     </>)
                                             }
                                         </View>
@@ -170,14 +235,14 @@ const HomeScreen = ({ navigation }) => {
                                                 key={index}
                                                 className="rounded-md  bg-white p-4 shadow-md items-start mb-4">
                                                 <>
-                                                
+
                                                     <Text
                                                         className='text-xl'>
                                                         Pago de inscripcion {pago.name_user} {pago.ap_paterno} {pago.ap_materno}
                                                     </Text>
                                                     <Text
                                                         className='text-base'>
-                                                        Limite de pago: {pago.due_date} "" 
+                                                        Limite de pago: {pago.due_date} ""
                                                     </Text>
                                                 </>
                                             </TouchableOpacity>

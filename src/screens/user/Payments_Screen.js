@@ -122,7 +122,7 @@ const PaymentsScreen = ({ navigation }) => {
                                     onPress={() => navigation.navigate('Inscripcion', { alumno: childInfo })}
                                     className="rounded-md bg-white justify-center px-10 py-4 mb-4 items-center">
                                     <Text className="w-80 text-center text-lg">
-                                    Mensualidadr de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
+                                    Mensualidad de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
                                     </Text>
                                 </TouchableOpacity>)
                         })}
