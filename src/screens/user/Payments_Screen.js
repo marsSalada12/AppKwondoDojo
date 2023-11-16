@@ -11,11 +11,14 @@ import { ClipboardDocumentCheckIcon } from 'react-native-heroicons/outline';
 
 
 const PaymentsScreen = ({ navigation }) => {
+    //Variables para almacenar los datos del usuario y hijos
     const [userData, setUserData] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
     const [childNames, setChildNames] = useState([]);
-
+    
+    // Variable para almacenar el historial de los pagos
     const [historial, setHistorial] = useState([])
+
+    const [isLoading, setIsLoading] = useState(true);
 
     // Variables para almacenar los ids del usuario e hijos
     const [idusuario, setIdusuario] = useState([""])
@@ -33,7 +36,6 @@ const PaymentsScreen = ({ navigation }) => {
                 .then(async (data) => {
                     setUserData(data)
                     traerInformacionUsuario(data.userUID)
-                    // await traerInformacionUsuario(await data.userUID);
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -55,6 +57,7 @@ const PaymentsScreen = ({ navigation }) => {
             })
             setChildNames([])
         }
+        // Consulta a la coleccion de "Payments", para obtener los pagos que ha echo el usuario
         const q = query(collection(db, "Payments"), where("userUID", "in", idusuario.concat(idHijos)), where("status", "!=", "Pendiente"));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const pendientes = [];
@@ -66,7 +69,7 @@ const PaymentsScreen = ({ navigation }) => {
     }, [isFocused]);
 
 
-
+    // Metodo para obtener la informacion del usuario de la BD
     async function traerInformacionUsuario(id) {
         setIdusuario([id])
         const unsub = onSnapshot(doc(db, "Usuarios", id), (doc) => {
@@ -76,9 +79,10 @@ const PaymentsScreen = ({ navigation }) => {
         });
     }
 
+    // Metodo para obtener la informacion de los hijos de la BD
     function traerInformacionChildren(ids) {
-        setIdHijos(ids)
-        getDataChildren(ids)
+        setIdHijos(ids) // Guardamos los IDS de los hijos
+        getDataChildren(ids) // Obtenemos la informacion de los hijos
             .then((info) => {
                 setChildNames(info);
             })
@@ -88,10 +92,7 @@ const PaymentsScreen = ({ navigation }) => {
                 console.log('traerInformacionChildren - getDataChildren: ', error);
             })
             .finally(() => {
-                // Llamamos setIsLoading(false) solo después de que ambas operaciones asíncronas se hayan completado
                 setIsLoading(false);
-                console.log(idusuario)
-                console.log(idHijos)
             });
     }
 

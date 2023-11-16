@@ -50,6 +50,12 @@ export const getDataChild = async (child_id) => {
 }
 
 
+// Funcion para iterar sobre los IDs de los hijos y retorna la informacion
+/**
+ * 
+ * @param {[]} child_ids 
+ * @returns informacino de los hijos
+ */
 export const getDataChildren = async (child_ids) => {
     const child_info = await Promise.all(
         child_ids.map(async (ch_id) => {

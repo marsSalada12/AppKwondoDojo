@@ -32,12 +32,15 @@ const HomeScreen = ({ navigation }) => {
         setIsLoading(true)
         getData()
             .then((uData) => {
+                // Guardamos los IDS del usuario y de los hijos
                 setIdusuario([uData.userUID])
                 setIdHijos(uData.hijos_matricula)
 
+                //Guardamos la informacion del ussuario
                 setUserData(uData)
                 traerInformacionUsuario(uData.userUID)
 
+                // Consultamos la coleccion de "Payments" para traernos los pagos que ha echo el usuario y sus hijos
                 const q = query(collection(db, "Payments"), where("userUID", "in", idusuario.concat(idHijos)), where("status", "==", "Pendiente"));
                 const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     const pendientes = [];
@@ -62,12 +65,13 @@ const HomeScreen = ({ navigation }) => {
         const unsub = onSnapshot(doc(db, "Usuarios", id), async (doc) => {
             setUserData({ ...doc.data(), "userUID": id });
 
-            // Mandamos a llamar una funcion para agregar la informacion del grupo
+            // Si el usuario esta incrito a un grupo, nos traemos la informacion del grupo
             let infroGroup = {}
             if (doc.data().lastGroupUID !== "") {
                 infroGroup = await getDataGroup(doc.data().lastGroupUID)
             }
 
+            // Si el usuario tiene algun pago, nos vamos a traer la informacino de su ultimo pago
             let paymentID = ''
             let lastPaymentInfo = {}
             if (doc.data().payments_id.length > 0) {
@@ -77,7 +81,10 @@ const HomeScreen = ({ navigation }) => {
 
             }
 
+            // Calculamos los dias restantes de la mensualidad
             const restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
+
+            // Guardamos la TODA la informacion que buscamos, (informacion del usuario, su grupo, y ultimo pago)
             setUserData({ ...doc.data(), ...infroGroup, ...lastPaymentInfo, "lastPaymentID": paymentID, "end_mensulidad_days": restantes })
 
             // Agregamos la informacion del pago, porque ademas del pago se guarda la informacion del grupo
@@ -98,7 +105,6 @@ const HomeScreen = ({ navigation }) => {
                 console.log('traerInformacionChildren - getDataChildren: ', error);
             })
             .finally(() => {
-                console.log(userData)
                 setIsLoading(false);
             });
 
