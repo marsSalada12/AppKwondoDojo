@@ -172,36 +172,39 @@ const HomeScreen = ({ navigation }) => {
                                             className='mt-4'>
                                             <Text className="text-xl  ">{childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}</Text>
                                             {
-                                                (childInfo.lastGroupUID && childInfo.end_mensulidad_days >= 0 )
-                                                    ? (<>
+                                                childInfo.status
+                                                    ? (childInfo.lastGroupUID && childInfo.end_mensulidad_days >= 0)
+                                                        ? (<>
 
-                                                        <Text className="text-lg  ">Hora {childInfo.schedule}</Text>
-                                                        <Text className="text-lg  ">Lunes - Viernes</Text>
-                                                        <Text className="text-lg  ">Grupo: {childInfo.type_group}</Text>
-                                                        <Text className="text-lg  ">Vencimiento: {childInfo.end_mensulidad_days} dias</Text>
-                                                        {
-                                                            childInfo.end_mensulidad_days <= 7 && (
-                                                                <TouchableOpacity
-                                                                    className='items-center py-2 rounded-md bg-blue-400'>
-                                                                    <Text
-                                                                        className='text-white text-lg'>
-                                                                        Renovar mensualidad
-                                                                    </Text>
-                                                                </TouchableOpacity>
-                                                            )
-                                                        }
+                                                            <Text className="text-lg  ">Hora {childInfo.schedule}</Text>
+                                                            <Text className="text-lg  ">Lunes - Viernes</Text>
+                                                            <Text className="text-lg  ">Grupo: {childInfo.type_group}</Text>
+                                                            <Text className="text-lg  ">Vencimiento: {childInfo.end_mensulidad_days} dias</Text>
+                                                            {
+                                                                childInfo.end_mensulidad_days <= 7 && (
+                                                                    <TouchableOpacity
+                                                                        className='items-center py-2 rounded-md bg-blue-400'>
+                                                                        <Text
+                                                                            className='text-white text-lg'>
+                                                                            Renovar mensualidad
+                                                                        </Text>
+                                                                    </TouchableOpacity>
+                                                                )
+                                                            }
 
-                                                    </>)
-                                                    : (<>
-                                                        <View
-                                                            className='p-4  mb-1 flex-row items-center'>
-                                                            <CalendarDaysIcon size={30} color={'black'} />
-                                                            <Text
-                                                                className=' text-lg px-4'>
-                                                                Inscribete a un grupo para mostrarte tu horario
-                                                            </Text>
-                                                        </View>
-                                                    </>)
+                                                        </>)
+                                                        : (<>
+                                                            <View
+                                                                className='p-4  mb-1 flex-row items-center'>
+                                                                <CalendarDaysIcon size={30} color={'black'} />
+                                                                <Text
+                                                                    className=' text-lg px-4'>
+                                                                    Inscribete a un grupo para mostrarte tu horario
+                                                                </Text>
+                                                            </View>
+                                                        </>)
+                                                    : null
+
                                             }
                                         </View>
                                     )

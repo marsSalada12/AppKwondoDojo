@@ -14,7 +14,7 @@ const PaymentsScreen = ({ navigation }) => {
     //Variables para almacenar los datos del usuario y hijos
     const [userData, setUserData] = useState(null);
     const [childNames, setChildNames] = useState([]);
-    
+
     // Variable para almacenar el historial de los pagos
     const [historial, setHistorial] = useState([])
 
@@ -62,7 +62,7 @@ const PaymentsScreen = ({ navigation }) => {
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const pendientes = [];
             querySnapshot.forEach((doc) => {
-                pendientes.push({...doc.data(), "payment_id": doc.id});
+                pendientes.push({ ...doc.data(), "payment_id": doc.id });
             });
             setHistorial(pendientes)
         });
@@ -118,14 +118,17 @@ const PaymentsScreen = ({ navigation }) => {
 
                         {childNames.map((childInfo, index) => {
                             return (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() => navigation.navigate('Inscripcion', { alumno: childInfo })}
-                                    className="rounded-md bg-white justify-center px-10 py-4 mb-4 items-center">
-                                    <Text className="w-80 text-center text-lg">
-                                    Mensualidad de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
-                                    </Text>
-                                </TouchableOpacity>)
+                                childInfo.status
+                                    ? <TouchableOpacity
+                                        key={index}
+                                        onPress={() => navigation.navigate('Inscripcion', { alumno: childInfo })}
+                                        className="rounded-md bg-white justify-center px-10 py-4 mb-4 items-center">
+                                        <Text className="w-80 text-center text-lg">
+                                            Mensualidad de {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    : null
+                            )
                         })}
 
                         <Text className="text-2xl font-semibold mb-5 ">

@@ -27,22 +27,27 @@ export const getDataChild = async (child_id) => {
         const childrenRef = doc(db, "Children", child_id);
         const docSnapshot = await getDoc(childrenRef);
         // Variable para almacenar la informacion del grupo
-        let infroGroup = {}
-        if (docSnapshot.data().lastGroupUID) {
-            infroGroup = await getDataGroup(docSnapshot.data().lastGroupUID)
+        if (docSnapshot.data().status === true) {
+            let infroGroup = {}
+            if (docSnapshot.data().lastGroupUID) {
+                infroGroup = await getDataGroup(docSnapshot.data().lastGroupUID)
+            }
+
+            let paymentID = ''
+            let lastPaymentInfo = {}
+            if (docSnapshot.data().payments_id.length > 0) {
+                paymentID = docSnapshot.data().payments_id[docSnapshot.data().payments_id.length - 1]
+                lastPaymentInfo = await getDataPayment(paymentID)
+                const restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
+
+                lastPaymentInfo = { ...lastPaymentInfo, end_mensulidad_days: restantes }
+            }
+
+            return { ...docSnapshot.data(), ...infroGroup, ...lastPaymentInfo, userUID: child_id }
+        } else {
+            // Si el campo status no es true, puedes retornar null o un valor indicativo.
+            return { nothing: "nothing" };
         }
-
-        let paymentID = ''
-        let lastPaymentInfo = {}
-        if (docSnapshot.data().payments_id.length > 0) {
-            paymentID = docSnapshot.data().payments_id[docSnapshot.data().payments_id.length - 1]
-            lastPaymentInfo = await getDataPayment(paymentID)
-            const restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
-
-            lastPaymentInfo = {...lastPaymentInfo, end_mensulidad_days: restantes}
-        }
-
-        return { ...docSnapshot.data(), ...infroGroup, ...lastPaymentInfo, userUID: child_id}
     } catch (error) {
         return { noting: "nothing" }
     }
