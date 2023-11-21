@@ -26,25 +26,22 @@ export const getDataChild = async (child_id) => {
     try {
         const childrenRef = doc(db, "Children", child_id);
         const docSnapshot = await getDoc(childrenRef);
-
-        // Si el hijo esta incrito a un grupo, nos traemos la informacion del grupo
+        // Variable para almacenar la informacion del grupo
         let infroGroup = {}
         if (docSnapshot.data().lastGroupUID) {
             infroGroup = await getDataGroup(docSnapshot.data().lastGroupUID)
         }
 
-        // Si el hijo tiene algun pago, nos vamos a traer la informacino de su ultimo pago
         let paymentID = ''
         let lastPaymentInfo = {}
         if (docSnapshot.data().payments_id.length > 0) {
             paymentID = docSnapshot.data().payments_id[docSnapshot.data().payments_id.length - 1]
             lastPaymentInfo = await getDataPayment(paymentID)
-            // Calculamos los dias restantes de la mensualidad
             const restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
+
             lastPaymentInfo = {...lastPaymentInfo, end_mensulidad_days: restantes}
         }
 
-        // Retornamos TODA la informacion que buscamos, (informacion del hijo, su grupo, y ultimo pago)
         return { ...docSnapshot.data(), ...infroGroup, ...lastPaymentInfo, userUID: child_id}
     } catch (error) {
         return { noting: "nothing" }
