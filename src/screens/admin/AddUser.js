@@ -20,7 +20,7 @@ import ModalLoading from '../../componentes/loading/loading';
 const AddUser = ({ navigation }) => {
   const info = useRoute().params
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const [tyUser, setTyUser] = useState([])
 
@@ -64,14 +64,14 @@ const AddUser = ({ navigation }) => {
             navigation.goBack();
           })
           .catch((error) => {
-            setIsLoading(true)
+            setIsLoading(false)
             const errorCode = error.code;
             const errorMessage = error.message;
             console.log(errorCode, errorMessage)
           })
       })
       .catch((error) => {
-        setIsLoading(true)
+        setIsLoading(false)
         const errorCode = error.code;
         const errorMessage = error.message;
         setMsjModalError(errorCode, '\n', errorMessage)
@@ -100,7 +100,7 @@ const AddUser = ({ navigation }) => {
       matern_name: datos.matern_name,
       phone: datos.phone
     });
-    setIsLoading(true)
+    setIsLoading(false)
     navigation.goBack()
   }
 
@@ -129,7 +129,12 @@ const AddUser = ({ navigation }) => {
           setTyUser(user);
         })
         .catch((error) => {
-
+          setIsLoading(false)
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setMsjModalError(errorCode, '\n', errorMessage)
+          setModalErrorVisible(true)
+          console.log('Error useEffect - getAllTypeUsers \n', errorCode, errorMessage)
         })
         .finally(() => {
           setIsLoading(false);

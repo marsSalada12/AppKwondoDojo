@@ -58,6 +58,7 @@ const AddGroup = ({ navigation }) => {
         schedule: '',
         description: '',
         name_teac: '',
+        id_teac: '',
         matricula_alumno: [],
         cupo: '',
         price: '',
@@ -153,6 +154,7 @@ const AddGroup = ({ navigation }) => {
             maestrosFun().then((maes) => {
                 isLoading(true);
                 setMaestros(maes)
+                console.log(maestros)
                 isLoading(false);
             })
         }, []

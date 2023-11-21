@@ -64,9 +64,7 @@ const HomeAdmin = () => {
             <Text className="text-2xl font-bold mb-2 ">
               Pagos pendientes
             </Text>
-            <ScrollView
-
-              className=' max-h-96'>
+            <ScrollView>
               {
                 pagosPendientes.length == 0
                   ? <View
