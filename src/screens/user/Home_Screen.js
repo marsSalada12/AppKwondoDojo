@@ -32,6 +32,8 @@ const HomeScreen = ({ navigation }) => {
         setIsLoading(true)
         getData()
             .then((uData) => {
+
+                console.log(uData)
                 // Guardamos los IDS del usuario y de los hijos
                 setIdusuario([uData.userUID])
                 setIdHijos(uData.hijos_matricula)
@@ -74,15 +76,13 @@ const HomeScreen = ({ navigation }) => {
             // Si el usuario tiene algun pago, nos vamos a traer la informacino de su ultimo pago
             let paymentID = ''
             let lastPaymentInfo = {}
+            let restantes = ''
             if (doc.data().payments_id.length > 0) {
                 paymentID = doc.data().payments_id[doc.data().payments_id.length - 1]
                 lastPaymentInfo = await getDataPayment(paymentID)
-
-
+                restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
             }
-
             // Calculamos los dias restantes de la mensualidad
-            const restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
 
             // Guardamos la TODA la informacion que buscamos, (informacion del usuario, su grupo, y ultimo pago)
             setUserData({ ...doc.data(), ...infroGroup, ...lastPaymentInfo, "lastPaymentID": paymentID, "end_mensulidad_days": restantes })
@@ -125,7 +125,7 @@ const HomeScreen = ({ navigation }) => {
 
                         <View>
                             {
-                                userData && (
+                                (!isLoading && userData) && (
                                     <>
                                         {console.log(userData)}
                                         <Text className="text-xl ">{userData.name_user} {userData.ap_paterno} {userData.ap_materno} </Text>

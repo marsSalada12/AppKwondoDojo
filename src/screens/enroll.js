@@ -87,47 +87,28 @@ const Enroll = ({ navigation }) => {
             setShowModal(true)
         } else {
             createUserWithEmailAndPassword(auth, datos.mail, datos.password)
-                .then((userCredential) => {
+                .then(async (userCredential) => {
                     //Guardamos el ID del usuario
                     const userUID = userCredential.user.uid;
-                    Crypto.digestStringAsync(
-                        Crypto.CryptoDigestAlgorithm.SHA256,
-                        datos.password
-                    )
-                        .then((hashP) => {
-                            console.log(hashP)
-                            datos.password = hashP.toString()
-                            datos.confirm_pass = hashP.toString()
-                            matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-                            datos.matricula = matricula
-                            createUserWUID(datos, userUID)
-                                .then(async (user) => {
-                                    setIsLoading(false)
-                                    console.log(user, "createUID")
-                                    await storeData(user)
-                                    navigation.navigate('TabBarUser')
-                                }
-                                ).catch(async (error) => {
-                                    setIsLoading(false)
-                                    await clearAll()
-                                    const errorCode = error.code;
-                                    const errorMessage = error.message;
-                                    setMsjModal(errorCode, '\n', errorMessage)
-                                    setShowModal(true)
-                                    console.log(errorMessage)
-                                })
+                    const hashP = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, datos.password)
 
-                        })
-                        .catch(async (error) => {
-                            setIsLoading(false)
-                            await clearAll()
-                            const errorCode = error.code;
-                            const errorMessage = error.message;
-                            setMsjModal(errorCode, '\n', errorMessage)
-                            setShowModal(true)
-                            console.log(errorCode, errorMessage)
+                    //Asignamos el hash y la matricula al objeto del usuario
+                    datos.password = hashP.toString()
+                    datos.confirm_pass = hashP.toString()
+                    datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
 
-                        })
+                    // Creamos al usuario con un ID
+                    const user = await createUserWUID(datos, userUID)
+                    console.log(user, "createUID")
+
+                    // Almacenamos la sesion del usuario
+                    await storeData(user)
+
+                    //Navegamos a el menu de usuario
+                    navigation.navigate('TabBarUser')
+                    
+                    // Cambiamos el estado del cargaando
+                    setIsLoading(false)
                 })
                 .catch(async (error) => {
 
@@ -138,7 +119,7 @@ const Enroll = ({ navigation }) => {
                     setMsjModal(errorCode, '\n', errorMessage)
                     setShowModal(true)
                     console.log(errorCode, errorMessage)
-                });
+                })
         }
     }
 
