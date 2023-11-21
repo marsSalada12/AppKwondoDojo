@@ -20,7 +20,12 @@ const Inscripcion = ({ navigation }) => {
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const grupos = [];
                 querySnapshot.forEach((doc) => {
-                    grupos.push({ ...doc.data(), 'id': doc.id });
+                    // Revisamos en la informacion de los grupos el tamaño del arreglo de "matricula_alumno"
+                    // Si el tamaño es menor al cupo requerido vamos a agregar al grupo en el arreglo
+                    // pero si no es menor simplemente no lo agregamos
+                    if (doc.data().matricula_alumno.length < parseInt(doc.data().cupo)) {
+                        grupos.push({ ...doc.data(), 'id': doc.id });
+                    }
                 });
                 setDatos(grupos)
             });
@@ -50,7 +55,7 @@ const Inscripcion = ({ navigation }) => {
                             datos.map((grupillos, index) => {
                                 return (
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate("Mensualidad", {"info": grupillos, alumno: info.alumno})}
+                                        onPress={() => navigation.navigate("Mensualidad", { "info": grupillos, alumno: info.alumno })}
                                         key={index}
                                         className="rounded-md w-full h-fit bg-white p-4 shadow-2xl items-start mt-2 mb-2">
                                         <View className="flex-row justify-around">

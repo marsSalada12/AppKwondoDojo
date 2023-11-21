@@ -34,7 +34,13 @@ export const maestrosFun = async () => {
     const querySnapshot = await getDocs(que);
     querySnapshot.forEach((doc) => {
         const fullName = doc.data().name_user + ' ' + doc.data().pattern_name + ' ' + doc.data().matern_name
-        maestros.push({ label: fullName, value: fullName, maestroUID: doc.id });
+        maestros.push(
+            {
+                label: fullName,
+                value: fullName,
+                testID: doc.id
+            }
+        );
     });
     return maestros;
 };

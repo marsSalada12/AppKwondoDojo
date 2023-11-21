@@ -12,6 +12,7 @@ import Dropdown from '../../componentes/Inputs/DropDown/DropDown'
 import ModalError from '../../componentes/Modals/MAddUserError'
 import GroupInfo from '../../componentes/Modals/GroupInfo'
 import { DropdownGroup } from '../../componentes/Inputs/DropDown/DropDownGrupo'
+import DropdownTeacher from '../../componentes/Inputs/DropDown/DropDownTecher'
 
 const AddGroup = ({ navigation }) => {
 
@@ -73,12 +74,16 @@ const AddGroup = ({ navigation }) => {
 
     // Metodo para guardar a un grupo en la BD
     const autenticar = async () => {
+        
         if (VerificarFormulario() && !ocupado) {
             console.log('insertamos el grupo')
+            
             const gruposReference = doc(collection(db, "Groups"));
             await setDoc(gruposReference, datos);
+            
             console.log(datos)
             console.log("agreganding...")
+            
             navigation.goBack()
         } else {
             setMensaje('Formulario incompleto o\nEl maestro ya tiene grupo a esa hora')
@@ -128,6 +133,7 @@ const AddGroup = ({ navigation }) => {
                 schedule: datos.schedule,
                 description: datos.description,
                 name_teac: datos.name_teac,
+                id_teac: datos.id_teac
             });
 
             console.log("ACTUALIZANDING...")
@@ -135,7 +141,8 @@ const AddGroup = ({ navigation }) => {
         } else {
             setMensaje('Formulario incompleto o\nEl maestro ya tiene grupos a esa hora')
             setShowModalErr(true)
-            console.log('no lo insertamos')
+
+            console.log('no lo insertamos ---')
         }
     }
 
@@ -154,7 +161,6 @@ const AddGroup = ({ navigation }) => {
             maestrosFun().then((maes) => {
                 isLoading(true);
                 setMaestros(maes)
-                console.log(maestros)
                 isLoading(false);
             })
         }, []
@@ -203,10 +209,11 @@ const AddGroup = ({ navigation }) => {
                 {
                     loading
                         ? null
-                        : <Dropdown
+                        : <DropdownTeacher
                             list={maestros}
                             title={"Maestros"}
                             name={"name_teac"}
+                            field_id={"id_teac"}
                             setValue={setDatos}
                             value={datos} />
                 }

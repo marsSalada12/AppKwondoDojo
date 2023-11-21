@@ -100,11 +100,12 @@ const Mensualidad = ({ navigation }) => {
                         {"Instructor: " + grupoIn.name_teac}
                     </Text>
                 </View>
-                <View className="ml-10">
+                {/* Aqui esta la View que mencionaba el cupo del grup */}
+                {/* <View className="ml-10">
                     <Text className=" text-lg font-semibold w-full mt-2 ml-2">
                         {"Cupo: \n " + grupoIn.cont_alumnos + "/" + + grupoIn.cupo}
                     </Text>
-                </View>
+                </View> */}
             </View>
             <Text className="text-2xl ml-4 mt-6">Saldo a pagar</Text>
             <View className=" flex-row justify-around rounded-md ml-5 mr-5 bg-white p-4 shadow-2xl items-start mt-2 mb-2">
