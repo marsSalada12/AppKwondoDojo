@@ -5,7 +5,7 @@ import { auth, db } from '../../firebase/firebase';
 import { createUserWithEmailAndPassword, getAuth, updateEmail, updateProfile } from 'firebase/auth';
 import { createUserWUID } from '../../firebase/cloudstorage/CreateUsers'
 import { useRoute } from '@react-navigation/native';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { StatusBar } from 'expo-status-bar';
 import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { getAllTypeUsers } from '../../firebase/cloudstorage/Default';
@@ -49,60 +49,109 @@ const AddUser = ({ navigation }) => {
       : initialDatos
   );
 
+  const VerificarFormulario = () => {
+    return (datos.type_user
+      && datos.name_user
+      && datos.pattern_name
+      && datos.matern_name
+      && datos.mail
+      && datos.phone)
+  }
+
 
   // Metodo para guardar a un usuario
   const autenticar = () => {
     setIsLoading(true)
-    createUserWithEmailAndPassword(auth, datos.mail, "123456")
-      .then((userCredential) => {
-        const user = userCredential.user.uid;
-        datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-        console.log(datos.matricula)
-        createUserWUID(datos, user)
-          .then(() => {
-            setIsLoading(true)
-            navigation.goBack();
-          })
-          .catch((error) => {
-            setIsLoading(false)
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode, errorMessage)
-          })
-      })
-      .catch((error) => {
-        setIsLoading(false)
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        setMsjModalError(errorCode, '\n', errorMessage)
-        setModalErrorVisible(true)
-        console.log('Error AddUser - Create  \n', errorCode, errorMessage)
-      });
+    VerificarFormulario
+      ? createUserWithEmailAndPassword(auth, datos.mail, "123456")
+        .then((userCredential) => {
+          const user = userCredential.user.uid;
+          datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+          console.log(datos.matricula)
+          createUserWUID(datos, user)
+            .then(() => {
+              setIsLoading(true)
+              navigation.goBack();
+            })
+            .catch((error) => {
+              setIsLoading(false)
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              console.log(errorCode, errorMessage)
+            })
+        })
+        .catch((error) => {
+          setIsLoading(false)
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setMsjModalError(errorCode, '\n', errorMessage)
+          setModalErrorVisible(true)
+          console.log('Error AddUser - Create  \n', errorCode, errorMessage)
+        })
+      : console.log("no se pudo")
   }
 
 
   //Metodo para desactivar o activar a el usuario
   const desactivar = async () => {
+    const groupsCollection = collection(db, "Groups");
     const infoUser = doc(db, "Usuarios", datos.id);
-    await updateDoc(infoUser, {
-      status: !info.status
-    });
+    try {
+      // Realizar una consulta para encontrar un grupo con el id_teach igual a userInfo.id_teach y status activo
+      const querySnapshot = await getDocs(query(groupsCollection, where("id_teac", "==", datos.id), where("status", "==", true)));
+      // Verificar si NO se encontró ningún grupo activo
+      if (querySnapshot.empty) {
+        // El usuario NO pertenece a ningún grupo activo, puedes actualizar el estado
+        await updateDoc(infoUser, {
+          status: !info.status
+        });
+        navigation.goBack();
+        console.log("Se actualizó el estado del usuario.");
+      } else {
+        // El usuario pertenece a algún grupo activo, no puedes actualizar el estado
+        console.log("El usuario pertenece a algún grupo activo. No se puede actualizar el estado.");
+        setMsjModalError("No se puede desactivar maestro")
+        setModalErrorVisible(true)
+      }
+    } catch (error) {
+      console.error("Error al procesar la solicitud:", error);
+    }
   }
 
-  //Actualizar desde cloudStorage
+  // Actualizar desde cloudStorage
   const actualizar = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
+
     const infoUser = doc(db, "Usuarios", datos.id);
-    await updateDoc(infoUser, {
-      type_user: datos.type_user,
-      name_user: datos.name_user,
-      pattern_name: datos.pattern_name,
-      matern_name: datos.matern_name,
-      phone: datos.phone
-    });
-    setIsLoading(false)
-    navigation.goBack()
+
+    try {
+      if (VerificarFormulario()) {
+        await updateDoc(infoUser, {
+          type_user: datos.type_user,
+          name_user: datos.name_user,
+          pattern_name: datos.pattern_name,
+          matern_name: datos.matern_name,
+          phone: datos.phone
+        });
+
+        setIsLoading(false);
+        navigation.goBack();
+      } else {
+        console.log("No se pudo actualizar. Verifica el formulario.");
+        setMsjModalError("Llenar formulario")
+        setModalErrorVisible(true)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error);
+      errorCode = error.code;
+      errorMessage = error.message;
+      setMsjModalError(errorCode, '\n', errorMessage)
+      setModalErrorVisible(true)
+      setIsLoading(false);
+    }
   }
+
 
   const MinTelephone = ({ phone }) => {
     if (phone.length == 10) {
@@ -118,7 +167,7 @@ const AddUser = ({ navigation }) => {
 
   const boton = () => {
     desactivar();
-    navigation.goBack();
+
   }
 
   useEffect(
