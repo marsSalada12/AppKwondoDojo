@@ -31,6 +31,7 @@ const Mensualidad = ({ navigation }) => {
         due_date: formatDate(addDays(new Date().getTime(), 7)),
         end_mensulidad_date: formatDate(addDays(new Date().getTime(), 30)),
         emission_date: formatDate(addDays(new Date().getTime(), 0)),
+        payday_date: '',
         price: grupoIn.price,
         reference: generateReference(alumnoIn.matricula),
         status: "Pendiente",

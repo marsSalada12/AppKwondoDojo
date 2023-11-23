@@ -23,7 +23,14 @@ const Referencia = () => {
     await updateDoc(payRef, {
       status: datos.status
     });
-   
+  }
+
+  const handlePayday = async () => {
+    const payRef = doc(db, "Payments", datos.payment_id);
+    // Actualizamos el estatuto del pago
+    await updateDoc(payRef, {
+      payday_date: datos.payday_date,
+    });
   }
 
   return (
@@ -62,6 +69,16 @@ const Referencia = () => {
                 setValue={setDatos}
                 value={datos}
               />
+
+<InputFileld
+                  title={"Fecha pago"}
+                  props={"DD/MM/YY"}
+                  edita={true}
+                  max={100}
+                  name={"payday_date"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'letters'} />
 
               <TouchableOpacity
                 onPress={() => {
