@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import Dropdown from '../../componentes/Inputs/DropDown/DropDown';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
+import InputFileld from '../../componentes/Inputs/input';
 
 const Referencia = () => {
   const navigation = useNavigation()
@@ -34,7 +35,7 @@ const Referencia = () => {
   }
 
   return (
-    <View className="pl-8 pr-8 flex-1 bg-white">
+    <View className="pl-8 pb-1 pr-8 flex-1 bg-white">
       <Text className="text-3xl mt-4">Mensualidad</Text>
       <Text className="mt-2 text-xl">Deposito en banco</Text>
       <View className="flex-row mr-6 ml-4 justify-between">
@@ -62,6 +63,18 @@ const Referencia = () => {
         datos.admin
           ? (
             <>
+             <View className="pl-4 pr-8 mt-3 bg-white">
+               <InputFileld
+                  title={"Fecha pago"}
+                  props={"DD/MM/YY"}
+                  edita={true}
+                  max={100}
+                  name={"payday_date"}
+                  setValue={setDatos}
+                  value={datos}
+                  type={'date'} />
+             </View>
+
               <Dropdown
                 list={estados}
                 name={"status"}
@@ -70,19 +83,12 @@ const Referencia = () => {
                 value={datos}
               />
 
-<InputFileld
-                  title={"Fecha pago"}
-                  props={"DD/MM/YY"}
-                  edita={true}
-                  max={100}
-                  name={"payday_date"}
-                  setValue={setDatos}
-                  value={datos}
-                  type={'letters'} />
+             
 
               <TouchableOpacity
                 onPress={() => {
                   handleStatus()
+                  handlePayday()
                   navigation.navigate("HomeA")
                 }}
                 className={"rounded-md p-4 bg-blue-400 items-center"}>
@@ -102,12 +108,12 @@ const Referencia = () => {
 
       <TouchableOpacity
         onPress={() => {
-          if(datos.admin){
+          if (datos.admin) {
             navigation.navigate("HomeA")
-          }else{
+          } else {
             navigation.navigate("HomeU")
           }
-          
+
         }}
         className={"rounded-md p-4 bg-red items-center mt-6 mb-6 "}>
         <Text className="text-lg text-white font-bold">

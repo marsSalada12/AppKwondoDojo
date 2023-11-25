@@ -22,20 +22,24 @@ const InputFileld = ({ title,
         value={value[name]}
         onChangeText={(Text) => {
           if (type === 'email') {
-            setValue({ ...value, [name]: Text })
-          } else {
-            if (type === 'letters') {
-              const result = Text.replace(/[^a-zA-Z0-9 ]/g, '');
-              setValue({ ...value, [name]: result })  
-
-            } else {
-              const result = Text.replace(/\D*/g, '')
-              setValue({ ...value, [name]: result })
-
+            setValue({ ...value, [name]: Text });
+          } else if (type === 'letters') {
+            const result = Text.replace(/[^a-zA-Z0-9 ]/g, '');
+            setValue({ ...value, [name]: result });
+          } else if (type === 'date') {
+            // Asumiendo que el formato es DD/MM/YY
+            const cleanedText = Text.replace(/[^\d/]/g, ''); // Eliminar caracteres no numéricos ni barras
+            if (cleanedText.length <= 8) {
+              // Validar solo si la longitud es igual o menor a 8 (DD/MM/YY)
+              setValue({ ...value, [name]: cleanedText });
             }
+            // Puedes manejar el caso en el que la fecha no cumple con el formato deseado.
+            // Por ejemplo, mostrar un mensaje de error o no actualizar el valor.
+          } else {
+            const result = Text.replace(/\D*/g, '');
+            setValue({ ...value, [name]: result });
           }
-        }
-        }
+        }}
       />
     </View>
   )
