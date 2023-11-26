@@ -153,7 +153,7 @@ const HomeScreen = ({ navigation }) => {
                                                     <CalendarDaysIcon size={30} color={'black'} />
                                                     <Text
                                                         className=' text-lg px-4'>
-                                                        Inscribete a un grupo para mostrarte tu horario
+                                                        Inscribete a un grupo para mostrarte {"\n"}tu horario
                                                     </Text>
                                                 </View>
                                         }
@@ -170,7 +170,13 @@ const HomeScreen = ({ navigation }) => {
                                         <View
                                             key={index}
                                             className='mt-4'>
-                                            <Text className="text-xl  ">{childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}</Text>
+                                            {
+                                                childInfo.status
+                                                    ? <Text className="text-xl  ">
+                                                        {childInfo.name_user} {childInfo.pattern_name} {childInfo.matern_name}
+                                                    </Text>
+                                                    : null
+                                            }
                                             {
                                                 childInfo.status
                                                     ? (childInfo.lastGroupUID && childInfo.end_mensulidad_days >= 0)
@@ -199,7 +205,7 @@ const HomeScreen = ({ navigation }) => {
                                                                 <CalendarDaysIcon size={30} color={'black'} />
                                                                 <Text
                                                                     className=' text-lg px-4'>
-                                                                    Inscribete a un grupo para mostrarte tu horario
+                                                                    Inscribete a un grupo para mostrarte {"\n"}tu horario
                                                                 </Text>
                                                             </View>
                                                         </>)

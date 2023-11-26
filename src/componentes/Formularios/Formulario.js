@@ -4,8 +4,12 @@ import InputFileld from '../Inputs/input'
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import { generateMatri } from '../generateMatricula'
+import ModalError from '../Modals/MAddUserError'
 
 export const Formulario = ({ childID, admin = false }) => {
+    const [modalErrorVisible, setModalErrorVisible] = useState(false)
+    const [MsjModalError, setMsjModalError] = useState('')
+
     const [datos, setDatos] = useState(
         {
             name_user: '',
@@ -17,6 +21,12 @@ export const Formulario = ({ childID, admin = false }) => {
         }
     )
 
+    const VerificarFormulario = () => {
+        return (datos.name_user
+            && datos.pattern_name
+            && datos.matern_name
+            && datos.mail)
+    }
     //desactivar hijo(cambiar status)
     const desactivar = async () => {
         const childInfo = doc(db, "Children", childID);
@@ -28,19 +38,28 @@ export const Formulario = ({ childID, admin = false }) => {
     //Actualizar hijo en la bd
     const Actualizar = async () => {
         try {
-            const childInfo = doc(db, "Children", childID);
-            datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-            await updateDoc(childInfo, {
-                name_user: datos.name_user,
-                pattern_name: datos.pattern_name,
-                matern_name: datos.matern_name,
-                mail: datos.mail,
-                matricula: datos.matricula
-            });
-            console.log("Información actualizada");
+            if (VerificarFormulario()) {
+                const childInfo = doc(db, "Children", childID);
+                datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+                await updateDoc(childInfo, {
+                    name_user: datos.name_user,
+                    pattern_name: datos.pattern_name,
+                    matern_name: datos.matern_name,
+                    mail: datos.mail,
+                    matricula: datos.matricula
+                });
+                console.log("Información actualizada");
+            } else {
+                console.log("No se pudo actualizar. Verifica el formulario.");
+                setMsjModalError("Llenar formulario")
+                setModalErrorVisible(true)
+            }
             // navigation.goBack();
         } catch (error) {
-            console.error("Error al actualizar información", error);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setMsjModalError(errorCode, '\n', errorMessage)
+            setModalErrorVisible(true)
         }
     }
 
@@ -55,6 +74,10 @@ export const Formulario = ({ childID, admin = false }) => {
 
     return (
         <View>
+            <ModalError
+                setVisible={setModalErrorVisible}
+                visible={modalErrorVisible}
+                message={MsjModalError} />
             <Text
                 className='text-xl my-5'>
                 Información alumno(s)

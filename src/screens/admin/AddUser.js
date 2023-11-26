@@ -62,7 +62,7 @@ const AddUser = ({ navigation }) => {
   // Metodo para guardar a un usuario
   const autenticar = () => {
     setIsLoading(true)
-    VerificarFormulario
+    VerificarFormulario()
       ? createUserWithEmailAndPassword(auth, datos.mail, "123456")
         .then((userCredential) => {
           const user = userCredential.user.uid;
