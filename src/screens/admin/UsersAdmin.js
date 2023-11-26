@@ -19,7 +19,7 @@ const UsersAdmin = () => {
 
   // Variable para filtrar por el estatus de los usuarios, por defecto va a traer a todos
   const [filtro, setFiltro] = useState([true, false])
-
+  
 
 
   useEffect(() => {

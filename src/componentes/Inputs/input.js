@@ -12,7 +12,21 @@ const InputFileld = ({ title,
 }) => {
   return (
     <View className={" "}>
-      <Text className="text-lg pb-2 w-80 pt-0">{title}</Text>
+      <View className='flex-row justify-between pt-2 '>
+        <Text className="text-lg ">{title}</Text>
+
+        {/* Revisamos el tamaño que tiene el objeto del usuario
+        para que se muestre el mensaje debe de ser menor a 3 el tamaño y 
+        debe de contenter algo */}
+        {
+          name !== 'mail' && (value[name].length < 3 && value[name])
+            ? <Text className="text-base text-red ">Tamaño minimo 3</Text>
+            : null
+        }
+      </View>
+
+
+
       <TextInput
 
         placeholder={props}
@@ -24,7 +38,7 @@ const InputFileld = ({ title,
           if (type === 'email') {
             setValue({ ...value, [name]: Text });
           } else if (type === 'letters') {
-            const result = Text.replace(/[^a-zA-Z0-9 ]/g, '');
+            const result = Text.replace(/[\W|\d|\s]*/g, '');
             setValue({ ...value, [name]: result });
           } else if (type === 'date') {
             // Asumiendo que el formato es DD/MM/YY

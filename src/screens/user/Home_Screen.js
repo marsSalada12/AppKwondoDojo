@@ -54,7 +54,8 @@ const HomeScreen = ({ navigation }) => {
 
             })
             .catch((error) => {
-                console.log(error)
+
+                console.log('useEffect - getData() ', error)
             })
     }, [isFocused])
 
@@ -63,33 +64,39 @@ const HomeScreen = ({ navigation }) => {
 
     //Funcion para traernos la informacion de un usuario
     async function traerInformacionUsuario(id) {
-        setIdusuario([id])
-        const unsub = onSnapshot(doc(db, "Usuarios", id), async (doc) => {
-            setUserData({ ...doc.data(), "userUID": id });
+        try {
+            setIdusuario([id])
+            
+            const unsub = onSnapshot(doc(db, "Usuarios", id), async (doc) => {
+                setUserData({ ...doc.data(), "userUID": id });
+                // Si el usuario esta incrito a un grupo, nos traemos la informacion del grupo
+                let infroGroup = {}
+                if (doc.data()?.lastGroupUID !== "") {
+                    infroGroup = await getDataGroup(doc.data().lastGroupUID)
+                }
 
-            // Si el usuario esta incrito a un grupo, nos traemos la informacion del grupo
-            let infroGroup = {}
-            if (doc.data().lastGroupUID !== "") {
-                infroGroup = await getDataGroup(doc.data().lastGroupUID)
-            }
+                // Si el usuario tiene algun pago, nos vamos a traer la informacino de su ultimo pago
+                
+                let paymentID = ''
+                let lastPaymentInfo = {}
+                let restantes = ''
+                if (doc.data().payments_id.length > 0) {
+                    paymentID = doc.data().payments_id[doc.data().payments_id.length - 1]
+                    lastPaymentInfo = await getDataPayment(paymentID)
+                    restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
+                }
+                // Calculamos los dias restantes de la mensualidad
 
-            // Si el usuario tiene algun pago, nos vamos a traer la informacino de su ultimo pago
-            let paymentID = ''
-            let lastPaymentInfo = {}
-            let restantes = ''
-            if (doc.data().payments_id.length > 0) {
-                paymentID = doc.data().payments_id[doc.data().payments_id.length - 1]
-                lastPaymentInfo = await getDataPayment(paymentID)
-                restantes = diasRestantes(lastPaymentInfo.end_mensulidad_date)
-            }
-            // Calculamos los dias restantes de la mensualidad
+                // Guardamos la TODA la informacion que buscamos, (informacion del usuario, su grupo, y ultimo pago)
+                setUserData({ ...doc.data(), ...infroGroup, ...lastPaymentInfo, "lastPaymentID": paymentID, "end_mensulidad_days": restantes })
 
-            // Guardamos la TODA la informacion que buscamos, (informacion del usuario, su grupo, y ultimo pago)
-            setUserData({ ...doc.data(), ...infroGroup, ...lastPaymentInfo, "lastPaymentID": paymentID, "end_mensulidad_days": restantes })
+                // Agregamos la informacion del pago, porque ademas del pago se guarda la informacion del grupo
+                traerInformacionChildren(doc.data().hijos_matricula)
+            });
+        } catch (error) {
+            console.log('traerInformacionUsuario - getData() ', error)
+        }
 
-            // Agregamos la informacion del pago, porque ademas del pago se guarda la informacion del grupo
-            traerInformacionChildren(doc.data().hijos_matricula)
-        });
     }
 
     // Funcion para traernos la informacion de los hijos
@@ -128,7 +135,7 @@ const HomeScreen = ({ navigation }) => {
                                 (!isLoading && userData) && (
                                     <>
                                         {console.log(userData)}
-                                        <Text className="text-xl ">{userData.name_user} {userData.ap_paterno} {userData.ap_materno} </Text>
+                                        <Text className="text-xl ">{userData.name_user} {userData.pattern_name} {userData.matern_name} </Text>
                                         {
                                             (userData.lastGroupUID && userData.end_mensulidad_days > 0)
                                                 ? <>

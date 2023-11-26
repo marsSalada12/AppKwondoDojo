@@ -26,7 +26,8 @@ const RecoveryPass = ({ navigation }) => {
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                setMsjModal('No se pudo enviar el correo')
+                console.log(errorCode)
+                setMsjModal('Email invailido o\n No se pudo enviar el correo')
                 setShowModal(true)
             });
     }
@@ -46,7 +47,7 @@ const RecoveryPass = ({ navigation }) => {
                 Recuperar {"\n"} contraseña
             </Text>
 
-            <View className="mt-12">
+            <View className="mt-12 w-80">
                 <InputFileld
                     title={"Correo Electrónico"}
                     props={"correo@ejemplo.com"}
@@ -64,14 +65,13 @@ const RecoveryPass = ({ navigation }) => {
                 </Text>
             </TouchableOpacity>
 
-            <View className=" flex flex-row justify-center w-80">
+            <View className=" flex flex-row justify-center ">
 
                 <Text>
                     Ya tienes cuenta?
                 </Text>
-
                 <Text onPress={() => navigation.navigate("SignIn")}
-                    className=" underline w-20">
+                    className=" underline ">
                     {"\t"}Inicia sesión
                 </Text>
 

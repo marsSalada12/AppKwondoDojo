@@ -5,7 +5,7 @@ const InputTel = ({ title, props, edita, max, min, name, setValue, value }) => {
   return (
     <View className="px-1">
       <Text
-        className="text-lg mb-2 mt-0">{title}
+        className="text-lg mb-2 mt-2">{title}
       </Text>
       <TextInput
       keyboardType='numeric'

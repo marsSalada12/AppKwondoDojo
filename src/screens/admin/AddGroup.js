@@ -13,6 +13,7 @@ import ModalError from '../../componentes/Modals/MAddUserError'
 import GroupInfo from '../../componentes/Modals/GroupInfo'
 import { DropdownGroup } from '../../componentes/Inputs/DropDown/DropDownGrupo'
 import DropdownTeacher from '../../componentes/Inputs/DropDown/DropDownTecher'
+import { checkLenghtData } from '../../componentes/checkForm'
 
 const AddGroup = ({ navigation }) => {
 
@@ -53,6 +54,8 @@ const AddGroup = ({ navigation }) => {
     const [mensaje, setMensaje] = useState('')
     const [ocupado, setOCupado] = useState(false)
 
+    const checkKeys = ["description",]
+    
     const initialDatos = {
         type_group: '',
         status: true,
@@ -72,21 +75,27 @@ const AddGroup = ({ navigation }) => {
             : initialDatos
     );
 
+    //Funcion para verificar que el formulario se haya llenado completo
+    // Vamos a devolver "true" si el formulario esta completo
+    const VerificarFormulario = () => {
+        return (datos.cupo
+            && datos.description
+            && datos.name_teac
+            && datos.price
+            && datos.schedule
+            && datos.type_group)
+    }
+
     // Metodo para guardar a un grupo en la BD
     const autenticar = async () => {
-        
-        if (VerificarFormulario() && !ocupado) {
-            console.log('insertamos el grupo')
-            
+        // Revisamos si los campos estan completos
+        if (VerificarFormulario() && !ocupado && checkLenghtData(datos, checkKeys)) {
+            console.log('agreganding...')
             const gruposReference = doc(collection(db, "Groups"));
             await setDoc(gruposReference, datos);
-            
-            console.log(datos)
-            console.log("agreganding...")
-            
             navigation.goBack()
         } else {
-            setMensaje('Formulario incompleto')
+            setMensaje('Formulario incompleto o\n Ocurrio un error')
             setShowModalErr(true)
             console.log('no lo insertamos')
         }
@@ -106,16 +115,7 @@ const AddGroup = ({ navigation }) => {
 
     }
 
-    //Funcion para verificar que el formulario se haya llenado completo
-    // Vamos a devolver "true" si el formulario esta completo
-    const VerificarFormulario = () => {
-        return (datos.cupo
-            && datos.description
-            && datos.name_teac
-            && datos.price
-            && datos.schedule
-            && datos.type_group)
-    }
+    
 
     // Metodo para cambiar el estado de un grupo
     const desactivar = async () => {
@@ -127,7 +127,7 @@ const AddGroup = ({ navigation }) => {
 
     // Metodo para actualizar la informacion del grupo
     const actualizar = async () => {
-        if (VerificarFormulario()) {
+        if (VerificarFormulario() && checkLenghtData(datos, checkKeys)) {
             const infoGroups = doc(db, "Groups", datos.id);
             await updateDoc(infoGroups, {
                 schedule: datos.schedule,
@@ -203,8 +203,7 @@ const AddGroup = ({ navigation }) => {
                     max={100}
                     name={"description"}
                     setValue={setDatos}
-                    value={datos}
-                    type={'letters'} />
+                    value={datos}/>
 
                 {
                     loading
@@ -263,7 +262,7 @@ const AddGroup = ({ navigation }) => {
                     onPress={info ?
                         () => actualizar()
                         : () => autenticar()}
-                    className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-10">
+                    className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6 mb-5">
                     <Text className="text-lg text-white font-bold">
                         {info
                             ? "Actualizar grupo"

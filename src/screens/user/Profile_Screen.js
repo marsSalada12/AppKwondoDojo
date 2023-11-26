@@ -14,6 +14,7 @@ import * as Crypto from 'expo-crypto';
 import { generateMatri } from '../../componentes/generateMatricula'
 import ModalLoading from '../../componentes/loading/loading'
 import { useIsFocused } from '@react-navigation/native';
+import { checkLenghtData } from '../../componentes/checkForm'
 
 const ProfileScreen = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
@@ -35,6 +36,12 @@ const ProfileScreen = ({ navigation }) => {
         payments_id: []
     }
 
+
+    const checkKeys = [
+        "name_user",
+        "pattern_name",
+        "matern_name",
+    ]
     const initialUserInfo = {
         name_user: '',
         matricula: '',
@@ -47,7 +54,7 @@ const ProfileScreen = ({ navigation }) => {
         hijos_matricula: [],
     }
 
-    
+
 
     useEffect(() => {
         console.log(isFocused ? 'Activo' : 'Inactivo')
@@ -84,34 +91,58 @@ const ProfileScreen = ({ navigation }) => {
         setLoading(false)
     }
 
+
+    //Funcion para verificar que el formulario se haya llenado completo
+    // Vamos a devolver "true" si el formulario esta completo
+    const VerificarFormulario = () => {
+        return (datos.name_user
+            && datos.pattern_name
+            && datos.matern_name
+            && datos.phone
+            && datos.phone.length == 10
+            && datos.mail
+        )
+    }
+
     const Actualizar = () => {
         try {
-            // Actualizar la información del usuario
-            setLoading(true)
-            getData()
-                .then(async (value) => {
-                    const infoUser = doc(db, "Usuarios", value.userUID);
-                    console.log(value.userUID)
-                    datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-                    console.log(datos.matricula)
-                    await updateDoc(infoUser, {
-                        name_user: datos.name_user,
-                        pattern_name: datos.pattern_name,
-                        matern_name: datos.matern_name,
-                        phone: datos.phone,
-                        matricula: datos.matricula
-                    });
 
-                    console.log("Información de usuario actualizada");
-                    setLoading(false)
-                    navigation.navigate("HomeU");
-                })
-                .catch((error) => {
-                    setLoading(false)
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
-                })
+            if (!checkLenghtData(datos, checkKeys) || !VerificarFormulario()) {
+                setLoading(false)
+                setMensaje("Revisa los campos del perfil")
+                setShowModal(true)
+                console.log('Actualizar - condicionales: ')
+
+            } else {
+                console.log('actualizar')
+
+                // Actualizar la información del usuario
+                setLoading(true)
+                getData()
+                    .then(async (value) => {
+                        const infoUser = doc(db, "Usuarios", value.userUID);
+                        console.log(value.userUID)
+                        datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
+                        console.log(datos.matricula)
+                        await updateDoc(infoUser, {
+                            name_user: datos.name_user,
+                            pattern_name: datos.pattern_name,
+                            matern_name: datos.matern_name,
+                            phone: datos.phone,
+                            matricula: datos.matricula
+                        });
+
+                        console.log("Información de usuario actualizada");
+                        setLoading(false)
+                        navigation.navigate("HomeU");
+                    })
+                    .catch((error) => {
+                        setLoading(false)
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log('useLayoutEffect - onSnapshot ', errorCode, ' ', errorMessage)
+                    })
+            }
         } catch (error) {
 
 
@@ -187,65 +218,74 @@ const ProfileScreen = ({ navigation }) => {
 
     const ChangePass = async () => {
         //Actualizar contrasseña en el servicio de auth
-        setLoading(true)
-        Crypto.digestStringAsync(
-            Crypto.CryptoDigestAlgorithm.SHA256,
-            newPass.password
-        )
-            .then((hashP) => {
-                const user = auth.currentUser;
 
-                updatePassword(user, hashP)
-                    .then(() => {
-                        console.log('Se actualizo')
+        if (!newPass.password || newPass.password.length < 6) {
 
-                        //Actualizar la contraseña en la base de datos
-                        getData()
-                            .then(async (value) => {
-                                const infoUser = doc(db, "Usuarios", value.userUID);
-                                console.log(value.userUID)
-                                await updateDoc(infoUser, {
-                                    confirm_pass: hashP,
-                                    password: hashP
-                                });
-                                setLoading(false)
-                                setMensaje('Contraseña actualizada')
-                                setShowModal(true)
-                                // navigation.goBack();
-                                setNewPass('')
-                            })
-                            .catch((error) => {
-                                setLoading(false)
-                                const errorCode = error.code;
-                                const errorMessage = error.message;
-                                setMensaje(errorCode, ' ', errorMessage)
-                                setShowModal(true)
-                                console.log('ChangePass - GetData: ', error)
+            setLoading(false)
+            setMensaje("Nueva contraseña invalida")
+            setShowModal(true)
+        } else {
+            setLoading(true)
+            Crypto.digestStringAsync(
+                Crypto.CryptoDigestAlgorithm.SHA256,
+                newPass.password
+            )
+                .then((hashP) => {
+                    const user = auth.currentUser;
 
-                            })
+                    updatePassword(user, newPass.password)
+                        .then(() => {
+                            console.log('Se actualizo')
 
-                    }).catch((error) => {
-                        setLoading(false)
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        setMensaje(errorCode, ' -- ', errorMessage)
-                        if (errorCode === 'auth/requires-recent-login') {
-                            setMensaje(mensaje + '\n \n Requiere volver a iniciar sesion')
-                        }
-                        setShowModal(true)
-                        console.log('ChangePass - UpdataPassword: ', errorCode, ' -- ', errorMessage)
+                            //Actualizar la contraseña en la base de datos
+                            getData()
+                                .then(async (value) => {
+                                    const infoUser = doc(db, "Usuarios", value.userUID);
+                                    console.log(value.userUID)
+                                    await updateDoc(infoUser, {
+                                        confirm_pass: hashP,
+                                        password: hashP
+                                    });
+                                    setLoading(false)
+                                    setMensaje('Contraseña actualizada')
+                                    setShowModal(true)
+                                    // navigation.goBack();
+                                    setNewPass('')
+                                })
+                                .catch((error) => {
+                                    setLoading(false)
+                                    const errorCode = error.code;
+                                    const errorMessage = error.message;
+                                    setMensaje(errorCode, ' ', errorMessage)
+                                    setShowModal(true)
+                                    console.log('ChangePass - GetData: ', error)
 
-                    });
+                                })
 
-            })
-            .catch((error) => {
-                setLoading(false)
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                setMensaje(errorCode, ' ', errorMessage)
-                setShowModal(true)
-                console.log('ChangePass - Updatepass: ', error)
-            })
+                        }).catch((error) => {
+                            setLoading(false)
+                            const errorCode = error.code;
+                            const errorMessage = error.message;
+                            setMensaje(errorCode, ' -- ', errorMessage)
+                            if (errorCode === 'auth/requires-recent-login') {
+                                setMensaje(mensaje + '\n \n Requiere volver a iniciar sesion')
+                            }
+                            setShowModal(true)
+                            console.log('ChangePass - UpdataPassword: ', errorCode, ' -- ', errorMessage)
+
+                        });
+
+                })
+                .catch((error) => {
+                    setLoading(false)
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    setMensaje(errorCode, ' ', errorMessage)
+                    setShowModal(true)
+                    console.log('ChangePass - Updatepass: ', error)
+                })
+        }
+
     };
 
     return (
@@ -263,7 +303,7 @@ const ProfileScreen = ({ navigation }) => {
                     )
                     : (
                         <View
-                        className=' px-10 pt-4'>
+                            className=' px-10 pt-4'>
                             <Text className="text-xl text-bold">Actualizar datos de perfil</Text>
                             <InputFileld
                                 title={"Nombre/s"}

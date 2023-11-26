@@ -14,6 +14,7 @@ import * as Crypto from 'expo-crypto';
 import { generateMatri } from '../componentes/generateMatricula'
 import InputTel from '../componentes/Inputs/inputTel'
 import ModalLoading from '../componentes/loading/loading'
+import { checkLenghtData } from '../componentes/checkForm'
 
 const Enroll = ({ navigation }) => {
     const [showModal, setShowModal] = useState(false)
@@ -23,6 +24,8 @@ const Enroll = ({ navigation }) => {
 
     const [visible, setVisible] = useState(false);
 
+
+    const checkKeys = ["name_user","pattern_name","matern_name"];
     const [datos, setDatos] = useState(
         {
             type_user: 'Usuario',
@@ -81,8 +84,8 @@ const Enroll = ({ navigation }) => {
 
     const autenticar = () => {
         setIsLoading(true)
-
-        if (!VerificarFormulario()) {
+        
+        if (!VerificarFormulario() || !checkLenghtData(datos, checkKeys)) {
             setMsjModal("Formulario incompleto")
             setShowModal(true)
         } else {
@@ -106,7 +109,7 @@ const Enroll = ({ navigation }) => {
 
                     //Navegamos a el menu de usuario
                     navigation.navigate('TabBarUser')
-                    
+
                     // Cambiamos el estado del cargaando
                     setIsLoading(false)
                 })

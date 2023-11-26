@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import DropDownPicker from 'react-native-dropdown-picker'
 
@@ -15,6 +15,7 @@ export const Dropdown = ({ list, title, name, setValue, value }) => {
             </Text>
             <DropDownPicker
                 disableBorderRadius={true}
+                
                 //Estillos del boton que muestra al dropdown
                 style={{
                     backgroundColor: "#e6e6e6",

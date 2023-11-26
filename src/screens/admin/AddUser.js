@@ -15,6 +15,7 @@ import InputTel from '../../componentes/Inputs/inputTel';
 import { generateMatri } from '../../componentes/generateMatricula';
 import Formulario from '../../componentes/Formularios/Formulario';
 import ModalLoading from '../../componentes/loading/loading';
+import { checkLenghtData } from '../../componentes/checkForm';
 
 
 const AddUser = ({ navigation }) => {
@@ -28,6 +29,7 @@ const AddUser = ({ navigation }) => {
   const [MsjModalError, setMsjModalError] = useState('')
 
 
+
   const initialDatos = {
     type_user: '',
     name_user: '',
@@ -36,13 +38,15 @@ const AddUser = ({ navigation }) => {
     matricula: '',
     mail: '',
     phone: '',
-    password: '123456',
-    confirm_pass: '123456',
+    password: '8bb0cf6eb9b17d0f7d22b456f121257dc1254e1f01665370476383ea776df414',
+    confirm_pass: '8bb0cf6eb9b17d0f7d22b456f121257dc1254e1f01665370476383ea776df414',
     status: true,
     payments_id: [],
     hijos_matricula: [],
+    lastGroupUID: ''
   }
 
+  const checkKeys = ["name_user", "pattern_name", "matern_name"];
   const [datos, setDatos] = useState(
     info
       ? { ...info }
@@ -55,22 +59,30 @@ const AddUser = ({ navigation }) => {
       && datos.pattern_name
       && datos.matern_name
       && datos.mail
-      && datos.phone)
+      && datos.phone
+      && datos.phone.length == 10)
   }
 
 
   // Metodo para guardar a un usuario
   const autenticar = () => {
-    setIsLoading(true)
-    VerificarFormulario()
-      ? createUserWithEmailAndPassword(auth, datos.mail, "123456")
+
+    // Revisamos que el formulario este completo y cumpla con el taño minimo algunos campos
+    if (!VerificarFormulario() || !checkLenghtData(datos, checkKeys)) {
+      setMsjModalError("Formulario incompleto")
+      setModalErrorVisible(true)
+    } else {
+
+      createUserWithEmailAndPassword(auth, datos.mail, "123456")
         .then((userCredential) => {
+          setIsLoading(true)
           const user = userCredential.user.uid;
           datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
           console.log(datos.matricula)
+          console.log(user, '--------')
           createUserWUID(datos, user)
             .then(() => {
-              setIsLoading(true)
+              setIsLoading(false)
               navigation.goBack();
             })
             .catch((error) => {
@@ -88,8 +100,10 @@ const AddUser = ({ navigation }) => {
           setModalErrorVisible(true)
           console.log('Error AddUser - Create  \n', errorCode, errorMessage)
         })
-      : console.log("no se pudo")
+
+    }
   }
+
 
 
   //Metodo para desactivar o activar a el usuario
@@ -121,11 +135,17 @@ const AddUser = ({ navigation }) => {
   // Actualizar desde cloudStorage
   const actualizar = async () => {
     setIsLoading(true);
-
     const infoUser = doc(db, "Usuarios", datos.id);
 
     try {
-      if (VerificarFormulario()) {
+      // Revisamos que el formulario este completo y cumpla con el taño minimo algunos campos
+      if (!VerificarFormulario() || !checkLenghtData(datos, checkKeys)) {
+        console.log("No se pudo actualizar. Verifica el formulario.");
+        setMsjModalError("No se pudo actualizar\n Verifica el formulario")
+        setModalErrorVisible(true)
+        setIsLoading(false);
+      } else {
+
         await updateDoc(infoUser, {
           type_user: datos.type_user,
           name_user: datos.name_user,
@@ -133,14 +153,9 @@ const AddUser = ({ navigation }) => {
           matern_name: datos.matern_name,
           phone: datos.phone
         });
-
+        
         setIsLoading(false);
         navigation.goBack();
-      } else {
-        console.log("No se pudo actualizar. Verifica el formulario.");
-        setMsjModalError("Llenar formulario")
-        setModalErrorVisible(true)
-        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
@@ -282,9 +297,14 @@ const AddUser = ({ navigation }) => {
 
         <View className="">
           <TouchableOpacity
-            onPress={info ?
-              () => actualizar()
-              : () => autenticar()}
+            onPress={() => {
+              if (info) {
+                actualizar()
+              } else {
+                autenticar()
+              }
+            }
+            }
             className="rounded-md bg-blue-400 p-4 w-80 items-center mt-6">
             <Text className="text-lg text-white font-bold">
               {
