@@ -137,7 +137,7 @@ const HomeScreen = ({ navigation }) => {
                                         
                                         <Text className="text-xl ">{userData.name_user} {userData.pattern_name} {userData.matern_name} </Text>
                                         {
-                                            (userData.lastGroupUID && userData.end_mensulidad_days > 0 )
+                                            (userData.lastGroupUID && userData.end_mensulidad_days > 0 && userData?.payday_date)
                                                 ? <>
                                                     <Text className="text-lg  ">Hora {userData.hora}</Text>
                                                     <Text className="text-lg  ">Lunes - Viernes</Text>
@@ -186,7 +186,7 @@ const HomeScreen = ({ navigation }) => {
                                             }
                                             {
                                                 childInfo.status
-                                                    ? (childInfo.lastGroupUID && childInfo.end_mensulidad_days >= 0)
+                                                    ? (childInfo.lastGroupUID && childInfo.end_mensulidad_days >= 0 && childInfo?.payday_date)
                                                         ? (<>
 
                                                             <Text className="text-lg  ">Hora {childInfo.schedule}</Text>
