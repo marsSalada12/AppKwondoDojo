@@ -5,6 +5,7 @@ import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import { generateMatri } from '../generateMatricula'
 import ModalError from '../Modals/MAddUserError'
+import { checkLenghtData } from '../checkForm'
 
 export const Formulario = ({ childID, admin = false }) => {
     const [modalErrorVisible, setModalErrorVisible] = useState(false)
@@ -21,6 +22,7 @@ export const Formulario = ({ childID, admin = false }) => {
         }
     )
 
+    const checkFields = ['name_user', "pattern_name", "matern_name", "mail"]
     const VerificarFormulario = () => {
         return (datos.name_user
             && datos.pattern_name
@@ -36,23 +38,29 @@ export const Formulario = ({ childID, admin = false }) => {
     }
 
     //Actualizar hijo en la bd
-    const Actualizar = async () => {
+    const Actualizar = () => {
         try {
-            if (VerificarFormulario()) {
+
+            // Revisamos si el correo es validoo
+            const reg = new RegExp("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$");
+            
+            // Verificamos el formulario, el tamaño y tambien el correo que sea valido
+            if (!VerificarFormulario() || !checkLenghtData(datos, checkFields) || !reg.test(datos.mail)) {
+                console.log("No se pudo actualizar. Verifica el formulario.");
+                setMsjModalError("No se pudo actualizar. Verifica el formulario")
+                setModalErrorVisible(true)
+            } else {
+
                 const childInfo = doc(db, "Children", childID);
                 datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-                await updateDoc(childInfo, {
-                    name_user: datos.name_user,
-                    pattern_name: datos.pattern_name,
-                    matern_name: datos.matern_name,
-                    mail: datos.mail,
-                    matricula: datos.matricula
-                });
+                // await updateDoc(childInfo, {
+                //     name_user: datos.name_user,
+                //     pattern_name: datos.pattern_name,
+                //     matern_name: datos.matern_name,
+                //     mail: datos.mail,
+                //     matricula: datos.matricula
+                // });
                 console.log("Información actualizada");
-            } else {
-                console.log("No se pudo actualizar. Verifica el formulario.");
-                setMsjModalError("Llenar formulario")
-                setModalErrorVisible(true)
             }
             // navigation.goBack();
         } catch (error) {
