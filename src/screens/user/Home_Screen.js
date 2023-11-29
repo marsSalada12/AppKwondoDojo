@@ -33,7 +33,6 @@ const HomeScreen = ({ navigation }) => {
         getData()
             .then((uData) => {
 
-                console.log(uData)
                 // Guardamos los IDS del usuario y de los hijos
                 setIdusuario([uData.userUID])
                 setIdHijos(uData.hijos_matricula)
@@ -113,6 +112,7 @@ const HomeScreen = ({ navigation }) => {
             })
             .finally(() => {
                 setIsLoading(false);
+                console.log(childNames)
             });
 
     }
@@ -122,7 +122,7 @@ const HomeScreen = ({ navigation }) => {
             {
                 isLoading
                     ? <ModalLoading />
-                    : <View className=" flex flex-1 px-5 pt-5 ">
+                    : <View className=" flex flex-1 px-5 pt-5 mb-32">
                         <StatusBar hidden={true} />
 
                         <Text className="text-2xl font-bold mb-1 ">
@@ -134,10 +134,10 @@ const HomeScreen = ({ navigation }) => {
                             {
                                 (!isLoading && userData) && (
                                     <>
-                                        {console.log(userData)}
+                                        
                                         <Text className="text-xl ">{userData.name_user} {userData.pattern_name} {userData.matern_name} </Text>
                                         {
-                                            (userData.lastGroupUID && userData.end_mensulidad_days > 0)
+                                            (userData.lastGroupUID && userData.end_mensulidad_days > 0 )
                                                 ? <>
                                                     <Text className="text-lg  ">Hora {userData.hora}</Text>
                                                     <Text className="text-lg  ">Lunes - Viernes</Text>
