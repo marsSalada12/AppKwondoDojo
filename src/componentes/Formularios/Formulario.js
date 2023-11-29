@@ -38,7 +38,7 @@ export const Formulario = ({ childID, admin = false }) => {
     }
 
     //Actualizar hijo en la bd
-    const Actualizar = () => {
+    const Actualizar = async () => {
         try {
 
             // Revisamos si el correo es validoo
@@ -53,13 +53,13 @@ export const Formulario = ({ childID, admin = false }) => {
 
                 const childInfo = doc(db, "Children", childID);
                 datos.matricula = generateMatri(datos.name_user, datos.pattern_name, datos.matern_name)
-                // await updateDoc(childInfo, {
-                //     name_user: datos.name_user,
-                //     pattern_name: datos.pattern_name,
-                //     matern_name: datos.matern_name,
-                //     mail: datos.mail,
-                //     matricula: datos.matricula
-                // });
+                await updateDoc(childInfo, {
+                    name_user: datos.name_user,
+                    pattern_name: datos.pattern_name,
+                    matern_name: datos.matern_name,
+                    mail: datos.mail,
+                    matricula: datos.matricula
+                });
                 console.log("Información actualizada");
             }
             // navigation.goBack();
