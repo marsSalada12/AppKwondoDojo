@@ -7,7 +7,6 @@
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      
       "image": "./assets/splash.png",
       "backgroundColor": "#3E3D4F"
     },
@@ -21,10 +20,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.marssalada12.KwonDojo"
     },
     "web": {
       "favicon": "./assets/logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d8281bf0-28f5-492b-9e8c-174a14e40ed4"
+      }
     }
   }
 }
