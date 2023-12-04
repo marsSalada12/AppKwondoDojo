@@ -42,47 +42,47 @@ const Mensualidad = ({ navigation }) => {
         ap_paterno: alumnoIn.pattern_name,
         ap_materno: alumnoIn.matern_name,
         userUID: alumnoIn.userUID,
-      });
+    });
 
 
-      const handlePayments = async () => {
+    const handlePayments = async () => {
         // Insertamos los datos en la coleccion
         const payments_id = await createPayment(datos);
         setDatos({ ...datos, payment_id: payments_id });
-  
-  
+
+
         // Verificar si alumnoIn es un padre o un hijo
         if (alumnoIn.type_user == "Usuario") {
-  
-          // Si es un padre, actualiza el documento del padre
-          const userRef = doc(db, "Usuarios", alumnoIn.userUID);
-          await updateDoc(userRef, {
-            payments_id: arrayUnion(payments_id),
-            lastGroupUID: grupoIn.id
-          });
-          console.log("se realixo papiu")
+
+            // Si es un padre, actualiza el documento del padre
+            const userRef = doc(db, "Usuarios", alumnoIn.userUID);
+            await updateDoc(userRef, {
+                payments_id: arrayUnion(payments_id),
+                lastGroupUID: grupoIn.id
+            });
+            console.log("se realixo papiu")
         } else {
-  
-          // Si es un hijo, actualiza su propio document
-          const alumnoRef = doc(db, "Children", alumnoIn.userUID);
-          await updateDoc(alumnoRef, {
-            payments_id: arrayUnion(payments_id),
-            lastGroupUID: grupoIn.id
-          })
-          console.log("se realixo hije")
-  
+
+            // Si es un hijo, actualiza su propio document
+            const alumnoRef = doc(db, "Children", alumnoIn.userUID);
+            await updateDoc(alumnoRef, {
+                payments_id: arrayUnion(payments_id),
+                lastGroupUID: grupoIn.id
+            })
+            console.log("se realixo hije")
+
         }
-  
-  
+
+
         //Agregamos el userUID del hijo
         const groupRef = doc(db, "Groups", grupoIn.id);
         await updateDoc(groupRef, {
-          matricula_alumno: arrayUnion(alumnoIn.userUID),
+            matricula_alumno: arrayUnion(alumnoIn.userUID),
         })
         console.log("se realixo hije")
 
         navigation.navigate("Referencia", datos)
-      }
+    }
 
     return (
         <View>
@@ -129,7 +129,8 @@ const Mensualidad = ({ navigation }) => {
                 </TouchableOpacity>
 
 
-                <TouchableOpacity className="rounded-md bg-red p-4 w-80 items-center mb-6 ml-5 mr-5">
+                <TouchableOpacity className="rounded-md bg-red p-4 w-80 items-center mb-6 ml-5 mr-5"
+                    onPress={() => navigation.navigate('HomeU')}>
                     <Text className="text-white text-center w-72">Cancelar</Text>
                 </TouchableOpacity>
             </View>
